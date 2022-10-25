@@ -7,11 +7,140 @@
     <title>Teeworlds Protocol</title>
 </head>
 <body>
-    <pre class="code-snippet">
-        <code>
-            0xFF 0xFF
-            0xAA 0xAA
-        </code>
-    </pre>
+    <div class="content">
+        <h2>The teeworlds 0.7 network protcol</h2>
+        <p>
+            This is an effort to document the network protcol of the game <a href="https://teeworlds.com">teeworlds</a>.
+            Only looking at the <a href="https://teeworlds.com/?page=downloads&id=14786">0.7.x</a> implemenations. The <a href="https://teeworlds.com/?page=downloads&id=5063">0.5.x</a> and <a href="https://github.com/teeworlds/teeworlds/tree/0.6">0.6.x</a> implemenations are slightly different and incompatible.
+
+            All packets are prefixed with a <code>[SOURCE->DESTINATION]</code> indicating who is sending the packet to who.
+            The packets are listed in the order they are supposed to be send when a client connects to a server.
+            <br><br>
+            The packet content is displayed as space seperated hexadecimal encoded bytes.
+            <br>
+            So <code class="code-inline">01</code> means that the bits <code class="code-inline">00000001</code> are sent via the network.
+            <br>
+            And <code class="code-inline">FF</code> means that the bits <code class="code-inline">11111111</code> are sent via the network.
+            <br>
+            <br>
+            This matches the output of the network dumping tool <code class="code-inline">tcpdump</code>.
+            If you have <a href="https://www.tcpdump.org/">tcpdump</a> installed on your system you can print teeworlds traffic using this command:
+            <pre class="code-snippet">
+                <code>
+                    tcpdump -nX -i lo "port 8303"
+                </code>
+            </pre>
+            Assuming your loopback network interface is called lo and you have a teeworlds server running on its default port 8303.
+        </p>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Hello server this is my token</h3>
+        <p>
+            The first packet that is being sent is from the client to the server.
+            The only data that is being transmitted is the security token from the client.
+            The packet header contains <code>FF FF FF FF</code> as placeholder for the server token.
+            Since the client does not know the server token yet.
+
+            At the end this packet contains 501 nullbytes to prohibit reflection attacks.
+            Those nullbytes are not shown below.
+        </p>
+        <pre class="code-snippet">
+            <code>
+                &lt;04  00  00  <span class="token">FF  FF  FF  FF</span>&gt;&lt;05&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
+                 ^                           ^   ^
+         size=7 flags=1                      |   client token
+                                         NET_CTRLMSG_TOKEN
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT] Hello client this my token</h3>
+        <p>
+            As a response to the clients hello the server answers with its token.
+            So after the packet header containing the clients token. The only data that is being sent.
+            Is the servers security token.
+        </p>
+        <pre class="code-snippet">
+            <code>
+                &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;05&gt;&lt;<span class="token">C0  7D  1E  5E</span>&gt;
+                 ^           ^               ^   ^
+          size=7 flags=1     |               |   server token
+                             |         NET_CTRLMSG_TOKEN
+                          client token
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Connect</h3>
+        <p>
+            After server and client exchanged tokens the client will once again send its token.
+            This time setting the Control Message to NET_CTRLMSG_CONNECT to initiate the connection.
+
+            At the end this packet contains 501 nullbytes to prohibit reflection attacks.
+            Those nullbytes are not shown below.
+        </p>
+        <pre class="code-snippet">
+            <code>
+                &lt;04  00  00  <span class="token">C0  7D  1E  5E</span>&gt;&lt;01&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
+                 ^           ^               ^   ^
+          size=7 flags=1     |               |   client token
+                        server token     NET_CTRLMSG_CONNECT
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT] Accept connection</h3>
+        <p>
+            If this packet is sent the server log will show this message.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][connection]: got connection, sending accept
+            </code>
+            <br>
+        </p>
+        <pre class="code-snippet">
+            <code>
+                &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;02&gt;
+                 ^           ^               ^
+            size=7 flags=1   |               |
+                             |       NET_CTRLMSG_ACCEPT
+                        client token
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Version and password</h3>
+        <p>
+            Now the client will inform the server about its version.
+            This packet is defined in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L340-L353">CClient::SendInfo()</a>
+            and contains the password, the network hash and the supported protocol version.
+            The vanilla client always sends the password that was entered last by the user.
+            No matter which server it is connecting to also if the server does not expect a password.
+            This is nice since it minimizes user input even if the ip changes or multiple servers have the same password.
+            But it is leaking the password you entered last to every server you connect to.
+            That is why the <a href="https://ddnet.org/">ddnet</a> client decided to only send the password after user confirmation.
+            <br><br>
+            Since the packet payload now contains uncompressed printable ASCII characters those are included below.
+            You can quickly identify this packet when running <code class="code-inline">tcpdump</code> with the <code class="code-inline">-X</code>flag.
+        </p>
+        <pre class="code-snippet">
+            <code>
+                [PACKET HEADER]
+                00  00  01  <span class="token">C0  7D  1E  5E</span>
+                            ^
+                        server token
+
+                [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+                40 28 01 03  30 2E 37 20  38 30 32 66      @(..<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L8">0.7</a> <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L7">802f</a>
+                31 62 65 36  30 61 30 35  36 36 35 66      <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L7">1be60a05665f</a>
+                00 6D 79 5F  70 61 73 73  77 6F 72 64      <span class="red">my_password</span>
+                5F 31 32 33  00 85 1C 00                   <span class="red">_123</span>...
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+    </div>
 </body>
 </html>
