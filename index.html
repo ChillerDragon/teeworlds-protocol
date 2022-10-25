@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="content">
-        <h2>The teeworlds 0.7 network protcol</h2>
+        <h2>The teeworlds 0.7 network protocol</h2>
         <p>
             This is an effort to document the network protcol of the game <a href="https://teeworlds.com">teeworlds</a>.
             Only looking at the <a href="https://teeworlds.com/?page=downloads&id=14786">0.7.x</a> implemenations. The <a href="https://teeworlds.com/?page=downloads&id=5063">0.5.x</a> and <a href="https://github.com/teeworlds/teeworlds/tree/0.6">0.6.x</a> implemenations are slightly different and incompatible.
@@ -120,6 +120,13 @@
             This is nice since it minimizes user input even if the ip changes or multiple servers have the same password.
             But it is leaking the password you entered last to every server you connect to.
             That is why the <a href="https://ddnet.org/">ddnet</a> client decided to only send the password after user confirmation.
+            <br>
+            <br>
+            If the server recieves this packet it will log the following line.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][connection]: connecting online
+            </code>
             <br><br>
             Since the packet payload now contains uncompressed printable ASCII characters those are included below.
             You can quickly identify this packet when running <code class="code-inline">tcpdump</code> with the <code class="code-inline">-X</code>flag.
@@ -140,7 +147,63 @@
         </pre>
 
         <hr>
-        <h3>[SERVER->CLIENT]</h3>
+        <h3>[SERVER->CLIENT] Map info</h3>
+        <p>
+            Now the server is informing the client about the map. This is NOT the mapfile it self. Just its metadata.
+            To see what exactly is being sent checkout the code of <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">CServer::SendMap</a>
+            it boils down to this:
+
+            <pre class="code-snippet">
+                <code>
+                    String GetMapName()
+                    Int    m_CurrentMapCrc
+                    Int    m_CurrentMapSize
+                    Int    m_MapChunksPerRequest
+                    Int    MAP_CHUNK_SIZE
+                    Raw    m_CurrentMapSha256
+                </code>
+            </pre>
+
+            In the ASCII representation of the packet you can spot the mapname.
+            <br>
+            In this case the map is called <code class="orange">skyblock</code>.
+
+            <pre class="code-snippet">
+                <code>
+                    [PACKET HEADER]
+                    00  01  01  <span class="token">51  3B  59  46</span>
+
+                    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+                    40 34 01 05  73 6B 79 62  6C 6F 63 6B      @4..<span class="orange">skyblock</span>
+                    00 D8 D1 95  A0 0F A5 0E  08 A8 15 76      ...........v
+                    BA 3A AE 46  F3 F5 E6 31  7A 8C BD 7E      .:.F...1z..~
+                    A4 B2 44 C4  7E 0E FF B5  86 7F 4B E3      ..D.~.....K.
+                    CA E7 50 93  14 0D 88 00                   ..P....
+                </code>
+            </pre>
+        </p>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Ready</h3>
+        <p>
+            If the client already has the map or finished the download process it will respond with the ready packet.
+            The map download packets are yet to be documented.
+            <br>
+            <br>
+            If the server gets this packet it will print the following log line.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][server]: player is ready. ClientID=0 addr=[0:0:0:0:0:0:0:1]:61985
+            </code>
+        </p>
+        <pre class="code-snippet">
+            <code>
+                &lt;00  01  <span class="token">01  C0  7D  1E  5E</span>&gt; 40  01  02  25     ....}.^@..%
+                 ^           ^                   ^
+        size=7 flags = 0     |         NETMSG_READY (TODO: annotate better how it turns 40 01 02 25 into 18 NETMSG_READY)
+                        server token
+            </code>
+        </pre>
     </div>
 </body>
 </html>
