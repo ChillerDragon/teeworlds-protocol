@@ -47,9 +47,9 @@
         <pre class="code-snippet">
             <code>
     &lt;04  00  00  <span class="token">FF  FF  FF  FF</span>&gt;&lt;05&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
-        ^                           ^   ^
-size=7 flags=1                      |   client token
-                                NET_CTRLMSG_TOKEN
+     ^                           ^   ^
+size=7 flags=1                   |   client token
+                             NET_CTRLMSG_TOKEN
             </code>
         </pre>
 
@@ -63,9 +63,9 @@ size=7 flags=1                      |   client token
         <pre class="code-snippet">
             <code>
     &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;05&gt;&lt;<span class="token">C0  7D  1E  5E</span>&gt;
-        ^           ^               ^   ^
-size=7 flags=1     |               |   server token
-                    |         NET_CTRLMSG_TOKEN
+     ^           ^               ^   ^
+size=7 flags=1   |               |   server token
+                 |         NET_CTRLMSG_TOKEN
                 client token
             </code>
         </pre>
@@ -82,8 +82,8 @@ size=7 flags=1     |               |   server token
         <pre class="code-snippet">
             <code>
     &lt;04  00  00  <span class="token">C0  7D  1E  5E</span>&gt;&lt;01&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
-        ^           ^               ^   ^
-size=7 flags=1     |               |   client token
+     ^           ^               ^   ^
+size=7 flags=1   |               |   client token
             server token     NET_CTRLMSG_CONNECT
             </code>
         </pre>
@@ -101,9 +101,9 @@ size=7 flags=1     |               |   client token
         <pre class="code-snippet">
             <code>
     &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;02&gt;
-        ^           ^               ^
+     ^           ^               ^
 size=7 flags=1   |               |
-                    |       NET_CTRLMSG_ACCEPT
+                 |       NET_CTRLMSG_ACCEPT
             client token
             </code>
         </pre>
@@ -222,3 +222,4 @@ size=7 flags=1   |               |
     </footer>
 </body>
 </html>
+
