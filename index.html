@@ -95,7 +95,7 @@
             <code>
     &lt;04  00  00  <span class="token">FF  FF  FF  FF</span>&gt;&lt;05&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
      ^                           ^   ^
-size=7 flags=1                   |   client token
+ size=7 flags=1                  |   client token
                              NET_CTRLMSG_TOKEN
             </code>
         </pre>
@@ -111,7 +111,7 @@ size=7 flags=1                   |   client token
             <code>
     &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;05&gt;&lt;<span class="token">C0  7D  1E  5E</span>&gt;
      ^           ^               ^   ^
-size=7 flags=1   |               |   server token
+ size=7 flags=1  |               |   server token
                  |         NET_CTRLMSG_TOKEN
                 client token
             </code>
@@ -130,7 +130,7 @@ size=7 flags=1   |               |   server token
             <code>
     &lt;04  00  00  <span class="token">C0  7D  1E  5E</span>&gt;&lt;01&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
      ^           ^               ^   ^
-size=7 flags=1   |               |   client token
+ size=7 flags=1  |               |   client token
             server token     NET_CTRLMSG_CONNECT
             </code>
         </pre>
@@ -149,7 +149,7 @@ size=7 flags=1   |               |   client token
             <code>
     &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;02&gt;
      ^           ^               ^
-size=7 flags=1   |               |
+ size=7 flags=1  |               |
                  |       NET_CTRLMSG_ACCEPT
             client token
             </code>
@@ -257,10 +257,10 @@ size=7 flags=1   |               |
         </p>
         <pre class="code-snippet">
             <code>
-                &lt;00  01  <span class="token">01  C0  7D  1E  5E</span>&gt; 40  01  02  25
-                 ^       ^                   ^
-        size=7 flags = 0 |             NETMSG_READY
-                    server token
+            &lt;00  01  01  <span class="token">C0  7D  1E  5E</span>&gt; 40  01  02  25
+              ^          ^               ^
+    size=7 flags = 0     |             NETMSG_READY
+                        server token
             </code>
         </pre>
 
@@ -271,9 +271,9 @@ size=7 flags=1   |               |
         </p>
         <pre class="code-snippet">
             <code>
-        &lt;10  02  <span class="token">03  51  3B  59  46</span>&gt; 4A  42  88  4A  6E  16  BA  31  46  A2  84  9E  BF  E2  06
-         ^       ^                   ^
-    size=7     client token      compressed data
+        &lt;10  02  03  <span class="token">51  3B  59  46</span>&gt; 4A  42  88  4A  6E  16  BA  31  46  A2  84  9E  BF  E2  06
+         ^           ^               ^
+    size=7       client token      compressed data
     flags = 4
     (COMPRESSION)
             </code>
@@ -321,7 +321,7 @@ size=7 flags=1   |               |
         <pre class="code-snippet">
             <code>
     [PACKET HEADER]
-    00  03  <span class="token">03  51  3B  59  46</span>
+    00  03  03  <span class="token">51  3B  59  46</span>
 
     [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
     40 01 05 16  41 05 06 0C  A8 0F 88 03      @...A.......
@@ -353,8 +353,207 @@ size=7 flags=1   |               |
         <pre class="code-snippet">
             <code>
     &lt;00  07  01  <span class="token">C0  7D  1E  5E</span>&gt; &lt;40  01  04&gt;  27
-                    ^                          ^
+                 ^                             ^
             server token                   NETMSG_ENTERGAME
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT] Server info</h3>
+        <p>
+            The server sends version, map name, gametype, playerlist and more prepared in the method
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L1091-L1149">
+                CServer::GenerateServerInfo(CPacker *pPacker, int Token)
+            </a>
+            <br>
+            Since this server is empty the packet data does not include any player data.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  04  01  <span class="token">51  3B  59  46</span>
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    40 29 08 09  30 2E 37 2E  35 00 75 6E      @)..0.7.5.un
+    6E 61 6D 65  64 20 73 65  72 76 65 72      named server
+    00 00 73 6B  79 62 6C 6F  63 6B 00 44      ..skyblock.D
+    4D 00 00 01  01 08 01 08                   M.......
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+            Since it is compressed below only the first few bytes are shown.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;10  04  03  <span class="token">51  3B  59  46</span>&gt; 4A 36  4C  ED  E1  47  DE...
+                 ^               ^
+            client token       compressed payload
+            </code>
+        </pre>
+        <p>
+            Here is what it decompresses to. Again <code>NETMSG_SERVERINFO (4)</code>
+            is extracted out of <code>0x09</code> together with the system flag.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    10  04  03  <span class="token">51  3B  59  46</span>
+
+    [PAYLOAD HEADER]
+    &lt;40  06&gt;&lt;09&gt; 26  00  14  00  00  01  41  1D  0A    @..&.....A..
+        ^        ^
+ Flags & Size    |
+        NETMSG_SERVERINFO
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    24 00 01 00  6E 61 6D 65  6C 65 73 73      $...nameless
+    20 74 65 65  00 00 40 73  70 69 6B 79       tee..@spiky
+    00 64 75 6F  64 6F 6E 6E  79 00 00 73      .duodonny..s
+    74 61 6E 64  61 72 64 00  73 74 61 6E      tandard.stan
+    64 61 72 64  00 73 74 61  6E 64 61 72      dard.standar
+    64 00 01 01  00 01 01 01  A0 AC DD 04      d...........
+    BD D2 A9 85  0C 80 FE 07  80 C0 AB 05      ............
+    9C DE AA 05  9E C9 E5 01  00 00 33 11      ..........3.
+    AE 01 AF 01  84 11 2B 00  03 00 06 00      ......+.....
+    00 01 00 0A  00 A6 01 90  04 91 02 00      ............
+    80 02 00 00  00 40 00 00  90 04 90 02      .....@......
+    00 00 0A 00  0A 01 00 00  00 0B 00 08      ............
+    00 00 00 00                                ..
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+            Since it is compressed below only the first few bytes are shown.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;10  04  01  <span class="token">51  3B  59  46</span>&gt; B5  36  45  11  5D  86  1A...
+                 ^               ^
+            client token       compressed payload
+            </code>
+        </pre>
+        <p>
+            Here is what it decompresses to. Again <code>NETMSG_SNAPSINGLE (8)</code>
+            is extracted out of <code>0x11</code> together with the system flag.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    10  04  03  <span class="token">51  3B  59  46</span>
+
+    [PAYLOAD HEADER]
+    &lt;00  33&gt;&lt;11&gt; B8  01  B9  01  84  11  2B  00  03     .3.......+..  
+        ^        ^
+ Flags & Size    |
+        NETMSG_SNAPSINGLE
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    00 06 00 00  01 00 0A 00  A6 01 90 04      ............
+    91 02 00 80  02 00 00 00  40 00 00 90      ........@...
+    04 90 02 00  00 0A 00 0A  01 00 00 00      ............
+    0B 00 08 00  00 00 00 00                   .....
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Client Input (hook/move/fire/jump)</h3>
+        <p>
+            Also the client uses huffman compression to send its inputs. It makes a call to
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L395-L432">
+                CClient::SendInput()
+            </a>
+            which sends the the acknowledged gametick and the prediction tick so the server knows which snapshots to (re)send.
+            After that it packs a bunch of integers representing the following struct
+            <pre class="code-snippet">
+                <code>
+    struct CNetObj_PlayerInput
+    {
+        int m_Direction;
+        int m_TargetX;
+        int m_TargetY;
+        int m_Jump;
+        int m_Fire;
+        int m_Hook;
+        int m_PlayerFlags;
+        int m_WantedWeapon;
+        int m_NextWeapon;
+        int m_PrevWeapon;
+    };
+                </code>
+            </pre>
+            The inputs are only sent if there is new data.
+            If there is none it will only acknowledged the gameticks.
+            <br>
+            So the compressed data that is sent via the network looks like this.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;10  0A  01  C0  7D  1E  5E&gt; 4D  E9  B0  14  7E  13  D6  F8  6F  57  DC  00
+        ^                        ^
+    size=7                   compressed payload
+    flags = 4 (COMPRESSION)
+            </code>
+        </pre>
+        <p>
+            Here is what it decompresses to. Again <code>NETMSG_INPUT (20)</code>
+            is extracted out of <code>0x29</code> together with the system flag.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    10  0A  01  <span class="token">C0  7D  1E  5E</span>
+
+    [PACKET PAYLOAD]
+    &lt;00  11&gt; 29  82  02  83  02  28  00  01  00  00  00  00  00  00  00  00  05
+        ^     ^
+ ChunkHeader  |
+ size = 17   NETMSG_INPUT
+ flags = 0
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Client says bye</h3>
+        <h3>[SERVER->CLIENT] Server says bye</h3>
+        <p>
+            If a client is properly shutdown or the user presses the disconnect button.
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L209-L231">
+                CNetConnection::Disconnect(const char *pReason)
+            </a>
+            sends a <code>NET_CTRLMSG_CLOSE (4)</code>. The same can also be sent by the server if it shutdowns for example.
+            <br>
+            At the end optionally this packet can contain a string containing the reason of closing the connection.
+            You probably have seen those disconnect messages in the chat already:
+            <br>
+            <br>
+            <code>
+                <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L379">
+                    *** 'nameless tee' has left the game (Timeout)
+                </a>
+                <br>
+                <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L396">
+                    *** 'nameless tee' has left the game (Too weak connection (not acked for 10 seconds))
+                </a>
+                <br>
+                <span>
+                    *** 'hacker' has left the game (custom message)
+                </span>
+                <br>
+            </code>
+            <br>
+            The server can also use this reason to show a custom shutdown message to the client.
+        </p>
+        <pre class="code-snippet">
+            <code>
+                &lt;04  0A  00  <span class="token">C0  7D  1E  5E</span>&gt;&lt;04&gt;
+                 ^           ^               ^
+               size=7    client/server    NET_CTRLMSG_CLOSE
+               flags=1      token
             </code>
         </pre>
     </div>
