@@ -31,6 +31,53 @@
                 </code>
             </pre>
             Assuming your loopback network interface is called lo and you have a teeworlds server running on its default port 8303.
+            <br>
+            <br>
+            Instead of printing packets to the terminal you can also save them to a pcap file using:
+            <pre class="code-snippet">
+                <code>
+    tcpdump -nX -i lo -w tw.pcap "port 8303"
+                </code>
+            </pre>
+            Which then can be loaded using wireshark. If you are motivated to compile and install a custom dissector I can highly recommend.
+            <a href="https://github.com/heinrich5991/libtw2/tree/ded871091bb984f0419cac605b85ecf438c6fbcd/wireshark-dissector">
+                The dissector from libtw2 by heinrich5991
+            </a>
+            which adds nice teeworlds related annotations to the packets.
+            <br>
+            <br>
+            <h2>Community projects</h2>
+
+            If you are reading this chances are you might find the community projects useful
+            that reimplemented teeworlds protocols (0.6/0.7) in other programming languages:
+            <br>
+            <ul>
+                <li>
+                    <a href="https://github.com/heinrich5991/libtw2">
+                        libtw2 - A collection of rust tools/libraries for teeworlds containing
+                        <ul>
+                            <li>A wireshark dissector</li>
+                            <li>A huffman compression implemenation</li>
+                            <li>A server implementation (not feature comeplete yet)</li>
+                        </ul>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/swarfey/tw-chatonly">
+                        tw-chatonly - teeworlds client/library, made in typescript 
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/edg-l/rustyman">
+                        rustyman - Huffman compression and decompression implemented in rust 
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/ChillerDragon/huffman-tw">
+                        huffman_tw - The teeworlds C++ huffman compression code wrapped as a ruby gem 
+                    </a>
+                </li>
+            </ul>
         </p>
 
         <hr>
@@ -195,13 +242,119 @@ size=7 flags=1   |               |
             <code>
                 [2022-10-25 14:22:25][server]: player is ready. ClientID=0 addr=[0:0:0:0:0:0:0:1]:61985
             </code>
+            <br>
+            <br>
+            The client sends the enum <code>NETMSG_READY</code> which has the value <code>18</code> but as a packed Integer tangled in with the system flag.
+            This is how the server unpacks this message id:
+            <pre class="code-snippet">
+                <code>
+    int Msg = Unpacker.GetInt();
+    int Sys = Msg&#38;1;
+    Msg >>= 1;
+                </code>
+            </pre>
+            So in the raw packet data detecting the <code>NETMSG_READY</code> flag is tricky.
         </p>
         <pre class="code-snippet">
             <code>
-                &lt;00  01  <span class="token">01  C0  7D  1E  5E</span>&gt; 40  01  02  25     ....}.^@..%
-                 ^           ^                   ^
-        size=7 flags = 0     |         NETMSG_READY (TODO: annotate better how it turns 40 01 02 25 into 18 NETMSG_READY)
-                        server token
+                &lt;00  01  <span class="token">01  C0  7D  1E  5E</span>&gt; 40  01  02  25
+                 ^       ^                   ^
+        size=7 flags = 0 |             NETMSG_READY
+                    server token
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+            Now the server sends the first packet with a compressed payload. It is using huffman compression to do so.
+        </p>
+        <pre class="code-snippet">
+            <code>
+        &lt;10  02  <span class="token">03  51  3B  59  46</span>&gt; 4A  42  88  4A  6E  16  BA  31  46  A2  84  9E  BF  E2  06
+         ^       ^                   ^
+    size=7     client token      compressed data
+    flags = 4
+    (COMPRESSION)
+            </code>
+        </pre>
+        The payload (without the header) decompresses to this
+        <pre class="code-snippet">
+            <code>
+    &lt;40  02&gt; 02  02  00  40  07  03  22  01  00  01  00  01  08  40  01  04  0B
+        ^
+    ChunkHeader: size = 2 flags = 1 (NET_CHUNKFLAG_VITAL)
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Start info (skin data)</h3>
+        <p>
+            Now the client calls <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/gameclient.cpp#L1878-L1891">CGameClient::SendStartInfo()</a>
+            which sends all the needed infos to render a tee in the world: Name, Clan, Country, Skinparts
+            <br>
+            <br>
+            You can see in the ASCII output that this client is connecting with the name <span class="orange">nameless tee</span>
+            and with an empty clantag. You can also identify the skinpart names duodonny and standard (falls back to default).
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  04  01  <span class="token">C0  7D  1E  5E</span>
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    41 19 03 36  6E 61 6D 65  6C 65 73 73      A..6<span class="orange">nameless</span>
+    20 74 65 65  00 00 40 73  70 69 6B 79      <span class="orange"> tee</span>..@spiky
+    00 64 75 6F  64 6F 6E 6E  79 00 00 73      .duodonny..s
+    74 61 6E 64  61 72 64 00  73 74 61 6E      tandard.stan
+    64 61 72 64  00 73 74 61  6E 64 61 72      dard.standar
+    64 00 01 01  00 01 01 01  A0 AC DD 04      d...........
+    BD D2 A9 85  0C 80 FE 07  80 C0 AB 05      ............
+    9C DE AA 05  9E C9 E5 01                   ........
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  03  <span class="token">03  51  3B  59  46</span>
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    40 01 05 16  41 05 06 0C  A8 0F 88 03      @...A.......
+    32 A8 14 B0  12 B4 07 96  02 9F 01 B0      2...........
+    D1 04 80 7D  AC 04 9C 17  32 98 DB 06      ...}....2...
+    80 B5 18 8C  02 BD 01 A0  ED 1A 88 03      ............
+    BD 01 B8 C8  21 90 01 14  BC 0A A0 9A      ....!.......
+    0C 88 03 80  E2 09 98 EA  01 A4 01 00      ............
+    A4 01 A4 01  40 01 07 10                   ....@...
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[CLIENT->SERVER] Enter game</h3>
+        <p>
+            Now the client sends <code>NETMSG_ENTERGAME (19)</code> using <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">CClient::SendEnterGame()</a>
+            Keep in mind those net messages are packed and mixed with the system flag. So hex <code>0x27</code>
+            will be unpacked to the integer <code>19</code>.
+            <br>
+            <br>
+            If the server gets this packet it will print the following log line.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][server]: player has entered the game. ClientID=0 addr=[0:0:0:0:0:0:0:1]:61985
+            </code>
+            <br>
+            <br>
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;00  07  01  <span class="token">C0  7D  1E  5E</span>&gt; &lt;40  01  04&gt;  27
+                    ^                          ^
+            server token                   NETMSG_ENTERGAME
             </code>
         </pre>
     </div>
@@ -222,4 +375,3 @@ size=7 flags=1   |               |
     </footer>
 </body>
 </html>
-
