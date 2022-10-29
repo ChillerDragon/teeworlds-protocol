@@ -255,12 +255,21 @@
                 </code>
             </pre>
             So in the raw packet data detecting the <code>NETMSG_READY</code> flag is tricky.
+            <br>
+            Here some python code that unpacks <code>NETMSG_READY</code> to the Integer <code>18</code> given the raw byte <code>0x25</code>
+            <pre class="code-snippet">
+                <code>
+    msg = 0x25
+    msg >>= 1
+    print(msg) # => 18 (NETMSG_READY)
+                </code>
+            </pre>
         </p>
         <pre class="code-snippet">
             <code>
-            &lt;00  01  01  <span class="token">C0  7D  1E  5E</span>&gt; 40  01  02  25
-              ^          ^               ^
-    size=7 flags = 0     |             NETMSG_READY
+            &lt;00  01  01  <span class="token">C0  7D  1E  5E</span>&gt;&lt;40  01  02&gt; 25
+              ^          ^               ^           ^
+    size=7 flags = 0     |              ChunkHeader  NETMSG_READY
                         server token
             </code>
         </pre>
@@ -354,8 +363,8 @@
         <pre class="code-snippet">
             <code>
     &lt;00  07  01  <span class="token">C0  7D  1E  5E</span>&gt; &lt;40  01  04&gt;  27
-                 ^                             ^
-            server token                   NETMSG_ENTERGAME
+                 ^                ^            ^
+            server token     ChunkHeader     NETMSG_ENTERGAME
             </code>
         </pre>
 
@@ -396,7 +405,7 @@
         </pre>
         <p>
             Here is what it decompresses to. Again <code>NETMSG_SERVERINFO (4)</code>
-            is extracted out of <code>0x09</code> together with the system flag.
+            is extracted out of <code>0x26</code> together with the system flag.
         </p>
         <pre class="code-snippet">
             <code>
@@ -502,7 +511,14 @@
         </pre>
         <p>
             Here is what it decompresses to. Again <code>NETMSG_INPUT (20)</code>
-            is extracted out of <code>0x29</code> together with the system flag.
+            is extracted out of <code>0x29</code> as seen in this python snippet:
+            <pre class="code-snippet">
+                <code>
+    msg = 0x29
+    msg >>= 1
+    print(msg) # => 20 (NETMSG_INPUT)
+                </code>
+            </pre>
         </p>
         <pre class="code-snippet">
             <code>
