@@ -2,6 +2,7 @@ html, body {
     background-color: #252526;
     color: #c3c3c3;
     font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
 }
 
 .content {
