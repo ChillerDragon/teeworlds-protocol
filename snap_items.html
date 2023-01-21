@@ -27,7 +27,9 @@
             The snapshot data is containing snap items which represent things like tees, projectiles and similar.
             All of those items are encoded as packed integers.
             The snapshot is build by the server and sent to the client.
-            <br><br>
+ 
+            <h3>Size list</h3>
+
             There are two types of snap items:
             <br>
             <ul>
@@ -47,7 +49,18 @@
                     Which is filled by the server.
                 </li>
             </ul>
+ 
+            <h3>Size list edge case</h3>
+    
+            There are two snap items (obj_player_info_race and obj_game_data_race) that were added after the 0.7 release and their size
+            is technically fixed and they should be included in the known size list.
+            But since there was already a official client release without those items,
+            they are intentionally removed from the list to stay backwards compatible.
+            The client skips all items with a unknown type_id so the server can send snap items
+            unknown to the client as long as the size is included so the client knows how many bytes
+            to ignore.
         </p>
+        <h3>Known size table</h3>
         <table>
             <tr>
                 <th>type_id</th>
@@ -60,154 +73,333 @@
                 <td>1</td>
                 <td>10</td>
                 <td>obj_player_input</td>
-                <td>para</td>
+                <td>
+                    int m_Direction;<br>
+                    int m_TargetX;<br>
+                    int m_TargetY;<br>
+                    int m_Jump;<br>
+                    int m_Fire;<br>
+                    int m_Hook;<br>
+                    int m_PlayerFlags;<br>
+                    int m_WantedWeapon;<br>
+                    int m_NextWeapon;<br>
+                    int m_PrevWeapon;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>2</td>
                 <td>6</td>
                 <td>obj_projectile</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+                    int m_Y;<br>
+                    int m_VelX;<br>
+                    int m_VelY;<br>
+                    int m_Type;<br>
+                    int m_StartTick;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>3</td>
                 <td>5</td>
                 <td>obj_laser</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+                    int m_Y;<br>
+                    int m_FromX;<br>
+                    int m_FromY;<br>
+                    int m_StartTick;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>4</td>
                 <td>3</td>
                 <td>obj_pickup</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+                    int m_Y;<br>
+                    int m_Type;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>5</td>
                 <td>3</td>
                 <td>obj_flag</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+                    int m_Y;<br>
+                    int m_Team;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>6</td>
                 <td>3</td>
                 <td>obj_game_data</td>
-                <td>para</td>
+                <td>
+                    int m_GameStartTick;<br>
+                    int m_GameStateFlags;<br>
+                    int m_GameStateEndTick;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>7</td>
                 <td>2</td>
                 <td>obj_game_data_team</td>
-                <td>para</td>
+                <td>
+                    int m_TeamscoreRed;<br>
+	                int m_TeamscoreBlue;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>8</td>
                 <td>4</td>
                 <td>obj_game_data_flag</td>
-                <td>para</td>
+                <td>
+                    int m_FlagCarrierRed;<br>
+                    int m_FlagCarrierBlue;<br>
+                    int m_FlagDropTickRed;<br>
+                    int m_FlagDropTickBlue;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>9</td>
                 <td>15</td>
                 <td>obj_character_core</td>
-                <td>para</td>
+                <td>
+                    int m_Tick;<br>
+                    int m_X;<br>
+                    int m_Y;<br>
+                    int m_VelX;<br>
+                    int m_VelY;<br>
+                    int m_Angle;<br>
+                    int m_Direction;<br>
+                    int m_Jumped;<br>
+                    int m_HookedPlayer;<br>
+                    int m_HookState;<br>
+                    int m_HookTick;<br>
+                    int m_HookX;<br>
+                    int m_HookY;<br>
+                    int m_HookDx;<br>
+                    int m_HookDy;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>10</td>
                 <td>22</td>
                 <td>obj_character</td>
-                <td>para</td>
+                <td>
+                    /* core */ <br>
+                    int m_Tick;<br>
+                    int m_X;<br>
+                    int m_Y;<br>
+                    int m_VelX;<br>
+                    int m_VelY;<br>
+                    int m_Angle;<br>
+                    int m_Direction;<br>
+                    int m_Jumped;<br>
+                    int m_HookedPlayer;<br>
+                    int m_HookState;<br>
+                    int m_HookTick;<br>
+                    int m_HookX;<br>
+                    int m_HookY;<br>
+                    int m_HookDx;<br>
+                    int m_HookDy;<br>
+                    <br>
+                    /* character extension */ <br>
+                    int m_Health;<br>
+                    int m_Armor;<br>
+                    int m_AmmoCount;<br>
+                    int m_Weapon;<br>
+                    int m_Emote;<br>
+                    int m_AttackTick;<br>
+                    int m_TriggeredEvents;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>11</td>
                 <td>3</td>
                 <td>obj_player_info</td>
-                <td>para</td>
+                <td>
+                    int m_PlayerFlags;<br>
+                    int m_Score;<br>
+                    int m_Latency;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>12</td>
                 <td>4</td>
                 <td>obj_spectator_info</td>
-                <td>para</td>
+                <td>
+                    int m_SpecMode;<br>
+                    int m_SpectatorID;<br>
+                    int m_X;<br>
+                    int m_Y;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>13</td>
                 <td>58</td>
                 <td>obj_client_info</td>
-                <td>para</td>
+                <td>
+                    int m_Local;<br>
+                    int m_Team;<br>
+                    int m_aName[4];<br>
+                    int m_aClan[3];<br>
+                    int m_Country;<br>
+                    int m_aaSkinPartNames[6][6];<br>
+                    int m_aUseCustomColors[6];<br>
+                    int m_aSkinPartColors[6];<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>14</td>
                 <td>5</td>
                 <td>obj_game_info</td>
-                <td>para</td>
+                <td>
+                    int m_GameFlags;<br>
+                    int m_ScoreLimit;<br>
+                    int m_TimeLimit;<br>
+                    int m_MatchNum;<br>
+                    int m_MatchCurrent;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>15</td>
                 <td>32</td>
                 <td>obj_tune_params</td>
-                <td>para</td>
+                <td>
+                    int m_aTuneParams[32];
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>16</td>
                 <td>2</td>
                 <td>event_common</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+	                int m_Y;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>17</td>
                 <td>2</td>
                 <td>event_explosion</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+	                int m_Y;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>18</td>
                 <td>2</td>
                 <td>event_spawn</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+	                int m_Y;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>19</td>
                 <td>2</td>
                 <td>event_hammerhit</td>
-                <td>para</td>
+                <td>
+                    int m_X;<br>
+	                int m_Y;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>20</td>
                 <td>3</td>
                 <td>event_death</td>
-                <td>para</td>
+                <td>
+                    /* common */ <br>
+                    int m_X;<br>
+	                int m_Y;<br>
+                    <br>
+                    /* death */ <br>
+                    int m_ClientID;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>21</td>
                 <td>3</td>
                 <td>event_sound_world</td>
-                <td>para</td>
+                <td>
+                    /* common */ <br>
+                    int m_X;<br>
+	                int m_Y;<br>
+                    <br>
+                    /* sound_world */ <br>
+                    int m_SoundID;<br>
+                </td>
                 <td>desc</td>
             </tr>
             <tr>
                 <td>22</td>
                 <td>5</td>
                 <td>event_damage</td>
-                <td>para</td>
+                <td>
+                    /* common */ <br>
+                    int m_X;<br>
+	                int m_Y;<br>
+                    <br>
+                    /* damage */ <br>
+                    int m_ClientID;<br>
+                    int m_Angle;<br>
+                    int m_HealthAmount;<br>
+                    int m_ArmorAmount;<br>
+                    int m_Self;<br>
+                </td>
+                <td>desc</td>
+            </tr>
+        </table>
+        <h3>Unknown size table (0.7.x extension)</h3>
+        <table>
+            <tr>
+                <th>type_id</th>
+                <th>size</th>
+                <th>name</th>
+                <th>parameters</th>
+                <th>description</th>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td>1</td>
+                <td>obj_player_info_race</td>
+                <td>
+                    int m_RaceStartTick;
+                </td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td>3</td>
+                <td>obj_game_data_race</td>
+                <td>
+                    int m_BestTime;<br>
+                    int m_Precision;<br>
+                    int m_RaceFlags;<br>
+                </td>
                 <td>desc</td>
             </tr>
         </table>
