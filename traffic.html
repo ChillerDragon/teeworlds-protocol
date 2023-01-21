@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="content">
+        <h2>The teeworlds 0.7 network protocol</h2>
+        <p>
+            All packets are prefixed with a <code>[SOURCE->DESTINATION]</code> indicating who is sending the packet to who.
+            The packets are listed in the order they are supposed to be send when a client connects to a server.
+            <br><br>
+            The packet content is displayed as space seperated hexadecimal encoded bytes.
+            <br>
+            So <code class="code-inline">01</code> means that the bits <code class="code-inline">00000001</code> are sent via the network.
+            <br>
+            And <code class="code-inline">FF</code> means that the bits <code class="code-inline">11111111</code> are sent via the network.
+            <br>
+            <br>
+            This matches the output of the network dumping tool <code class="code-inline">tcpdump</code>.
+            If you have <a href="https://www.tcpdump.org/">tcpdump</a> installed on your system you can print teeworlds traffic using this command:
+            <pre class="code-snippet">
+                <code>
+    tcpdump -nX -i lo "port 8303"
+                </code>
+            </pre>
+            Assuming your loopback network interface is called lo and you have a teeworlds server running on its default port 8303.
+            <br>
+            <br>
+            Instead of printing packets to the terminal you can also save them to a pcap file using:
+            <pre class="code-snippet">
+                <code>
+    tcpdump -nX -i lo -w tw.pcap "port 8303"
+                </code>
+            </pre>
+            Which then can be loaded using wireshark. If you are motivated to compile and install a custom dissector I can highly recommend.
+            <a href="https://github.com/heinrich5991/libtw2/tree/ded871091bb984f0419cac605b85ecf438c6fbcd/wireshark-dissector">
+                The dissector from libtw2 by heinrich5991
+                <img src="img/libtw2_dissector.png" alt="libtw2 dissector preview">
+            </a>
+            which adds nice teeworlds related annotations to the packets.
+            <br>
+            <br>
+        </p>
+
+        <hr>
+        <h3 id="cl_srv_token"><a href="#cl_srv_token">[CLIENT->SERVER] Hello server this is my token</a></h3>
+        <p>
+            The first packet that is being sent is from the client to the server.
+            The only data that is being transmitted is the security token from the client.
+            The packet header contains <code>FF FF FF FF</code> as placeholder for the server token.
+            Since the client does not know the server token yet.
+
+            At the end this packet contains 501 nullbytes to prohibit reflection attacks.
+            Those nullbytes are not shown below.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;04  00  00  <span class="token">FF  FF  FF  FF</span>&gt;&lt;05&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
+     ^                           ^   ^
+ size=7 flags=1                  |   client token
+                             NET_CTRLMSG_TOKEN
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="srv_cl_token"><a href="#srv_cl_token">[SERVER->CLIENT] Hello client this my token</a></h3>
+        <p>
+            As a response to the clients hello the server answers with its token.
+            So after the packet header containing the clients token. The only data that is being sent.
+            Is the servers security token.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;05&gt;&lt;<span class="token">C0  7D  1E  5E</span>&gt;
+     ^           ^               ^   ^
+ size=7 flags=1  |               |   server token
+                 |         NET_CTRLMSG_TOKEN
+                client token
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="cl_srv_connect"><a href="#cl_srv_connect">[CLIENT->SERVER] Connect</a></h3>
+        <p>
+            After server and client exchanged tokens the client will once again send its token.
+            This time setting the Control Message to NET_CTRLMSG_CONNECT to initiate the connection.
+
+            At the end this packet contains 501 nullbytes to prohibit reflection attacks.
+            Those nullbytes are not shown below.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;04  00  00  <span class="token">C0  7D  1E  5E</span>&gt;&lt;01&gt;&lt;<span class="token">51  3B  59  46</span>&gt;
+     ^           ^               ^   ^
+ size=7 flags=1  |               |   client token
+            server token     NET_CTRLMSG_CONNECT
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="srv_cl_accept"><a href="#srv_cl_accept">[SERVER->CLIENT] Accept connection</a></h3>
+        <p>
+            If this packet is sent the server log will show this message.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][connection]: got connection, sending accept
+            </code>
+            <br>
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;04  00  00  <span class="token">51  3B  59  46</span>&gt;&lt;02&gt;
+     ^           ^               ^
+ size=7 flags=1  |               |
+                 |       NET_CTRLMSG_ACCEPT
+            client token
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="cl_srv_info"><a href="#cl_srv_info">[CLIENT->SERVER] Version and password</a></h3>
+        <p>
+            Now the client will inform the server about its version.
+            This packet is defined in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L340-L353">CClient::SendInfo()</a>
+            and contains the password, the network hash and the supported protocol version.
+            The vanilla client always sends the password that was entered last by the user.
+            No matter which server it is connecting to also if the server does not expect a password.
+            This is nice since it minimizes user input even if the ip changes or multiple servers have the same password.
+            But it is leaking the password you entered last to every server you connect to.
+            That is why the <a href="https://ddnet.org/">ddnet</a> client decided to only send the password after user confirmation.
+            <br>
+            <br>
+            If the server receives this packet it will log the following line.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][connection]: connecting online
+            </code>
+            <br><br>
+            Since the packet payload now contains uncompressed printable ASCII characters those are included below.
+            You can quickly identify this packet when running <code class="code-inline">tcpdump</code> with the <code class="code-inline">-X</code>flag.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  00  01  <span class="token">C0  7D  1E  5E</span>
+                ^
+            server token
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    40 28 01 03  30 2E 37 20  38 30 32 66      @(..<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L8">0.7</a> <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L7">802f</a>
+    31 62 65 36  30 61 30 35  36 36 35 66      <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L7">1be60a05665f</a>
+    00 6D 79 5F  70 61 73 73  77 6F 72 64      <span class="red">my_password</span>
+    5F 31 32 33  00 85 1C 00                   <span class="red">_123</span>...
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="srv_cl_mapinfo"><a href="#srv_cl_mapinfo">[SERVER->CLIENT] Map info</a></h3>
+        <p>
+            Now the server is informing the client about the map. This is NOT the mapfile it self. Just its metadata.
+            To see what exactly is being sent checkout the code of <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">CServer::SendMap</a>
+            it boils down to this:
+
+            <pre class="code-snippet">
+                <code>
+    String GetMapName()
+    Int    m_CurrentMapCrc
+    Int    m_CurrentMapSize
+    Int    m_MapChunksPerRequest
+    Int    MAP_CHUNK_SIZE
+    Raw    m_CurrentMapSha256
+                </code>
+            </pre>
+
+            In the ASCII representation of the packet you can spot the mapname.
+            <br>
+            In this case the map is called <code class="orange">skyblock</code>.
+
+            <pre class="code-snippet">
+                <code>
+    [PACKET HEADER]
+    00  01  01  <span class="token">51  3B  59  46</span>
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    40 34 01 05  73 6B 79 62  6C 6F 63 6B      @4..<span class="orange">skyblock</span>
+    00 D8 D1 95  A0 0F A5 0E  08 A8 15 76      ...........v
+    BA 3A AE 46  F3 F5 E6 31  7A 8C BD 7E      .:.F...1z..~
+    A4 B2 44 C4  7E 0E FF B5  86 7F 4B E3      ..D.~.....K.
+    CA E7 50 93  14 0D 88 00                   ..P....
+                </code>
+            </pre>
+        </p>
+
+        <hr>
+        <h3 id="cl_srv_ready"><a href="#cl_srv_ready">[CLIENT->SERVER] Ready</a></h3>
+        <p>
+            If the client already has the map or finished the download process it will respond with the ready packet.
+            The map download packets are yet to be documented.
+            <br>
+            <br>
+            If the server gets this packet it will print the following log line.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][server]: player is ready. ClientID=0 addr=[0:0:0:0:0:0:0:1]:61985
+            </code>
+            <br>
+            <br>
+            The client sends the enum <code>NETMSG_READY</code> which has the value <code>18</code> but as a packed Integer tangled in with the system flag.
+            This is how the server unpacks this message id:
+            <pre class="code-snippet">
+                <code>
+    int Msg = Unpacker.GetInt();
+    int Sys = Msg&#38;1;
+    Msg >>= 1;
+                </code>
+            </pre>
+            So in the raw packet data detecting the <code>NETMSG_READY</code> flag is tricky.
+            <br>
+            Here some python code that unpacks <code>NETMSG_READY</code> to the Integer <code>18</code> given the raw byte <code>0x25</code>
+            <pre class="code-snippet">
+                <code>
+    msg = 0x25
+    msg >>= 1
+    print(msg) # => 18 (NETMSG_READY)
+                </code>
+            </pre>
+        </p>
+        <pre class="code-snippet">
+            <code>
+            &lt;00  01  01  <span class="token">C0  7D  1E  5E</span>&gt;&lt;40  01  02&gt; 25
+              ^          ^               ^           ^
+    size=7 flags = 0     |              ChunkHeader  NETMSG_READY
+                        server token
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+            Now the server sends the first packet with a compressed payload. It is using huffman compression to do so.
+        </p>
+        <pre class="code-snippet">
+            <code>
+        &lt;10  02  03  <span class="token">51  3B  59  46</span>&gt; 4A  42  88  4A  6E  16  BA  31  46  A2  84  9E  BF  E2  06
+         ^           ^               ^
+    size=7       client token      compressed data
+    flags = 4
+    (COMPRESSION)
+            </code>
+        </pre>
+        The payload (without the header) decompresses to this
+        <pre class="code-snippet">
+            <code>
+    &lt;40  02&gt; 02  02  00  40  07  03  22  01  00  01  00  01  08  40  01  04  0B
+        ^
+    ChunkHeader: size = 2 flags = 1 (NET_CHUNKFLAG_VITAL)
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="cl_srv_startinfo"><a href="#cl_srv_startinfo">[CLIENT->SERVER] Start info (skin data)</a></h3>
+        <p>
+            Now the client calls <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/gameclient.cpp#L1878-L1891">CGameClient::SendStartInfo()</a>
+            which sends all the needed infos to render a tee in the world: Name, Clan, Country, Skinparts
+            <br>
+            <br>
+            You can see in the ASCII output that this client is connecting with the name <span class="orange">nameless tee</span>
+            and with an empty clantag. You can also identify the skinpart names duodonny and standard (falls back to default).
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  04  01  <span class="token">C0  7D  1E  5E</span>
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    41 19 03 36  6E 61 6D 65  6C 65 73 73      A..6<span class="orange">nameless</span>
+    20 74 65 65  00 00 40 73  70 69 6B 79      <span class="orange"> tee</span>..@spiky
+    00 64 75 6F  64 6F 6E 6E  79 00 00 73      .duodonny..s
+    74 61 6E 64  61 72 64 00  73 74 61 6E      tandard.stan
+    64 61 72 64  00 73 74 61  6E 64 61 72      dard.standar
+    64 00 01 01  00 01 01 01  A0 AC DD 04      d...........
+    BD D2 A9 85  0C 80 FE 07  80 C0 AB 05      ............
+    9C DE AA 05  9E C9 E5 01                   ........
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  03  03  <span class="token">51  3B  59  46</span>
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    40 01 05 16  41 05 06 0C  A8 0F 88 03      @...A.......
+    32 A8 14 B0  12 B4 07 96  02 9F 01 B0      2...........
+    D1 04 80 7D  AC 04 9C 17  32 98 DB 06      ...}....2...
+    80 B5 18 8C  02 BD 01 A0  ED 1A 88 03      ............
+    BD 01 B8 C8  21 90 01 14  BC 0A A0 9A      ....!.......
+    0C 88 03 80  E2 09 98 EA  01 A4 01 00      ............
+    A4 01 A4 01  40 01 07 10                   ....@...
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="cl_srv_entergame"><a href="#cl_srv_entergame">[CLIENT->SERVER] Enter game</a></h3>
+        <p>
+            Now the client sends <code>NETMSG_ENTERGAME (19)</code> using <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">CClient::SendEnterGame()</a>
+            Keep in mind those net messages are packed and mixed with the system flag. So hex <code>0x27</code>
+            will be unpacked to the integer <code>19</code>.
+            <br>
+            <br>
+            If the server gets this packet it will print the following log line.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][server]: player has entered the game. ClientID=0 addr=[0:0:0:0:0:0:0:1]:61985
+            </code>
+            <br>
+            <br>
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;00  07  01  <span class="token">C0  7D  1E  5E</span>&gt; &lt;40  01  04&gt;  27
+                 ^                ^            ^
+            server token     ChunkHeader     NETMSG_ENTERGAME
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="srv_cl_serverinfo"><a href="#srv_cl_serverinfo">[SERVER->CLIENT] Server info</a></h3>
+        <p>
+            The server sends version, map name, gametype, playerlist and more prepared in the method
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L1091-L1149">
+                CServer::GenerateServerInfo(CPacker *pPacker, int Token)
+            </a>
+            <br>
+            Since this server is empty the packet data does not include any player data.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  04  01  <span class="token">51  3B  59  46</span>
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    40 29 08 09  30 2E 37 2E  35 00 75 6E      @)..0.7.5.un
+    6E 61 6D 65  64 20 73 65  72 76 65 72      named server
+    00 00 73 6B  79 62 6C 6F  63 6B 00 44      ..skyblock.D
+    4D 00 00 01  01 08 01 08                   M.......
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+            Since it is compressed below only the first few bytes are shown.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;10  04  03  <span class="token">51  3B  59  46</span>&gt; 4A 36  4C  ED  E1  47  DE...
+                 ^               ^
+            client token       compressed payload
+            </code>
+        </pre>
+        <p>
+            Here is what it decompresses to. Again <code>NETMSG_SERVERINFO (4)</code>
+            is extracted out of <code>0x26</code> together with the system flag.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    10  04  03  <span class="token">51  3B  59  46</span>
+
+    [PAYLOAD HEADER]
+    &lt;40  06&gt;&lt;09&gt; 26  00  14  00  00  01  41  1D  0A    @..&.....A..
+        ^        ^
+ Flags & Size    |
+        NETMSG_SERVERINFO
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    24 00 01 00  6E 61 6D 65  6C 65 73 73      $...nameless
+    20 74 65 65  00 00 40 73  70 69 6B 79       tee..@spiky
+    00 64 75 6F  64 6F 6E 6E  79 00 00 73      .duodonny..s
+    74 61 6E 64  61 72 64 00  73 74 61 6E      tandard.stan
+    64 61 72 64  00 73 74 61  6E 64 61 72      dard.standar
+    64 00 01 01  00 01 01 01  A0 AC DD 04      d...........
+    BD D2 A9 85  0C 80 FE 07  80 C0 AB 05      ............
+    9C DE AA 05  9E C9 E5 01  00 00 33 11      ..........3.
+    AE 01 AF 01  84 11 2B 00  03 00 06 00      ......+.....
+    00 01 00 0A  00 A6 01 90  04 91 02 00      ............
+    80 02 00 00  00 40 00 00  90 04 90 02      .....@......
+    00 00 0A 00  0A 01 00 00  00 0B 00 08      ............
+    00 00 00 00                                ..
+            </code>
+        </pre>
+
+        <hr>
+        <h3>[SERVER->CLIENT]</h3>
+        <p>
+            Since it is compressed below only the first few bytes are shown.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;10  04  01  <span class="token">51  3B  59  46</span>&gt; B5  36  45  11  5D  86  1A...
+                 ^               ^
+            client token       compressed payload
+            </code>
+        </pre>
+        <p>
+            Here is what it decompresses to. Again <code>NETMSG_SNAPSINGLE (8)</code>
+            is extracted out of <code>0x11</code> together with the system flag.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    10  04  03  <span class="token">51  3B  59  46</span>
+
+    [PAYLOAD HEADER]
+    &lt;00  33&gt;&lt;11&gt; B8  01  B9  01  84  11  2B  00  03     .3.......+..  
+        ^        ^
+ Flags & Size    |
+        NETMSG_SNAPSINGLE
+
+    [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+    00 06 00 00  01 00 0A 00  A6 01 90 04      ............
+    91 02 00 80  02 00 00 00  40 00 00 90      ........@...
+    04 90 02 00  00 0A 00 0A  01 00 00 00      ............
+    0B 00 08 00  00 00 00 00                   .....
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="cl_srv_input"><a href="#cl_srv_input">[CLIENT->SERVER] Client Input (hook/move/fire/jump)</a></h3>
+        <p>
+            Also the client uses huffman compression to send its inputs. It makes a call to
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L395-L432">
+                CClient::SendInput()
+            </a>
+            which sends the the acknowledged gametick and the prediction tick so the server knows which snapshots to (re)send.
+            After that it packs a bunch of integers representing the following struct
+            <pre class="code-snippet">
+                <code>
+    struct CNetObj_PlayerInput
+    {
+        int m_Direction;
+        int m_TargetX;
+        int m_TargetY;
+        int m_Jump;
+        int m_Fire;
+        int m_Hook;
+        int m_PlayerFlags;
+        int m_WantedWeapon;
+        int m_NextWeapon;
+        int m_PrevWeapon;
+    };
+                </code>
+            </pre>
+            The inputs are only sent if there is new data.
+            If there is none it will only acknowledged the gameticks.
+            <br>
+            So the compressed data that is sent via the network looks like this.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    &lt;10  0A  01  C0  7D  1E  5E&gt; 4D  E9  B0  14  7E  13  D6  F8  6F  57  DC  00
+        ^                        ^
+    size=7                   compressed payload
+    flags = 4 (COMPRESSION)
+            </code>
+        </pre>
+        <p>
+            Here is what it decompresses to. Again <code>NETMSG_INPUT (20)</code>
+            is extracted out of <code>0x29</code> as seen in this python snippet:
+            <pre class="code-snippet">
+                <code>
+    msg = 0x29
+    msg >>= 1
+    print(msg) # => 20 (NETMSG_INPUT)
+                </code>
+            </pre>
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    10  0A  01  <span class="token">C0  7D  1E  5E</span>
+
+    [PACKET PAYLOAD]
+    &lt;00  11&gt; 29  82  02  83  02  28  00  01  00  00  00  00  00  00  00  00  05
+        ^     ^
+ ChunkHeader  |
+ size = 17   NETMSG_INPUT
+ flags = 0
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="cl_srv_disconnect"><a href="#cl_srv_disconnect">[CLIENT->SERVER] Client says bye</a></h3>
+        <h3 id="srv_cl_disconnect"><a href="#srv_cl_disconnect">[SERVER->CLIENT] Server says bye</a></h3>
+        <p>
+            If a client is properly shutdown or the user presses the disconnect button.
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L209-L231">
+                CNetConnection::Disconnect(const char *pReason)
+            </a>
+            sends a <code>NET_CTRLMSG_CLOSE (4)</code>. The same can also be sent by the server if it shutdowns for example.
+            <br>
+            At the end optionally this packet can contain a string containing the reason of closing the connection.
+            You probably have seen those disconnect messages in the chat already:
+            <br>
+            <br>
+            <code>
+                <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L379">
+                    *** 'nameless tee' has left the game (Timeout)
+                </a>
+                <br>
+                <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L396">
+                    *** 'nameless tee' has left the game (Too weak connection (not acked for 10 seconds))
+                </a>
+                <br>
+                <span>
+                    *** 'hacker' has left the game (custom message)
+                </span>
+                <br>
+            </code>
+            <br>
+            The server can also use this reason to show a custom shutdown message to the client.
+        </p>
+        <pre class="code-snippet">
+            <code>
+                &lt;04  0A  00  <span class="token">C0  7D  1E  5E</span>&gt;&lt;04&gt;
+                 ^           ^               ^
+               size=7    client/server    NET_CTRLMSG_CLOSE
+               flags=1      token
+            </code>
+        </pre>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2022
+            </span>
+        </div>
+    </footer>
+</body>
+</html>
