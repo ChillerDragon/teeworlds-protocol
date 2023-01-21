@@ -60,6 +60,16 @@ footer {
     border-radius: 1em;
 }
 
+/* table */
+
+table, th, td {
+    border: 1px solid #c3c3c3;
+}
+
+td, th {
+    padding: 0.5em;
+}
+
 /* packet highlight */
 
 .token {

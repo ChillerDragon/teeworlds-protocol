@@ -18,6 +18,196 @@
     </div>
     <div class="content">
         <h2>List of snap items</h2>
+        <p>
+            The network messages NETMSG_SNAP, NETMSG_SNAPEMPTY, NETMSG_SNAPSINGLE and NETMSG_SNAPSMALL
+            contain snapshots which represent the current game state.
+            The snapshot data is containing snap items which represent things like tees, projectiles and similar.
+            All of those items are encoded as packed integers.
+            The snapshot is build by the server and sent to the client.
+            <br><br>
+            There are two types of snap items:
+            <br>
+            <ul>
+                <li>
+                    <strong>Known size snap items:</strong>
+                    <br>
+                    There is a list of snap item sizes that is fixed.
+                    That list is included in the client and server code.
+                    since both parties already know the size it won't be included
+                    in the snap.
+                </li>
+                <li>
+                    <strong>Unknown size snap items:</strong>
+                    <br>
+                    The items of which the client does not know the size yet.
+                    Will contain a size field in the snapshot data.
+                    Which is filled by the server.
+                </li>
+            </ul>
+        </p>
+        <table>
+            <tr>
+                <th>type_id</th>
+                <th>size</th>
+                <th>name</th>
+                <th>parameters</th>
+                <th>description</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>10</td>
+                <td>obj_player_input</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>6</td>
+                <td>obj_projectile</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>5</td>
+                <td>obj_laser</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>3</td>
+                <td>obj_pickup</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>3</td>
+                <td>obj_flag</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>3</td>
+                <td>obj_game_data</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>2</td>
+                <td>obj_game_data_team</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>4</td>
+                <td>obj_game_data_flag</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>15</td>
+                <td>obj_character_core</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>22</td>
+                <td>obj_character</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>3</td>
+                <td>obj_player_info</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td>4</td>
+                <td>obj_spectator_info</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td>58</td>
+                <td>obj_client_info</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td>5</td>
+                <td>obj_game_info</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td>32</td>
+                <td>obj_tune_params</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td>2</td>
+                <td>event_common</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td>2</td>
+                <td>event_explosion</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td>2</td>
+                <td>event_spawn</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td>2</td>
+                <td>event_hammerhit</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td>3</td>
+                <td>event_death</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td>3</td>
+                <td>event_sound_world</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td>5</td>
+                <td>event_damage</td>
+                <td>para</td>
+                <td>desc</td>
+            </tr>
+        </table>
     </div> <!-- content -->
     <footer>
         <hr>
