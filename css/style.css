@@ -36,6 +36,10 @@ a:hover {
     font-weight: bold;
 }
 
+.header {
+    padding: 0em 2em;
+}
+
 footer {
     margin-top: 5em;
     padding: 1em 10em;
@@ -52,7 +56,7 @@ footer {
     fill: white;
 }
 
-img {
+.rounded-img {
     border-radius: 1em;
 }
 

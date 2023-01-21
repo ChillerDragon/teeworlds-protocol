@@ -7,8 +7,17 @@
     <title>Teeworlds Protocol</title>
 </head>
 <body>
+    <div class="header">
+        <a href="index.html">
+            <img src="img/tee.svg" alt="tee">
+        </a>
+        <a href="index.html">home</a>
+        <a href="traffic.html">traffic</a>
+        <a href="snap_items.html">snap_items</a>
+        <hr>
+    </div>
     <div class="content">
-        <h2>The teeworlds 0.7 network protocol</h2>
+        <h2>Teeworlds 0.7 sample traffic</h2>
         <p>
             All packets are prefixed with a <code>[SOURCE->DESTINATION]</code> indicating who is sending the packet to who.
             The packets are listed in the order they are supposed to be send when a client connects to a server.
@@ -39,7 +48,7 @@
             Which then can be loaded using wireshark. If you are motivated to compile and install a custom dissector I can highly recommend.
             <a href="https://github.com/heinrich5991/libtw2/tree/ded871091bb984f0419cac605b85ecf438c6fbcd/wireshark-dissector">
                 The dissector from libtw2 by heinrich5991
-                <img src="img/libtw2_dissector.png" alt="libtw2 dissector preview">
+                <img class="rounded-img" src="img/libtw2_dissector.png" alt="libtw2 dissector preview">
             </a>
             which adds nice teeworlds related annotations to the packets.
             <br>
