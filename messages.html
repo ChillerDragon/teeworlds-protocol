@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html">
+            <img src="img/tee.svg" alt="tee">
+        </a>
+        <a href="index.html">home</a>
+        <a href="traffic.html">traffic</a>
+        <a href="snap_items.html">snap_items</a>
+        <a href="messages.html">messages</a>
+        <hr>
+    </div>
+    <div class="content">
+        <h2>List of network messages</h2>
+        <p>
+            TODO
+        </p>
+        <h3>NETMSG_NULL (msgid=0)</h3>
+        <h3>NETMSG_INFO (msgid=1)</h3>
+        <h3>[SERVER->CLIENT] NETMSG_MAP_CHANGE (msgid=2)</h3>
+        <p>
+            Sent when client should switch map
+            <br>
+            Sent by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">
+                CServer::SendMap(int ClientID)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    CMsgPacker Msg(NETMSG_MAP_CHANGE, true);
+    Msg.AddString(GetMapName(), 0);
+    Msg.AddInt(m_CurrentMapCrc);
+    Msg.AddInt(m_CurrentMapSize);
+    Msg.AddInt(m_MapChunksPerRequest);
+    Msg.AddInt(MAP_CHUNK_SIZE);
+    Msg.AddRaw(&m_CurrentMapSha256, sizeof(m_CurrentMapSha256));
+    SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+                </code>
+            </pre>
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/master/src/engine/client/client.cpp#L1150-L1222">
+                CClient::ProcessServerPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    const char *pMap = Unpacker.GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
+    int MapCrc = Unpacker.GetInt();
+    int MapSize = Unpacker.GetInt();
+    int MapChunkNum = Unpacker.GetInt();
+    int MapChunkSize = Unpacker.GetInt();
+    if(Unpacker.Error())
+        return;
+    const SHA256_DIGEST *pMapSha256 = (const SHA256_DIGEST *)Unpacker.GetRaw(sizeof(*pMapSha256));
+                </code>
+            </pre>
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_MAP_DATA (msgid=3)</h3>
+        <p>
+            map transfer, contains a chunk of the map file
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_SERVERINFO</h3>
+        <h3>[SERVER->CLIENT] NETMSG_CON_READY</h3>
+        <p>
+            connection is ready, client should send start info
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_SNAP</h3>
+        <p>
+            normal snapshot, multiple parts
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_SNAPEMPTY</h3>
+        <p>
+            empty snapshot
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_SNAPSINGLE</h3>
+        <h3>[SERVER->CLIENT] NETMSG_SNAPSMALL</h3>
+        <h3>[SERVER->CLIENT] NETMSG_INPUTTIMING</h3>
+        <p>
+            reports how off the input was
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_RCON_AUTH_ON</h3>
+        <p>
+            rcon authentication enabled
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_RCON_AUTH_OFF</h3>
+        <p>
+            rcon authentication disabled
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_RCON_LINE</h3>
+        <p>
+            line that should be printed to the remote console
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_RCON_CMD_ADD</h3>
+        <h3>[SERVER->CLIENT] NETMSG_RCON_CMD_REM</h3>
+        <h3>[SERVER->CLIENT] NETMSG_AUTH_CHALLANGE</h3>
+        <h3>[SERVER->CLIENT] NETMSG_AUTH_RESULT</h3>
+        <h3>[CLIENT->SERVER] NETMSG_READY</h3>
+        <h3>[CLIENT->SERVER] NETMSG_ENTERGAME</h3>
+        <h3>[CLIENT->SERVER] NETMSG_INPUT</h3>
+        <p>
+            contains the inputdata from the client
+        </p>
+        <h3>[CLIENT->SERVER] NETMSG_RCON_CMD</h3>
+        <h3>[CLIENT->SERVER] NETMSG_RCON_AUTH</h3>
+        <h3>[CLIENT->SERVER] NETMSG_REQUEST_MAP_DATA</h3>
+        <h3>[CLIENT->SERVER] NETMSG_AUTH_START</h3>
+        <h3>[CLIENT->SERVER] NETMSG_AUTH_RESPONSE</h3>
+        <h3>[SERVER->CLIENT] NETMSG_PING</h3>
+        <h3>[CLIENT->SERVER] NETMSG_PING</h3>
+        <p>
+            sent by both
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_PING_REPLY</h3>
+        <h3>[CLIENT->SERVER] NETMSG_PING_REPLY</h3>
+        <p>
+            sent by both
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_ERROR</h3>
+        <h3>[CLIENT->SERVER] NETMSG_ERROR</h3>
+        <p>
+            sent by both
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_MAPLIST_ENTRY_ADD</h3>
+        <p>
+            the msg id is planned to be changed in 0.8
+        </p>
+        <h3>[SERVER->CLIENT] NETMSG_MAPLIST_ENTRY_REM</h3>
+        <p>
+            the msg id is planned to be changed in 0.8
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2022
+            </span>
+        </div>
+    </footer>
+</body>
