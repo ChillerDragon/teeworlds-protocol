@@ -388,8 +388,14 @@
         </pre>
 
         <hr>
-        <h3>[SERVER->CLIENT]</h3>
+        <h3 id="srv_cl_game_info_client_info_snap"><a href="#srv_cl_game_info_client_info_snap">[SERVER->CLIENT] Game Info, Client Info, Snap Single</a></h3>
         <p>
+            The payload is 3 chunks:
+            <ul>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a> - score limit, time limit and match</li>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a> - all players name, skin and other infos</li>
+                <li><a href="system_messages.html#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a> - snapshot data (tee positions and similar)</li>
+            </ul>
             Since it is compressed below only the first few bytes are shown.
         </p>
         <pre class="code-snippet">
