@@ -441,7 +441,16 @@
         <h3 id="srv_cl_snap_single"><a href="#srv_cl_snap_single">[SERVER->CLIENT] Snap Single</a></h3>
         <p>
             If nothing further happens. Nobody presses any button, reconnects or sends a chat message.
-            The server will keep sending this snap single packet.
+            The server will keep sending this snap single packet. If the client then sends a packet and
+            acknowledges the snap the server will send
+            <a href="system_messages.html#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a>
+            until there is new snap data.
+            <br>
+            The snap is the most complicated message of all.
+            Its payload is snap metadata and a list of integers representing
+            <a href="snap_items.html">
+                snap items.
+            </a>
             <br>
             <br>
             Since it is compressed below only the first few bytes are shown.
