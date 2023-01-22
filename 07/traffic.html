@@ -14,7 +14,8 @@
         <a href="../index.html">home</a>
         <a href="traffic.html">traffic</a>
         <a href="snap_items.html">snap_items</a>
-        <a href="messages.html">messages</a>
+        <a href="system_messages.html">system_messages</a>
+        <a href="game_messages.html">game_messages</a>
         <hr>
     </div>
     <div class="content">
@@ -257,9 +258,15 @@
         </pre>
 
         <hr>
-        <h3>[SERVER->CLIENT]</h3>
+        <h3>[SERVER->CLIENT] Motd, Server Settings, Ready</h3>
         <p>
             Now the server sends the first packet with a compressed payload. It is using huffman compression to do so.
+            The payload is 3 chunks:
+            <ul>
+                <li>motd - the message of the day</li>
+                <li>server settings - custom server settings</li>
+                <li>ready - telling the client he can send his startinfo</li>
+            </ul>
         </p>
         <pre class="code-snippet">
             <code>
