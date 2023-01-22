@@ -24,25 +24,30 @@
             One integer field which usually does not exceed one byte.
             Is indicating which type of message was sent.
             This field is called the message id.
+            These message ids are defined in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/protocol.h#L31-L76">
+                src/engine/shared/protocol.h
+            </a>
+            and their payload is defined where they are sent and received.
             <br>
             <br>
             In the list below you will find those message.
             With their name, id and payload.
         </p>
         <hr>
-        <h3>NETMSG_NULL</h3>
+        <h3 id="NETMSG_NULL"><a href="#NETMSG_NULL">NETMSG_NULL</a></h3>
         <p>
             <strong>Message ID:</strong> 0 <br>
         </p>
         <hr>
-        <h3>NETMSG_INFO</h3>
+        <h3 id="NETMSG_INFO"><a href="#NETMSG_INFO">NETMSG_INFO</a></h3>
         <p>
             <strong>Sender:</strong>  <br>
             <strong>Recipient:</strong>  <br>
             <strong>Message ID:</strong> 1 <br>
         </p>
         <hr>
-        <h3>NETMSG_MAP_CHANGE</h3>
+        <h3 id="NETMSG_MAP_CHANGE"><a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
@@ -83,213 +88,213 @@
             </pre>
         </p>
         <hr>
-        <h3>NETMSG_MAP_DATA</h3>
+        <h3 id="NETMSG_MAP_DATA"><a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 3 <br>
             map transfer, contains a chunk of the map file
         </p>
         <hr>
-        <h3>NETMSG_SERVERINFO</h3>
+        <h3 id="NETMSG_SERVERINFO"><a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 4 <br>
         </p>
         <hr>
-        <h3>NETMSG_CON_READY</h3>
+        <h3 id="NETMSG_CON_READY"><a href="#NETMSG_CON_READY">NETMSG_CON_READY</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 5 <br>
             connection is ready, client should send start info
         </p>
         <hr>
-        <h3>NETMSG_SNAP</h3>
+        <h3 id="NETMSG_SNAP"><a href="#NETMSG_SNAP">NETMSG_SNAP</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 6 <br>
             normal snapshot, multiple parts
         </p>
         <hr>
-        <h3>NETMSG_SNAPEMPTY</h3>
+        <h3 id="NETMSG_SNAPEMPTY"><a href="#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 7 <br>
             empty snapshot
         </p>
         <hr>
-        <h3>NETMSG_SNAPSINGLE</h3>
+        <h3 id="NETMSG_SNAPSINGLE"><a href="#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 8 <br>
         </p>
         <hr>
-        <h3>NETMSG_SNAPSMALL</h3>
+        <h3 id="NETMSG_SNAPSMALL"><a href="#NETMSG_SNAPSMALL">NETMSG_SNAPSMALL</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 9 <br>
         </p>
         <hr>
-        <h3>NETMSG_INPUTTIMING</h3>
+        <h3 id="NETMSG_INPUTTIMING"><a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 10 <br>
             reports how off the input was
         </p>
         <hr>
-        <h3>NETMSG_RCON_AUTH_ON</h3>
+        <h3 id="NETMSG_RCON_AUTH_ON"><a href="#NETMSG_RCON_AUTH_ON">NETMSG_RCON_AUTH_ON</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 11 <br>
             rcon authentication enabled
         </p>
         <hr>
-        <h3>NETMSG_RCON_AUTH_OFF</h3>
+        <h3 id="NETMSG_RCON_AUTH_OFF"><a href="#NETMSG_RCON_AUTH_OFF">NETMSG_RCON_AUTH_OFF</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 12 <br>
             rcon authentication disabled
         </p>
         <hr>
-        <h3>NETMSG_RCON_LINE</h3>
+        <h3 id="NETMSG_RCON_LINE"><a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 13 <br>
             line that should be printed to the remote console
         </p>
         <hr>
-        <h3>NETMSG_RCON_CMD_ADD</h3>
+        <h3 id="NETMSG_RCON_CMD_ADD"><a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 14 <br>
         </p>
         <hr>
-        <h3>NETMSG_RCON_CMD_REM</h3>
+        <h3 id="NETMSG_RCON_CMD_REM"><a href="#NETMSG_RCON_CMD_REM">NETMSG_RCON_CMD_REM</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 15 <br>
         </p>
         <hr>
-        <h3>NETMSG_AUTH_CHALLANGE</h3>
+        <h3 id="NETMSG_AUTH_CHALLANGE"><a href="#NETMSG_AUTH_CHALLANGE">NETMSG_AUTH_CHALLANGE</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 16 <br>
         </p>
         <hr>
-        <h3>NETMSG_AUTH_RESULT</h3>
+        <h3 id="NETMSG_AUTH_RESULT"><a href="#NETMSG_AUTH_RESULT">NETMSG_AUTH_RESULT</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 17 <br>
         </p>
         <hr>
-        <h3>NETMSG_READY</h3>
+        <h3 id="NETMSG_READY"><a href="#NETMSG_READY">NETMSG_READY</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 18 <br>
         </p>
         <hr>
-        <h3>NETMSG_ENTERGAME</h3>
+        <h3 id="NETMSG_ENTERGAME"><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 19 <br>
         </p>
         <hr>
-        <h3>NETMSG_INPUT</h3>
+        <h3 id="NETMSG_INPUT"><a href="#NETMSG_INPUT">NETMSG_INPUT</a></h3>
         <p>
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 20 <br>
             contains the inputdata from the client
         </p>
         <hr>
-        <h3>NETMSG_RCON_CMD</h3>
+        <h3 id="NETMSG_RCON_CMD"><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a></h3>
         <p>
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 21 <br>
         </p>
         <hr>
-        <h3>NETMSG_RCON_AUTH</h3>
+        <h3 id="NETMSG_RCON_AUTH"><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></h3>
         <p>
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 22 <br>
         </p>
         <hr>
-        <h3>NETMSG_REQUEST_MAP_DATA</h3>
+        <h3 id="NETMSG_REQUEST_MAP_DATA"><a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a></h3>
         <p>
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 23 <br>
         </p>
         <hr>
-        <h3>NETMSG_AUTH_START</h3>
+        <h3 id="NETMSG_AUTH_START"><a href="#NETMSG_AUTH_START">NETMSG_AUTH_START</a></h3>
         <p>
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 24 <br>
         </p>
         <hr>
-        <h3>NETMSG_AUTH_RESPONSE</h3>
+        <h3 id="NETMSG_AUTH_RESPONSE"><a href="#NETMSG_AUTH_RESPONSE">NETMSG_AUTH_RESPONSE</a></h3>
         <p>
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 25 <br>
         </p>
         <hr>
-        <h3>NETMSG_PING</h3>
+        <h3 id="NETMSG_PING"><a href="#NETMSG_PING">NETMSG_PING</a></h3>
         <p>
             <strong>Sender:</strong> Client, Server <br>
             <strong>Recipient:</strong> Client, Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 26 <br>
             sent by both
         </p>
         <hr>
-        <h3>NETMSG_PING_REPLY</h3>
+        <h3 id="NETMSG_PING_REPLY"><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></h3>
         <p>
             <strong>Sender:</strong> Client, Server <br>
             <strong>Recipient:</strong> Client, Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 27 <br>
             sent by both
         </p>
         <hr>
-        <h3>NETMSG_ERROR</h3>
+        <h3 id="NETMSG_ERROR"><a href="#NETMSG_ERROR">NETMSG_ERROR</a></h3>
         <p>
             <strong>Sender:</strong> Client, Server <br>
             <strong>Recipient:</strong> Client, Server <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 28 <br>
             sent by both
         </p>
         <hr>
-        <h3>NETMSG_MAPLIST_ENTRY_ADD</h3>
+        <h3 id="NETMSG_MAPLIST_ENTRY_ADD"><a href="#NETMSG_MAPLIST_ENTRY_ADD">NETMSG_MAPLIST_ENTRY_ADD</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 29 <br>
             the msg id is planned to be changed in 0.8
         </p>
         <hr>
-        <h3>NETMSG_MAPLIST_ENTRY_REM</h3>
+        <h3 id="NETMSG_MAPLIST_ENTRY_REM"><a href="#NETMSG_MAPLIST_ENTRY_REM">NETMSG_MAPLIST_ENTRY_REM</a></h3>
         <p>
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> xxx <br>
+            <strong>Message ID:</strong> 30 <br>
             the msg id is planned to be changed in 0.8
         </p>
     </div> <!-- content -->
