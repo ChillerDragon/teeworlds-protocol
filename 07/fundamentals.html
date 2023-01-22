@@ -12,6 +12,7 @@
             <img src="../img/tee.svg" alt="tee">
         </a>
         <a href="../index.html">home</a>
+        <a href="fundamentals.html">fundamentals</a>
         <a href="traffic.html">traffic</a>
         <a href="snap_items.html">snap_items</a>
         <a href="system_messages.html">system_messages</a>
@@ -22,6 +23,76 @@
         <h2>Fundamentals</h2>
         <p>
             There are a few base concepts that you need to understand to fully grasp the whole network protocol from scratch.
+        </p>
+        <hr>
+        <h3 id="tokens">Tokens</h3>
+        <p>
+            Every game related packet (ignoring server info for now) has a packet header with a token field.
+            From
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network.h#L12-L41">
+                network.h
+            </a>
+            <pre class="code-snippet">
+                <code>
+    packet header: 7 bytes (9 bytes for connless)
+        unsigned char flags_ack;    // 6bit flags, 2bit ack
+        unsigned char ack;          // 8bit ack
+        unsigned char numchunks;    // 8bit chunks
+        unsigned char token[4];     // 32bit token
+        // ffffffaa
+        // aaaaaaaa
+        // NNNNNNNN
+        // TTTTTTTT
+        // TTTTTTTT
+        // TTTTTTTT
+        // TTTTTTTT
+
+    packet header (CONNLESS):
+        unsigned char flag_version;				// 6bit flags, 2bits version
+        unsigned char token[4];					// 32bit token
+        unsigned char responsetoken[4];			// 32bit response token
+
+        // ffffffvv
+        // TTTTTTTT
+        // TTTTTTTT
+        // TTTTTTTT
+        // TTTTTTTT
+        // RRRRRRRR
+        // RRRRRRRR
+        // RRRRRRRR
+        // RRRRRRRR
+
+    if the token isn't explicitely set by any means, it must be set to
+    0xffffffff
+                </code>
+            </pre>
+            The token field has to be the token of the receiving party.
+            So when the client sends a packet to the server the token field
+            contains the token from the server and vice versa.
+            <br>
+            Client and server generate a random token and then exchange it.
+            <br>
+            <br>
+            If the token is not known yet the token field will be FF FF FF FF
+            indicating it being empty. This happens only in the very
+            <a href="traffic.html#cl_srv_token">first packet</a>
+            the client sends to initiate the connection.
+            <br>
+            <br>
+            If the client or server gets a packet with an unexpected token
+            it will simply ignore it without any error message in the logs.
+            So if you are trying to reimplement the protocol this is one of
+            the first things you need to get right before you can properly
+            send packets.
+            <br>
+            <br>
+            Quick debug tip if you suspect token bugs in your implemenation.
+            Comment out or add a dbg_msg in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L250">
+                this line
+            </a>
+            where packets with wrong
+            tokens are silently dropped.
         </p>
         <hr>
         <h3 id="huffman"><a href="#huffman">Huffman compression</a></h3>
