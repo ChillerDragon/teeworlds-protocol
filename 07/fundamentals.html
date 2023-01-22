@@ -210,6 +210,66 @@
             which soley focusses on int packing.
         </p>
         <hr>
+        <h3 id="string_packing"><a href="#string_packing">String packing</a></h3>
+        <p>
+            When strings are sent via the network. They are sent as plain C strings.
+            They do not contain a length. And have to be null terminated.
+            <br>
+            <br>
+            The receiver then can use diffent types of sanitizers when unpacking the string:
+            <ul>
+                <li>
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.h#L39">
+                        SANITIZE
+                    </a> - Is calling
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/base/system.c#L2209-L2219">
+                        str_sanitize(char *str_in)
+                    </a>
+                    which  makes sure that the string only contains the characters between 32 and 255 + \r\n\t
+                </li>
+                <li>
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.h#L40">
+                        SANITIZE_CC
+                    </a> - Is calling
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/base/system.c#L2157-L2167">
+                        str_sanitize_cc(char *)
+                    </a>
+                    which makes sure that the string only contains the characters between 32 and 255
+                </li>
+                <li>
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.h#L41">
+                        SKIP_START_WHITESPACES
+                    </a> - Is calling
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/base/system.c#L2599-L2616">
+                        str_utf8_skip_whitespaces(const char *str)
+                    </a>
+                    on the string to remove all leading whitespaces.
+                </li>
+            </ul>
+        </p>
+        <hr>
+        <h3 id="raw_packing"><a href="#raw_packing">Raw packing</a></h3>
+        <p>
+            If you want to send raw bytes over the network. The teeworlds protocol got you covered.
+            <br>
+            There is
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.cpp#L68-L85">
+                void CPacker::AddRaw(const void *pData, int Size)
+            </a>
+            and its counter part
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.cpp#L155-L171">
+                const unsigned char *CUnpacker::GetRaw(int Size)
+            </a>
+            <br>
+            <br>
+            It will just send and receive byte by byte the raw data you give it.
+            Note that while reading you have to know the size. The raw data does not include a size
+            field or is terminated in any way.
+            <br>
+            So raw can only be used in contexts where the length is known to the recipient.
+            This usually happens by a leading <a href="#int_packing">integer field</a> holding the size.
+        </p>
+        <hr>
         <h3 id="huffman"><a href="#huffman">Huffman compression</a></h3>
         <p>
             Packets can be compressed using huffman compression.
