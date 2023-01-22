@@ -28,6 +28,11 @@
             you can establish a basic healthy connection.
             <br>
             <br>
+            In this example traffic we look at a client joing a server. The client already knows the map.
+            So no map download packets will be sent. The server sends all its basic info such as gametype, map name and similar.
+            Then after the client is connected it sents 1 input packet. In the end we cleanly close the connection with a disconnect packet.
+            <br>
+            <br>
             All packets are prefixed with a <code>[SOURCE->DESTINATION]</code> indicating who is sending the packet to who.
             The packets are listed in the order they are supposed to be send when a client connects to a server.
             <br><br>
@@ -546,6 +551,28 @@
  ChunkHeader  |
  size = 17   NETMSG_INPUT
  flags = 0
+            </code>
+        </pre>
+
+        <hr>
+        <h3 id="srv_cl_input_timing_snap_empty"><a href="#srv_cl_input_timing_snap_empty">[SERVER->CLIENT] Input Timing, Snap Empty</a></h3>
+        <p>
+            After the client sends some input the server will respond with input timing. Which is usually bundled with a snap chunk.
+            In this case there is no new snap data so the snap chunk is of type SNAP_EMPTY.
+        </p>
+        <pre class="code-snippet">
+            <code>
+    [PACKET HEADER]
+    00  0A  02  <span class="token">C0  7D  1E  5E</span>
+    ^   ^   ^   ^
+    |   |   |   client token
+    |   |   2 chunks (Input Timing, Snap Empty)
+    |   sequence number unchanged
+    no flags (not compressed for example)
+
+    [PACKET PAYLOAD]
+    00 04 02 24  05 cd fd 00  04 15 81 32 ...$ .... ...2
+    0d 00 04 0f  82 32 02                 .... .2.
             </code>
         </pre>
 
