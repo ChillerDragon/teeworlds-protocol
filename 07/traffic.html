@@ -258,7 +258,7 @@
         </pre>
 
         <hr>
-        <h3>[SERVER->CLIENT] Motd, Server Settings, Ready</h3>
+        <h3 id="srv_cl_motd_sett_rdy"><a href="#srv_cl_motd_sett_rdy">[SERVER->CLIENT] Motd, Server Settings, Ready</a></h3>
         <p>
             Now the server sends the first packet with a compressed payload. It is using huffman compression to do so.
             The payload is 3 chunks:
@@ -277,12 +277,12 @@
     (COMPRESSION)
             </code>
         </pre>
-        The payload (without the header) decompresses to this
+        The payload (without the packet header) decompresses to this
         <pre class="code-snippet">
             <code>
-    &lt;40  02&gt; 02  02  00  40  07  03  22  01  00  01  00  01  08  40  01  04  0B
-        ^
-    ChunkHeader: size = 2 flags = 1 (NET_CHUNKFLAG_VITAL)
+    &lt;40  02  02  02  00&gt; &lt;40  07  03  22  01  00  01  00  01  08&gt; &lt;40  01  04  0b&gt;
+     ^                    ^                                        ^
+    motd                  server_settings                          ready
             </code>
         </pre>
 
@@ -314,7 +314,14 @@
         </pre>
 
         <hr>
-        <h3>[SERVER->CLIENT]</h3>
+        <h3 id="srv_cl_vote_tune_rdy"><a href="#srv_cl_vote_tune_rdy">[SERVER->CLIENT] Vote Clear, Tune Params, Ready To Enter</a></h3>
+            This packet is usually compressed too.
+            The payload is 3 chunks:
+            <ul>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_VOTECLEAROPTIONS">NETMSGTYPE_SV_VOTECLEAROPTIONS</a> - TODO</li>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_TUNEPARAMS">NETMSGTYPE_SV_TUNEPARAMS</a> - TODO</li>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a> - telling the client he can join the game (spawn a tee)</li>
+            </ul>
         <p>
         </p>
         <pre class="code-snippet">
