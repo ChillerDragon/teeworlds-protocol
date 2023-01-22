@@ -133,6 +133,83 @@
             </a>
         </p>
         <hr>
+        <h3 id="int_packing"><a href="#int_packing">Int packing</a></h3>
+        <p>
+            Note there is also documentation on ints in
+            <a href="https://github.com/heinrich5991/libtw2/blob/bb63d4d6344a2330ba22d10d638b2cf0d8959544/doc/int.md">
+                the libtw2 docs.
+            </a>
+            <br>
+            <br>
+            All numbers (integers) sent via the network are packed using a custom
+            teeworlds specific packer.
+            <br>
+            Eventho it being a custom packer the numbers 0-63
+            are pretty much the standard binary representation.
+            <br>
+            <br>
+            So binary <code>00000001</code> is decimal <code>1</code><br>
+            and binary <code>00000010</code> is decimal <code>2</code><br>
+            and so on..
+            <br>
+            <br>
+            If we exceed 63 it starts to differ.
+            <br>
+            The int packer code can be found
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/compression.cpp#L7-L29">
+                here.
+            </a>
+            Together with this annotation comment.
+            <pre class="code-snippet">
+                <code>
+    Format: ESDDDDDD EDDDDDDD EDD... Extended, Data, Sig
+                </code>
+            </pre>
+            What it means is that the second bit of the the first byte of the integer is its sign bit.
+            Meaning that if the second bit of the first byte is <code>1</code> it is a negative number.
+            If the second bit of the first byte is a <code>0</code> it is a positive number.
+            And the first bit of every byte is the extension bit. If it is set to <code>1</code>
+            it means another byte is following if it is set to <code>0</code> the current byte is the last.
+            This extension bit allows to send small numbers (-62 to 63) as a single byte over the network.
+            This extension bit also means that technically the protocol allows numbers of any size.
+            Which you should not send tho since they are read into a C++ <code>int</code> which is only 4 bytes.
+            <br>
+            <br>
+            Also note that the byte order is little endian.
+            The smallest positive two byte number 64 is represented as those bits: <code>10000000 00000001</code><br>
+            Which can be dissected as:
+            <pre class="code-snippet">
+                <code>
+    ESDDDDDD EDDDDDDD
+    10000000 00000001
+    ^^^    ^ ^^    ^
+    ||\   /  | \   /
+    || \ / not  \ /
+    ||  \ extended
+    ||   \      /
+    ||    \    /
+    ||     \  /
+    ||      \/
+    ||      /\
+    ||     /  \
+    ||    /    \
+    || 0000001 000000
+    ||       |
+    ||       v
+    ||       64
+    ||
+    |positive
+    extended
+                </code>
+            </pre>
+            <br>
+            There is a rust crate named
+            <a href="https://github.com/edg-l/teeint">
+                teeint
+            </a>
+            which soley focusses on int packing.
+        </p>
+        <hr>
         <h3 id="huffman"><a href="#huffman">Huffman compression</a></h3>
         <p>
             Packets can be compressed using huffman compression.
