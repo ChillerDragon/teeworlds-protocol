@@ -99,9 +99,38 @@
         <p>
             Every chunk header can contain a vital flag. Note that one teeworlds packet can
             contain multiple chunks. If said vital flag is set to true the receiving party
-            has to increment a counter. This counter is called the sequence number.
-
-            TODO waiting for https://github.com/teeworlds/teeworlds/issues/3191
+            has to increment a counter. This counter is called the sequence or acknowledge number.
+            Client and server will send the amount of vital chunks they received as sequence number
+            in the packet header.
+            <br>
+            <br>
+            The
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network.h#L322-L324">
+                CNetConnection
+            </a>
+            class keeps track of these sequence numbers.
+            <br>
+            <pre class="code-snippet">
+                <code>
+    unsigned short m_Sequence;
+    unsigned short m_Ack;
+    unsigned short m_PeerAck;
+                </code>
+            </pre>
+            Using these three variables client and server keep track of:
+            <ul>
+                <li>m_Sequence - The amount of vital chunks sent</li>
+                <li>m_Ack - The amount of vital chunks received</li>
+                <li>m_PeerAck - The amount of vital chunks acknowledged by the peer</li>
+            </ul>
+            Be warned that the client and server silently drop all packets with wrong
+            sequence numbers set in the packet header.
+            <br>
+            Quick debug tip if you suspect sequence number bugs in your implemenation.
+            Comment out or add dbg_msgs in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L235-L246">
+                these lines.
+            </a>
         </p>
         <hr>
         <h3 id="huffman"><a href="#huffman">Huffman compression</a></h3>
