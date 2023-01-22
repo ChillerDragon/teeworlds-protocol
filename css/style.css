@@ -66,6 +66,14 @@ table, th, td {
     border: 1px solid #c3c3c3;
 }
 
+/* fake table */
+
+.num {
+    /* border: 1px solid lightblue; */
+    width: 2em;
+    display: inline-block;
+}
+
 td, th {
     padding: 0.5em;
 }
