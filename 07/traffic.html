@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <title>Teeworlds Protocol</title>
 </head>
 <body>
     <div class="header">
-        <a href="index.html">
-            <img src="img/tee.svg" alt="tee">
+        <a href="../index.html">
+            <img src="../img/tee.svg" alt="tee">
         </a>
-        <a href="index.html">home</a>
+        <a href="../index.html">home</a>
         <a href="traffic.html">traffic</a>
         <a href="snap_items.html">snap_items</a>
         <a href="messages.html">messages</a>
@@ -20,6 +20,13 @@
     <div class="content">
         <h2>Teeworlds 0.7 sample traffic</h2>
         <p>
+            If you are trying to build your own teeworlds compatible client or server. You have to understand what to send when.
+            So this page is showing annotated raw data of a real conversation between client and server. I very much recommend using
+            a wireshark dissector to inspect your traffic if you try to reimplement the protocol. This traffic example is not a comeplete
+            documentation of the whole protocol just the few essential packets to get you started. If you understand and reimplement those
+            you can establish a basic healthy connection.
+            <br>
+            <br>
             All packets are prefixed with a <code>[SOURCE->DESTINATION]</code> indicating who is sending the packet to who.
             The packets are listed in the order they are supposed to be send when a client connects to a server.
             <br><br>
@@ -49,7 +56,7 @@
             Which then can be loaded using wireshark. If you are motivated to compile and install a custom dissector I can highly recommend.
             <a href="https://github.com/heinrich5991/libtw2/tree/ded871091bb984f0419cac605b85ecf438c6fbcd/wireshark-dissector">
                 The dissector from libtw2 by heinrich5991
-                <img class="rounded-img" src="img/libtw2_dissector.png" alt="libtw2 dissector preview">
+                <img class="rounded-img" src="../img/libtw2_dissector.png" alt="libtw2 dissector preview">
             </a>
             which adds nice teeworlds related annotations to the packets.
             <br>
