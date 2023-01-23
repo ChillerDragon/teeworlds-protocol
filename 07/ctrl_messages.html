@@ -43,10 +43,15 @@
         <hr>
         <h3 id="NET_CTRLMSG_ACCEPT"><a href="#NET_CTRLMSG_ACCEPT">NET_CTRLMSG_ACCEPT</a></h3>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
+            <strong>Sender:</strong> Server <br>
+            <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 2 <br>
-            TODO
+            In a ideal connection scenario this is the 4th
+            package being exchanged.
+            After the two token packets and the connection request from the client.
+            The server sends this to accept the connection.
+            Which sets the client state to online.
+            The client is now expected to send his <a href="system_messages.html#NETMSG_INFO">start info</a>.
         </p>
         <hr>
         <h3 id="NET_CTRLMSG_CLOSE"><a href="#NET_CTRLMSG_CLOSE">NET_CTRLMSG_CLOSE</a></h3>

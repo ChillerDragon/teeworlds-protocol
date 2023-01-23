@@ -51,6 +51,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 1 <br>
+            <strong>Response to:</strong> <a href="ctrl_messages.html#NET_CTRLMSG_ACCEPT">NET_CTRLMSG_ACCEPT</a> <br>
+            <strong>Expected response:</strong> <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> <br>
             Sent by the client in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L340-L353">
                 CClient::SendInfo()
@@ -116,7 +118,9 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 2 <br>
-            Sent when client should switch map
+            <strong>Response to:</strong> <a href="#NETMSG_INFO">NETMSG_INFO</a> <br>
+            <strong>Expected response:</strong> <a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a> | <a href="system_messages.html#NETMSG_READY">NETMSG_READY</a> <br>
+            Sent when client should switch map and on initial join.
             <br>
             Sent by the server in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">
@@ -157,6 +161,8 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 3 <br>
+            <strong>Response to:</strong> <a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a> <br>
+            <strong>Expected response:</strong> <a href="#NETMSG_READY">NETMSG_READY</a> <br>
             map transfer, contains a chunk of the map file <br>
             If the client did send a <a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a>.
             The server will respond with those map chunk messages in
@@ -208,6 +214,8 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 4 <br>
+            <strong>Response to:</strong> <a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> <br>
+            <strong>Expected response:</strong> None <br> <br>
             The server sends the server info to every client that joins.
             After the client did send the <a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> message.
             Or if a server admin does change the server info it will be resend it to all clients.
@@ -261,6 +269,8 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 5 <br>
+            <strong>Response to:</strong> <a href="#NETMSG_READY">NETMSG_READY</a> <br>
+            <strong>Expected response:</strong> <a href="game_messages.html#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a> <br>
             The server sends this to the client when the connection is ready.
             It also tells the client to now send the startinfo.
             <br>
@@ -345,7 +355,11 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 6 <br>
-            normal snapshot, multiple parts
+            <strong>Response to:</strong> None <br>
+            <strong>Expected response:</strong> None <br>
+            normal snapshot, multiple parts <br>
+            Will be sent by the server to every client if there is
+            new snap data.
         </p>
         <hr>
         <h3 id="NETMSG_SNAPEMPTY"><a href="#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a></h3>
@@ -375,7 +389,56 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 10 <br>
-            reports how off the input was
+            <strong>Response to:</strong> <a href="#NETMSG_INPUT">NETMSG_INPUT</a> <br>
+            <strong>Expected response:</strong> None <br>
+            reports how off the input was <br>
+            The server responds this to all the input messages from the clients in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L924-L980">
+                CServer::ProcessClientPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    // add message to report the input timing
+    // skip packets that are old
+    if(IntendedTick > m_aClients[ClientID].m_LastInputTick)
+    {
+        int TimeLeft = ((TickStartTime(IntendedTick)-Now)*1000) / time_freq();
+
+        CMsgPacker Msg(NETMSG_INPUTTIMING, true);
+        Msg.AddInt(IntendedTick);
+        Msg.AddInt(TimeLeft);
+        SendMsg(&Msg, 0, ClientID);
+    }
+                </code>
+            </pre>
+            The client uses this data to correct its prediction in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L1342-L1361">
+                CClient::ProcessServerPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_INPUTTIMING)
+    {
+        int InputPredTick = Unpacker.GetInt();
+        int TimeLeft = Unpacker.GetInt();
+
+        // adjust our prediction time
+        int64 Target = 0;
+        for(int k = 0; k < 200; k++)
+        {
+            if(m_aInputs[k].m_Tick == InputPredTick)
+            {
+                Target = m_aInputs[k].m_PredictedTime + (time_get() - m_aInputs[k].m_Time);
+                Target = Target - (int64)(((TimeLeft-PREDICTION_MARGIN)/1000.0f)*time_freq());
+                break;
+            }
+        }
+
+        if(Target)
+            m_PredictedTime.Update(&m_InputtimeMarginGraph, Target, TimeLeft, 1);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_RCON_AUTH_ON"><a href="#NETMSG_RCON_AUTH_ON">NETMSG_RCON_AUTH_ON</a></h3>
@@ -383,7 +446,38 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 11 <br>
-            rcon authentication enabled
+            <strong>Response to:</strong> <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a> <br>
+            <strong>Expected response:</strong> None <br>
+            If the client did send the correct rcon admin or mod password.
+            The server sends this to inform the client that the rcon console is now enabled.
+            <pre class="code-snippet">
+                <code>
+    else if(Config()->m_SvRconPassword[0] && str_comp(pPw, Config()->m_SvRconPassword) == 0)
+    {
+        CMsgPacker Msg(NETMSG_RCON_AUTH_ON, true);
+        SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    else if(Config()->m_SvRconModPassword[0] && str_comp(pPw, Config()->m_SvRconModPassword) == 0)
+    {
+        CMsgPacker Msg(NETMSG_RCON_AUTH_ON, true);
+        SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+                </code>
+            </pre>
+
+            The client sets <code>m_RconAuthed</code> to true (1) on receival.
+            Which enables the rcon prompt in the client UI.
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_AUTH_ON)
+    {
+        m_RconAuthed = 1;
+        m_UseTempRconCommands = 1;
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_RCON_AUTH_OFF"><a href="#NETMSG_RCON_AUTH_OFF">NETMSG_RCON_AUTH_OFF</a></h3>
@@ -391,7 +485,50 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 12 <br>
+            <strong>Response to:</strong> <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (<code>logout</code>) <br>
+            <strong>Expected response:</strong> None <br>
             rcon authentication disabled
+            The server sends this when an admin executes the <code>logout</code> rcon command.
+            <pre class="code-snippet">
+                <code>
+    void CServer::ConLogout(IConsole::IResult *pResult, void *pUser)
+    {
+        CServer *pServer = (CServer *)pUser;
+    
+        if(pServer->m_RconClientID >= 0 && pServer->m_RconClientID < MAX_CLIENTS &&
+            pServer->m_aClients[pServer->m_RconClientID].m_State != CServer::CClient::STATE_EMPTY)
+        {
+            CMsgPacker Msg(NETMSG_RCON_AUTH_OFF, true);
+            pServer->SendMsg(&Msg, MSGFLAG_VITAL, pServer->m_RconClientID);
+    
+            pServer->m_aClients[pServer->m_RconClientID].m_Authed = AUTHED_NO;
+            pServer->m_aClients[pServer->m_RconClientID].m_AuthTries = 0;
+            pServer->m_aClients[pServer->m_RconClientID].m_pRconCmdToSend = 0;
+            pServer->m_aClients[pServer->m_RconClientID].m_pMapListEntryToSend = 0;
+            pServer->SendRconLine(pServer->m_RconClientID, "Logout successful.");
+            char aBuf[32];
+            str_format(aBuf, sizeof(aBuf), "ClientID=%d logged out", pServer->m_RconClientID);
+            pServer->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+        }
+    }
+                </code>
+            </pre>
+            If the client gets this message it sets <code>m_RconAuthed</code> to false (0)
+            which deactivates the rcon prompt in the client UI.
+            It also deletes all rcon commands the server sent to the client during the time
+            the client was authed.
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_AUTH_OFF)
+    {
+        m_RconAuthed = 0;
+        if(m_UseTempRconCommands)
+            m_pConsole->DeregisterTempAll();
+        m_UseTempRconCommands = 0;
+        m_pConsole->DeregisterTempMapAll();
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_RCON_LINE"><a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a></h3>
@@ -399,7 +536,39 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 13 <br>
-            line that should be printed to the remote console
+            <strong>Response to:</strong> <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> | <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a> <br>
+            <strong>Expected response:</strong> None <br>
+            Line that should be printed to the remote console.
+            <br>
+            All messages that show up in the clients rcon console are coming from this message.
+            They are send by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L727-L732">
+                CServer::SendRconLine(int ClientID, const char *pLine)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendRconLine(int ClientID, const char *pLine)
+    {
+        CMsgPacker Msg(NETMSG_RCON_LINE, true);
+        Msg.AddString(pLine, 512);
+        SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+                </code>
+            </pre>
+            <br>
+            If the client gets this packet. It adds the payload (line) into
+            the console log where the rendere can pick it up if the user
+            opens the rcon console.
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_LINE)
+    {
+        const char *pLine = Unpacker.GetString();
+        if(Unpacker.Error() == 0)
+            <a href="https://github.com/teeworlds/teeworlds/blob/master/src/game/client/gameclient.cpp#L1050-L1053">GameClient()->OnRconLine(pLine);</a>
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_RCON_CMD_ADD"><a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a></h3>
@@ -407,6 +576,48 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 14 <br>
+            <strong>Response to:</strong> <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a> <br>
+            <strong>Expected response:</strong> None <br>
+            The server will send his list of rcon commands with parameters and help text
+            to all authenticated clients. So after the client did authenticate the server starts sending
+            NETMSG_RCON_CMD_ADD messages. There is a rate limit that avoid flooding the client
+            with too much data. That is why when you authenticate to rcon and press tab to
+            see the list of autocompletions they only show up after some time.
+            The server uses the
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L751-L758">
+                SendRconCmdAdd()
+            </a>
+            method to send them which is called on tick if the ratelimit is not exceeded and the target client
+            is authenticated.
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendRconCmdAdd(const IConsole::CCommandInfo *pCommandInfo, int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_RCON_CMD_ADD, true);
+        Msg.AddString(pCommandInfo->m_pName, IConsole::TEMPCMD_NAME_LENGTH);
+        Msg.AddString(pCommandInfo->m_pHelp, IConsole::TEMPCMD_HELP_LENGTH);
+        Msg.AddString(pCommandInfo->m_pParams, IConsole::TEMPCMD_PARAMS_LENGTH);
+        SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+                </code>
+            </pre>
+            The client then receives them in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L1291-L1298">
+                CClient::ProcessServerPacket(CNetChunk *pPacket)
+            </a>
+            where it stores them into the autocompletion list used by the remote console UI.
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_CMD_ADD)
+    {
+        const char *pName = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+        const char *pHelp = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+        const char *pParams = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+        if(Unpacker.Error() == 0)
+            m_pConsole->RegisterTemp(pName, pParams, CFGFLAG_SERVER, pHelp);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_RCON_CMD_REM"><a href="#NETMSG_RCON_CMD_REM">NETMSG_RCON_CMD_REM</a></h3>
@@ -414,6 +625,48 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 15 <br>
+            <strong>Response to:</strong> <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (mod_command) <br>
+            <strong>Expected response:</strong> None <br>
+            This is the opposite as <a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a>.
+            And is used by the server to remove commands from the clients known command list.
+            While adding takes three parameters: name, parameters and help text. Removing
+            only needs the name and the client will remove the whole commany entry that matches the name.
+            This is only sent to moderators when an admin updates the list of commands
+            accessible to moderators (using the rcon command
+            <code>
+                <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/console.cpp#L824">
+                    mod_command
+                </a>
+            </code>).
+            The method sending this message is
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L760-L765">
+                SendRconCmdRem()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendRconCmdRem(const IConsole::CCommandInfo *pCommandInfo, int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_RCON_CMD_REM, true);
+        Msg.AddString(pCommandInfo->m_pName, 256);
+        SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+                </code>
+            </pre>
+            If the client receives it it will remove the command with the given name
+            from its list of known commands in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L1299-L1304">
+                CClient::ProcessServerPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_CMD_REM)
+    {
+        const char *pName = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+        if(Unpacker.Error() == 0)
+            m_pConsole->DeregisterTemp(pName);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_AUTH_CHALLANGE"><a href="#NETMSG_AUTH_CHALLANGE">NETMSG_AUTH_CHALLANGE</a></h3>
@@ -421,6 +674,9 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 16 <br>
+            <strong>Response to:</strong> None <br>
+            <strong>Expected response:</strong> None <br>
+            Seems to be unused
         </p>
         <hr>
         <h3 id="NETMSG_AUTH_RESULT"><a href="#NETMSG_AUTH_RESULT">NETMSG_AUTH_RESULT</a></h3>
@@ -428,6 +684,9 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 17 <br>
+            <strong>Response to:</strong> None <br>
+            <strong>Expected response:</strong> None <br>
+            Seems to be unused
         </p>
         <hr>
         <h3 id="NETMSG_READY"><a href="#NETMSG_READY">NETMSG_READY</a></h3>
@@ -435,6 +694,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 18 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
         </p>
         <hr>
         <h3 id="NETMSG_ENTERGAME"><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></h3>
@@ -442,6 +703,8 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 19 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
         </p>
         <hr>
         <h3 id="NETMSG_INPUT"><a href="#NETMSG_INPUT">NETMSG_INPUT</a></h3>
@@ -449,6 +712,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 20 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
             contains the inputdata from the client
         </p>
         <hr>
@@ -457,6 +722,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 21 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
         </p>
         <hr>
         <h3 id="NETMSG_RCON_AUTH"><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></h3>
@@ -464,6 +731,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 22 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
         </p>
         <hr>
         <h3 id="NETMSG_REQUEST_MAP_DATA"><a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a></h3>
@@ -471,6 +740,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 23 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
         </p>
         <hr>
         <h3 id="NETMSG_AUTH_START"><a href="#NETMSG_AUTH_START">NETMSG_AUTH_START</a></h3>
@@ -478,6 +749,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 24 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
         </p>
         <hr>
         <h3 id="NETMSG_AUTH_RESPONSE"><a href="#NETMSG_AUTH_RESPONSE">NETMSG_AUTH_RESPONSE</a></h3>
@@ -485,6 +758,8 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 25 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
         </p>
         <hr>
         <h3 id="NETMSG_PING"><a href="#NETMSG_PING">NETMSG_PING</a></h3>
@@ -492,6 +767,8 @@
             <strong>Sender:</strong> Client, Server <br>
             <strong>Recipient:</strong> Client, Server <br>
             <strong>Message ID:</strong> 26 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
             sent by both
         </p>
         <hr>
@@ -500,6 +777,8 @@
             <strong>Sender:</strong> Client, Server <br>
             <strong>Recipient:</strong> Client, Server <br>
             <strong>Message ID:</strong> 27 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
             sent by both
         </p>
         <hr>
@@ -508,6 +787,8 @@
             <strong>Sender:</strong> Client, Server <br>
             <strong>Recipient:</strong> Client, Server <br>
             <strong>Message ID:</strong> 28 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
             sent by both
         </p>
         <hr>
@@ -516,6 +797,8 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 29 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
             the msg id is planned to be changed in 0.8
         </p>
         <hr>
@@ -524,6 +807,8 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 30 <br>
+            <strong>Response to:</strong> TODO <br>
+            <strong>Expected response:</strong> TODO <br>
             the msg id is planned to be changed in 0.8
         </p>
     </div> <!-- content -->
