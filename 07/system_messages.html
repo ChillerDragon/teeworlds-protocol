@@ -694,8 +694,59 @@
             <strong>Sender:</strong> Client <br>
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 18 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <strong>Response to:</strong> <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> | <a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a> <br>
+            <strong>Expected response:</strong> <a href="#NETMSG_CON_READY">NETMSG_CON_READY</a> <br>
+            The client sends this to the server when it finished downloading the map
+            or when it wants to skip the map download because it already has it in the downloadedmaps/ folder.
+            The client uses the
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L362-L366">
+                CClient::SendReady()
+            </a>
+            method to send this message.
+            <pre class="code-snippet">
+                <code>
+    void CClient::SendReady()
+    {
+        CMsgPacker Msg(NETMSG_READY, true);
+        SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
+            The server calls
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L721-L725">
+                SendConnectionReady(ClientID);
+            </a>
+            when it receives this message in the
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L892-L908">
+                CServer::ProcessClientPacket(CNetChunk *pPacket)
+            </a>
+            method
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_READY)
+    {
+        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && (m_aClients[ClientID].m_State == CClient::STATE_CONNECTING || m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC))
+        {
+            char aAddrStr[NETADDR_MAXSTRSIZE];
+            net_addr_str(m_NetServer.ClientAddr(ClientID), aAddrStr, sizeof(aAddrStr), true);
+
+            char aBuf[256];
+            str_format(aBuf, sizeof(aBuf), "player is ready. ClientID=%d addr=%s", ClientID, aAddrStr);
+            Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
+
+            bool ConnectAsSpec = m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC;
+            m_aClients[ClientID].m_State = CClient::STATE_READY;
+            GameServer()->OnClientConnected(ClientID, ConnectAsSpec);
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L721-L725">SendConnectionReady(ClientID);</a>
+        }
+    }
+                </code>
+            </pre>
+            The
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L721-L725">
+                SendConnectionReady(ClientID);
+            </a>
+            then sends the <a href="#NETMSG_CON_READY">NETMSG_CON_READY</a> as a response to the client.
         </p>
         <hr>
         <h3 id="NETMSG_ENTERGAME"><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></h3>
