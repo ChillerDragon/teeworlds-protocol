@@ -100,9 +100,46 @@
         <hr>
         <h3 id="NETMSGTYPE_SV_READYTOENTER"><a href="#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a></h3>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
+            <strong>Sender:</strong> Server <br>
+            <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 8 <br>
+            <strong>Response to:</strong> <a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a> <br>
+            <strong>Expected response:</strong> <a href="system_messages.html#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> <br>
+            It is sent by the server as a response to <a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a>
+            in the method
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/server/gamecontext.cpp#L1157-L1158">
+                CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    CNetMsg_Sv_ReadyToEnter m;
+    Server()->SendPackMsg(&m, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+                </code>
+            </pre>
+            It is processed by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/master/src/game/client/gameclient.cpp#L994-L997">
+                CGameClient::OnMessage(int MsgId, CUnpacker *pUnpacker)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgId == NETMSGTYPE_SV_READYTOENTER)
+    {
+        Client()->EnterGame();
+    }
+                </code>
+            </pre>
+            Which calls <code>CClient::EnterGame()</code>
+            which then calls <code>CClient::SendEnterGame()</code>
+            <pre class="code-snippet">
+                <code>
+    void CClient::SendEnterGame()
+    {
+        CMsgPacker Msg(<a href="system_messages.html#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a>, true);
+        SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
+            Where it responds with <a href="system_messages.html#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a>
         </p>
         <hr>
         <h3 id="NETMSGTYPE_SV_WEAPONPICKUP"><a href="#NETMSGTYPE_SV_WEAPONPICKUP">NETMSGTYPE_SV_WEAPONPICKUP</a></h3>

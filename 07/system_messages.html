@@ -751,11 +751,47 @@
         <hr>
         <h3 id="NETMSG_ENTERGAME"><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
+            <strong>Sender:</strong> Client <br>
+            <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 19 <br>
-            <strong>Response to:</strong> TODO <br>
+            <strong>Response to:</strong> <a href="game_messages.html#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a> <br>
             <strong>Expected response:</strong> TODO <br>
+            Sent by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">
+                CClient::SendEnterGame()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CClient::SendEnterGame()
+    {
+        CMsgPacker Msg(NETMSG_ENTERGAME, true);
+        SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
+            The server processes this message in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L909-L923">
+                CServer::ProcessClientPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_ENTERGAME)
+    {
+        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && m_aClients[ClientID].m_State == CClient::STATE_READY && GameServer()->IsClientReady(ClientID))
+        {
+            char aAddrStr[NETADDR_MAXSTRSIZE];
+            net_addr_str(m_NetServer.ClientAddr(ClientID), aAddrStr, sizeof(aAddrStr), true);
+
+            char aBuf[256];
+            str_format(aBuf, sizeof(aBuf), "player has entered the game. ClientID=%d addr=%s", ClientID, aAddrStr);
+            Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+            m_aClients[ClientID].m_State = CClient::STATE_INGAME;
+            SendServerInfo(ClientID);
+            GameServer()->OnClientEnter(ClientID);
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_INPUT"><a href="#NETMSG_INPUT">NETMSG_INPUT</a></h3>
