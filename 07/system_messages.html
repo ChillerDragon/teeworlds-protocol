@@ -48,9 +48,67 @@
         <hr>
         <h3 id="NETMSG_INFO"><a href="#NETMSG_INFO">NETMSG_INFO</a></h3>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
+            <strong>Sender:</strong> Client <br>
+            <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 1 <br>
+            Sent by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L340-L353">
+                CClient::SendInfo()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CClient::SendInfo()
+    {
+        // restore password of favorite if possible
+        const char *pPassword = m_ServerBrowser.GetFavoritePassword(m_aServerAddressStr);
+        if(!pPassword)
+            pPassword = Config()->m_Password;
+        str_copy(m_aServerPassword, pPassword, sizeof(m_aServerPassword));
+
+        CMsgPacker Msg(NETMSG_INFO, true);
+        Msg.AddString(<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L8">GameClient()->NetVersion()</a>, 128);
+        Msg.AddString(m_aServerPassword, 128);
+        Msg.AddInt(<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L9">GameClient()->ClientVersion()</a>);
+        SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
+            Received by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L830-L857">
+                CServer::ProcessClientPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    if(Msg == NETMSG_INFO)
+    {
+        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && m_aClients[ClientID].m_State == CClient::STATE_AUTH)
+        {
+            const char *pVersion = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+            if(str_comp(pVersion, GameServer()->NetVersion()) != 0)
+            {
+                // wrong version
+                char aReason[256];
+                str_format(aReason, sizeof(aReason), "Wrong version. Server is running '%s' and client '%s'", GameServer()->NetVersion(), pVersion);
+                m_NetServer.Drop(ClientID, aReason);
+                return;
+            }
+
+            const char *pPassword = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+            if(Config()->m_Password[0] != 0 && str_comp(Config()->m_Password, pPassword) != 0)
+            {
+                // wrong password
+                m_NetServer.Drop(ClientID, "Wrong password");
+                return;
+            }
+
+            m_aClients[ClientID].m_Version = Unpacker.GetInt();
+
+            m_aClients[ClientID].m_State = CClient::STATE_CONNECTING;
+            SendMap(ClientID);
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_MAP_CHANGE"><a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a></h3>
