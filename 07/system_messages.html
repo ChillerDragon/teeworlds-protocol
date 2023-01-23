@@ -157,7 +157,50 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 3 <br>
-            map transfer, contains a chunk of the map file
+            map transfer, contains a chunk of the map file <br>
+            If the client did send a <a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a>.
+            The server will respond with those map chunk messages in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L858-L891">
+                CServer::ProcessClientPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_REQUEST_MAP_DATA)
+    {
+        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && (m_aClients[ClientID].m_State == CClient::STATE_CONNECTING || m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC))
+        {
+            int ChunkSize = MAP_CHUNK_SIZE;
+
+            // send map chunks
+            for(int i = 0; i < m_MapChunksPerRequest && m_aClients[ClientID].m_MapChunk >= 0; ++i)
+            {
+                int Chunk = m_aClients[ClientID].m_MapChunk;
+                int Offset = Chunk * ChunkSize;
+
+                // check for last part
+                if(Offset+ChunkSize >= m_CurrentMapSize)
+                {
+                    ChunkSize = m_CurrentMapSize-Offset;
+                    m_aClients[ClientID].m_MapChunk = -1;
+                }
+                else
+                    m_aClients[ClientID].m_MapChunk++;
+
+                CMsgPacker Msg(NETMSG_MAP_DATA, true);
+                Msg.AddRaw(&m_pCurrentMapData[Offset], ChunkSize);
+                SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+
+                if(Config()->m_Debug)
+                {
+                    char aBuf[64];
+                    str_format(aBuf, sizeof(aBuf), "sending chunk %d with size %d", Chunk, ChunkSize);
+                    Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "server", aBuf);
+                }
+            }
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_SERVERINFO"><a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a></h3>
@@ -165,6 +208,52 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 4 <br>
+            The server sends the server info to every client that joins.
+            After the client did send the <a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> message.
+            Or if a server admin does change the server info it will be resend it to all clients.
+            By setting the rcon variables <code>sv_name</code>, <code>password</code> or <code>sv_max_clients</code>.<br>
+            It is sent via the function
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L1151-L1165">
+                CServer::SendServerInfo(int ClientID)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendServerInfo(int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_SERVERINFO, true);
+        GenerateServerInfo(&Msg, -1);
+        if(ClientID == -1)
+        {
+            for(int i = 0; i < MAX_CLIENTS; i++)
+            {
+                if(m_aClients[i].m_State != CClient::STATE_EMPTY)
+                    SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, i);
+            }
+        }
+        else if(ClientID >= 0 && ClientID < MAX_CLIENTS && m_aClients[ClientID].m_State != CClient::STATE_EMPTY)
+            SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+    }
+                </code>
+            </pre>
+            It will be unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L1271-L1281">
+                CClient::ProcessServerPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_SERVERINFO)
+    {
+        <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/serverbrowser.h#L10-L71">CServerInfo</a> Info = {0};
+        net_addr_str(&pPacket->m_Address, Info.m_aAddress, sizeof(Info.m_aAddress), true);
+        if(!<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L923-L988">UnpackServerInfo(&Unpacker, &Info, 0)</a> && !Unpacker.Error())
+        {
+            SortClients(&Info);
+            mem_copy(&m_CurrentServerInfo, &Info, sizeof(m_CurrentServerInfo));
+            m_CurrentServerInfo.m_NetAddr = m_ServerAddress;
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_CON_READY"><a href="#NETMSG_CON_READY">NETMSG_CON_READY</a></h3>
@@ -172,7 +261,83 @@
             <strong>Sender:</strong> Server <br>
             <strong>Recipient:</strong> Client <br>
             <strong>Message ID:</strong> 5 <br>
-            connection is ready, client should send start info
+            The server sends this to the client when the connection is ready.
+            It also tells the client to now send the startinfo.
+            <br>
+            <br>
+            After the server did receive a <a href="#NETMSG_READY">NETMSG_READY</a> from the client.
+            It will respond with this message in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L892-L908">
+                CServer::ProcessClientPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_READY)
+    {
+        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && (m_aClients[ClientID].m_State == CClient::STATE_CONNECTING || m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC))
+        {
+            char aAddrStr[NETADDR_MAXSTRSIZE];
+            net_addr_str(m_NetServer.ClientAddr(ClientID), aAddrStr, sizeof(aAddrStr), true);
+
+            char aBuf[256];
+            str_format(aBuf, sizeof(aBuf), "player is ready. ClientID=%d addr=%s", ClientID, aAddrStr);
+            Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
+
+            bool ConnectAsSpec = m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC;
+            m_aClients[ClientID].m_State = CClient::STATE_READY;
+            GameServer()->OnClientConnected(ClientID, ConnectAsSpec);
+            SendConnectionReady(ClientID);
+        }
+    }
+                </code>
+            </pre>
+            If the client does receive it it will call GameClient()->OnConnected()
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_CON_READY)
+    {
+        GameClient()->OnConnected();
+    }
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    void CGameClient::OnConnected()
+    {
+        m_Layers.Init(Kernel());
+        m_Collision.Init(Layers());
+
+        for(int i = 0; i < m_All.m_Num; i++)
+        {
+            m_All.m_paComponents[i]->OnMapLoad();
+            m_All.m_paComponents[i]->OnReset();
+        }
+
+        m_ServerMode = SERVERMODE_PURE;
+
+        // send the inital info
+        SendStartInfo();
+    }
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    void CGameClient::SendStartInfo()
+    {
+        CNetMsg_Cl_StartInfo Msg;
+        Msg.m_pName = Config()->m_PlayerName;
+        Msg.m_pClan = Config()->m_PlayerClan;
+        Msg.m_Country = Config()->m_PlayerCountry;
+        for(int p = 0; p < NUM_SKINPARTS; p++)
+        {
+            Msg.m_apSkinPartNames[p] = CSkins::ms_apSkinVariables[p];
+            Msg.m_aUseCustomColors[p] = *CSkins::ms_apUCCVariables[p];
+            Msg.m_aSkinPartColors[p] = *CSkins::ms_apColorVariables[p];
+        }
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_SNAP"><a href="#NETMSG_SNAP">NETMSG_SNAP</a></h3>
@@ -267,8 +432,8 @@
         <hr>
         <h3 id="NETMSG_READY"><a href="#NETMSG_READY">NETMSG_READY</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
+            <strong>Sender:</strong> Client <br>
+            <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 18 <br>
         </p>
         <hr>
