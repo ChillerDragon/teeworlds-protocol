@@ -77,7 +77,7 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td>Net Version</td>
+                    <td id="NETMSG_INFO_net_version"><a href="#NETMSG_INFO_net_version">Net Version</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>
                         The official name is "NetVersion" but a more fitting name in my opinion would be "Protocol Version".
@@ -88,7 +88,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Password</td>
+                    <td id="NETMSG_INFO_password"><a href="#NETMSG_INFO_password">Password</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>
                         If the config option <code>password</code> is set on the server. This password has to match to join the server.
@@ -97,7 +97,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Client Version</td>
+                    <td id="NETMSG_INFO_client_version"><a href="#NETMSG_INFO_client_version">Client Version</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
                         Another version field which does not have to match the servers
@@ -200,7 +200,7 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td>Map Name</td>
+                    <td id="NETMSG_MAP_CHANGE_map_name"><a href="#NETMSG_MAP_CHANGE_map_name">Map name</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>
                         Name of the map. The client will use this name and the crc to lookup
@@ -208,7 +208,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Crc</td>
+                    <td id="NETMSG_MAP_CHANGE_crc"><a href="#NETMSG_MAP_CHANGE_crc">Crc</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
                         The Cyclic redundancy check (Crc) hash is used to differentiate between different maps
@@ -216,21 +216,21 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Map size</td>
+                    <td id="NETMSG_MAP_CHANGE_map_size"><a href="#NETMSG_MAP_CHANGE_map_size">Map size</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
                         The size of the map in bytes.
                     </td>
                 </tr>
                 <tr>
-                    <td>Chunks per request</td>
+                    <td id="NETMSG_MAP_CHANGE_chunks_per_request"><a href="#NETMSG_MAP_CHANGE_chunks_per_request">Chunks per request</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
                         The value is coming from the servers config option <code>sv_map_download_speed</code>
                     </td>
                 </tr>
                 <tr>
-                    <td>Chunk size</td>
+                    <td id="NETMSG_MAP_CHANGE_chunk_size"><a href="#NETMSG_MAP_CHANGE_chunk_size">Chunk size</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
                         Since the map download chunks contain an unterminated raw data field
@@ -244,7 +244,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Map sha256</td>
+                    <td id="NETMSG_MAP_CHANGE_map_sha256"><a href="#NETMSG_MAP_CHANGE_map_sha256">Map sha256</a></td>
                     <td><a href="fundamentals.html#raw_packing">Raw</a></td>
                     <td>
                         Since crc is a weak hashing alorithm this new field was added
