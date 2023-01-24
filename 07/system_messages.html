@@ -209,8 +209,6 @@
                     <th><strong>Expected response:</strong></th><td><a href="#NETMSG_READY">NETMSG_READY</a></td>
                 </tr>
             </table>
-
-
             map transfer, contains a chunk of the map file <br>
             If the client did send a <a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a>.
             The server will respond with those map chunk messages in
@@ -259,11 +257,23 @@
         <hr>
         <h3 id="NETMSG_SERVERINFO"><a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 4 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> <br>
-            <strong>Expected response:</strong> None <br> <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>4</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             The server sends the server info to every client that joins.
             After the client did send the <a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> message.
             Or if a server admin does change the server info it will be resend it to all clients.
@@ -314,11 +324,24 @@
         <hr>
         <h3 id="NETMSG_CON_READY"><a href="#NETMSG_CON_READY">NETMSG_CON_READY</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 5 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_READY">NETMSG_READY</a> <br>
-            <strong>Expected response:</strong> <a href="game_messages.html#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a> <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>5</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_READY">NETMSG_READY</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td><a href="game_messages.html#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a></td>
+                </tr>
+            </table>
+
             The server sends this to the client when the connection is ready.
             It also tells the client to now send the startinfo.
             <br>
@@ -400,11 +423,23 @@
         <hr>
         <h3 id="NETMSG_SNAP"><a href="#NETMSG_SNAP">NETMSG_SNAP</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 6 <br>
-            <strong>Response to:</strong> None <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>6</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             normal snapshot, multiple parts <br>
             Will be sent by the server to every client if there is
             new snap data.
@@ -412,33 +447,87 @@
         <hr>
         <h3 id="NETMSG_SNAPEMPTY"><a href="#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 7 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>7</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             empty snapshot
         </p>
         <hr>
         <h3 id="NETMSG_SNAPSINGLE"><a href="#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 8 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>8</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h3 id="NETMSG_SNAPSMALL"><a href="#NETMSG_SNAPSMALL">NETMSG_SNAPSMALL</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 9 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>9</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h3 id="NETMSG_INPUTTIMING"><a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 10 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_INPUT">NETMSG_INPUT</a> <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>10</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_INPUT">NETMSG_INPUT</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             reports how off the input was <br>
             The server responds this to all the input messages from the clients in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L924-L980">
@@ -491,11 +580,23 @@
         <hr>
         <h3 id="NETMSG_RCON_AUTH_ON"><a href="#NETMSG_RCON_AUTH_ON">NETMSG_RCON_AUTH_ON</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 11 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a> <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>11</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             If the client did send the correct rcon admin or mod password.
             The server sends this to inform the client that the rcon console is now enabled.
             <pre class="code-snippet">
@@ -530,11 +631,23 @@
         <hr>
         <h3 id="NETMSG_RCON_AUTH_OFF"><a href="#NETMSG_RCON_AUTH_OFF">NETMSG_RCON_AUTH_OFF</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 12 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (<code>logout</code>) <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>12</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (<code>logout</code>)</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             rcon authentication disabled
             The server sends this when an admin executes the <code>logout</code> rcon command.
             <pre class="code-snippet">
@@ -581,11 +694,23 @@
         <hr>
         <h3 id="NETMSG_RCON_LINE"><a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 13 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> | <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a> <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>13</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> | <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             Line that should be printed to the remote console.
             <br>
             All messages that show up in the clients rcon console are coming from this message.
@@ -621,11 +746,23 @@
         <hr>
         <h3 id="NETMSG_RCON_CMD_ADD"><a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 14 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a> <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>14</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             The server will send his list of rcon commands with parameters and help text
             to all authenticated clients. So after the client did authenticate the server starts sending
             NETMSG_RCON_CMD_ADD messages. There is a rate limit that avoid flooding the client
@@ -670,11 +807,23 @@
         <hr>
         <h3 id="NETMSG_RCON_CMD_REM"><a href="#NETMSG_RCON_CMD_REM">NETMSG_RCON_CMD_REM</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 15 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (mod_command) <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>15</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (mod_command)</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
             This is the opposite as <a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a>.
             And is used by the server to remove commands from the clients known command list.
             While adding takes three parameters: name, parameters and help text. Removing
@@ -719,31 +868,67 @@
         <hr>
         <h3 id="NETMSG_AUTH_CHALLANGE"><a href="#NETMSG_AUTH_CHALLANGE">NETMSG_AUTH_CHALLANGE</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 16 <br>
-            <strong>Response to:</strong> None <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Unused</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Unused</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>16</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>Unused</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>Unused</td>
+                </tr>
+            </table>
             Seems to be unused
         </p>
         <hr>
         <h3 id="NETMSG_AUTH_RESULT"><a href="#NETMSG_AUTH_RESULT">NETMSG_AUTH_RESULT</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 17 <br>
-            <strong>Response to:</strong> None <br>
-            <strong>Expected response:</strong> None <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Unused</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Unused</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>17</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>Unused</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>Unused</td>
+                </tr>
+            </table>
             Seems to be unused
         </p>
         <hr>
         <h3 id="NETMSG_READY"><a href="#NETMSG_READY">NETMSG_READY</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 18 <br>
-            <strong>Response to:</strong> <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> | <a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a> <br>
-            <strong>Expected response:</strong> <a href="#NETMSG_CON_READY">NETMSG_CON_READY</a> <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>18</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> | <a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td><a href="#NETMSG_CON_READY">NETMSG_CON_READY</a></td>
+                </tr>
+            </table>
             The client sends this to the server when it finished downloading the map
             or when it wants to skip the map download because it already has it in the downloadedmaps/ folder.
             The client uses the
@@ -938,87 +1123,195 @@
         <hr>
         <h3 id="NETMSG_RCON_AUTH"><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 22 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>22</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h3 id="NETMSG_REQUEST_MAP_DATA"><a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 23 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>23</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h3 id="NETMSG_AUTH_START"><a href="#NETMSG_AUTH_START">NETMSG_AUTH_START</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 24 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>24</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h3 id="NETMSG_AUTH_RESPONSE"><a href="#NETMSG_AUTH_RESPONSE">NETMSG_AUTH_RESPONSE</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 25 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>25</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h3 id="NETMSG_PING"><a href="#NETMSG_PING">NETMSG_PING</a></h3>
         <p>
-            <strong>Sender:</strong> Client, Server <br>
-            <strong>Recipient:</strong> Client, Server <br>
-            <strong>Message ID:</strong> 26 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>26</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></td>
+                </tr>
+            </table>
             sent by both
         </p>
         <hr>
         <h3 id="NETMSG_PING_REPLY"><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></h3>
         <p>
-            <strong>Sender:</strong> Client, Server <br>
-            <strong>Recipient:</strong> Client, Server <br>
-            <strong>Message ID:</strong> 27 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>27</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
             sent by both
         </p>
         <hr>
         <h3 id="NETMSG_ERROR"><a href="#NETMSG_ERROR">NETMSG_ERROR</a></h3>
         <p>
-            <strong>Sender:</strong> Client, Server <br>
-            <strong>Recipient:</strong> Client, Server <br>
-            <strong>Message ID:</strong> 28 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>28</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
             sent by both
         </p>
         <hr>
         <h3 id="NETMSG_MAPLIST_ENTRY_ADD"><a href="#NETMSG_MAPLIST_ENTRY_ADD">NETMSG_MAPLIST_ENTRY_ADD</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 29 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>29</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
             the msg id is planned to be changed in 0.8
         </p>
         <hr>
         <h3 id="NETMSG_MAPLIST_ENTRY_REM"><a href="#NETMSG_MAPLIST_ENTRY_REM">NETMSG_MAPLIST_ENTRY_REM</a></h3>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 30 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>30</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                </tr>
+            </table>
             the msg id is planned to be changed in 0.8
         </p>
     </div> <!-- content -->
