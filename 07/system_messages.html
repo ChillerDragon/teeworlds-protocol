@@ -193,6 +193,70 @@
                     </td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td>Map Name</td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Name of the map. The client will use this name and the crc to lookup
+                        if it already has the map in the downloadedmaps/ folder
+                    </td>
+                </tr>
+                <tr>
+                    <td>Crc</td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        The Cyclic redundancy check (Crc) hash is used to differentiate between different maps
+                        that share the same name.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Map size</td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        The size of the map in bytes.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Chunks per request</td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        The value is coming from the servers config option <code>sv_map_download_speed</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Chunk size</td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Since the map download chunks contain an unterminated raw data field
+                        the server is informing the client here how big that data field is.
+                        It is sending <code>MAP_CHUNK_SIZE</code> which is defined as
+                        <code>MAP_CHUNK_SIZE=NET_MAX_PAYLOAD-NET_MAX_CHUNKHEADERSIZE-4</code>
+                        which evalutes to <code>1384</code>.
+                        So on a unmodified vanilla server this will always be the fixed value
+                        <code>1384</code> but custom servers could change it and the client
+                        should technically support that.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Map sha256</td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        Since crc is a weak hashing alorithm this new field was added
+                        to avoid hash collisions and better differentiate maps with the same name.
+                        It was added as a security update since the crc collision was attackable.
+                        And one could trick clients into thinking they know a certain map already.
+                        <br>
+                        There is no length field for this raw field. Client and server use the fixed
+                        pre agreed size <code>SHA256_DIGEST_LENGTH</code> (32)
+                    </td>
+                </tr>
+            </table>
             Sent when client should switch map and on initial join.
             <br>
             Sent by the server in
