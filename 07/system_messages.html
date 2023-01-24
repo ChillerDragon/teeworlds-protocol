@@ -755,7 +755,11 @@
             <strong>Recipient:</strong> Server <br>
             <strong>Message ID:</strong> 19 <br>
             <strong>Response to:</strong> <a href="game_messages.html#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a> <br>
-            <strong>Expected response:</strong> TODO <br>
+            <strong>Expected response:</strong>
+            <a href="game_messages.html#NETMSGTYPE_SV_COMMANDINFO">NETMSGTYPE_SV_COMMANDINFO</a> & <br>
+            <a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a> & <br>
+            <a href="game_messages.html#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a> & <br>
+            <a href="game_messages.html#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a> <br>
             Sent by the client in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">
                 CClient::SendEnterGame()
