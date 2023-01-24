@@ -313,6 +313,24 @@
                     <th><strong>Expected response:</strong></th><td><a href="#NETMSG_READY">NETMSG_READY</a></td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="TODO"><a href="#TODO">Map data</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        This message contains individual pieces of the whole map file.
+                        They will be split in chunks of size <code>MAP_CHUNK_SIZE</code>
+                        usually <code>1384</code> or a custom value provided by the server
+                        in the <a href="#NETMSG_MAP_CHANGE_chunk_size">chunk size</a> field of
+                        the <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> message
+                    </td>
+                </tr>
+            </table>
             map transfer, contains a chunk of the map file <br>
             If the client did send a <a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a>.
             The server will respond with those map chunk messages in
