@@ -356,6 +356,25 @@
     }
                 </code>
             </pre>
+            The client then unpacks them in
+            <a href="">
+                CClient::ProcessServerPacket(CNetChunk *pPacket)
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_MAP_DATA)
+    {
+        if(!m_MapdownloadFileTemp)
+            return;
+
+        int Size = minimum(m_MapDownloadChunkSize, m_MapdownloadTotalsize-m_MapdownloadAmount);
+        const unsigned char *pData = Unpacker.GetRaw(Size);
+                </code>
+            </pre>
+            The client uses the <code>m_MapDownloadChunkSize</code>
+            as size of the raw field. This variable was set to the value
+            of the <a href="#NETMSG_MAP_CHANGE_chunk_size">Chunk Size</a> field from the
+            <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> message.
         </p>
         <hr>
         <h2 id="NETMSG_SERVERINFO"><a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a></h2>
