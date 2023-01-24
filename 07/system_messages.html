@@ -760,6 +760,33 @@
             <a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a> & <br>
             <a href="game_messages.html#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a> & <br>
             <a href="game_messages.html#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a> <br>
+
+
+            <table>
+                <tr>
+                    <td><strong>Sender:</strong></td><td>Client</td>
+                </tr>
+                <tr>
+                    <td><strong>Recipient:</strong></td><td>Server</td>
+                </tr>
+                <tr>
+                    <td><strong>Message ID:</strong></td><td>19</td>
+                </tr>
+                <tr>
+                    <td><strong>Response to:</strong></td><td><a href="game_messages.html#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a></td>
+                </tr>
+                <tr>
+                    <td><strong>Expected response:</strong></td>
+                    <td>
+                        <a href="game_messages.html#NETMSGTYPE_SV_COMMANDINFO">NETMSGTYPE_SV_COMMANDINFO</a> & <br>
+                        <a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a> & <br>
+                        <a href="game_messages.html#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a> & <br>
+                        <a href="game_messages.html#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a>
+                    </td>
+                </tr>
+            </table>
+
+
             Sent by the client in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">
                 CClient::SendEnterGame()
