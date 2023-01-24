@@ -320,7 +320,7 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="TODO"><a href="#TODO">Map data</a></td>
+                    <td id="NETMSG_MAP_DATA_map_data"><a href="#NETMSG_MAP_DATA_map_data">Map data</a></td>
                     <td><a href="fundamentals.html#raw_packing">Raw</a></td>
                     <td>
                         This message contains individual pieces of the whole map file.
@@ -409,12 +409,110 @@
                     <th><strong>Message ID:</strong></th><td>4</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></td>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> | <br>
+                        <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (<code>sv_name</code>, <code>password</code>, <code>sv_max_clients</code>)
+                    </td>
                 </tr>
                 <tr>
                     <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_game_version"><a href="#NETMSG_SERVERINFO_game_version">Game version</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_name"><a href="#NETMSG_SERVERINFO_name">Name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_hostname"><a href="#NETMSG_SERVERINFO_hostname">Hostname</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_map_name"><a href="#NETMSG_SERVERINFO_map_name">Map name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_game_type"><a href="#NETMSG_SERVERINFO_game_type">Game type</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_flags"><a href="#NETMSG_SERVERINFO_flags">Flags</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        There are only two possible flags
+                        <code>SERVERINFO_FLAG_PASSWORD</code>
+                        and
+                        <code>SERVERINFO_FLAG_TIMESCORE</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_skill_level"><a href="#NETMSG_SERVERINFO_skill_level">Skill level</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_player_count"><a href="#NETMSG_SERVERINFO_player_count">Player count</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_player_slots"><a href="#NETMSG_SERVERINFO_player_slots">Player slots</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_client_count"><a href="#NETMSG_SERVERINFO_client_count">Client count</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SERVERINFO_max_clients"><a href="#NETMSG_SERVERINFO_max_clients">Max clients</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            <strong>Note:</strong>
+            A similar structure with a few different fields is used for
+            the server info request the server list uses (prefixed with "inf3").
+            But this is only documenting the client server connection specific message
+            and ignoring everything that is master server related.
+            <br>
+            <br>
             The server sends the server info to every client that joins.
             After the client did send the <a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> message.
             Or if a server admin does change the server info it will be resend it to all clients.
@@ -1227,7 +1325,8 @@
                     <th><strong>Expected response:</strong></th>
                     <td>
                         [ <a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a> ] | <br>
-                        [ <a href="#NETMSG_RCON_AUTH_OFF">NETMSG_RCON_AUTH_OFF</a> ]
+                        [ <a href="#NETMSG_RCON_AUTH_OFF">NETMSG_RCON_AUTH_OFF</a> <code>logout</code> ] | <br>
+                        [ <a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a> <code>sv_name</code>, <code>password</code>, <code>sv_max_clients</code> ]
                     </td>
                 </tr>
             </table>
