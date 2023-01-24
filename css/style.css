@@ -62,8 +62,12 @@ footer {
 
 /* table */
 
-table, th, td {
-    border: 1px solid #c3c3c3;
+th, td {
+    border: 1px solid #c3c3c34d;
+}
+
+th {
+    background-color: #c3c3c30a;
 }
 
 /* fake table */

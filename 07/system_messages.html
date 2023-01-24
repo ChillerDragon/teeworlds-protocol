@@ -751,17 +751,6 @@
         <hr>
         <h3 id="NETMSG_ENTERGAME"><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 19 <br>
-            <strong>Response to:</strong> <a href="game_messages.html#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a> <br>
-            <strong>Expected response:</strong>
-            <a href="game_messages.html#NETMSGTYPE_SV_COMMANDINFO">NETMSGTYPE_SV_COMMANDINFO</a> & <br>
-            <a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a> & <br>
-            <a href="game_messages.html#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a> & <br>
-            <a href="game_messages.html#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a> <br>
-
-
             <table>
                 <tr>
                     <td><strong>Sender:</strong></td><td>Client</td>
@@ -827,21 +816,78 @@
         <hr>
         <h3 id="NETMSG_INPUT"><a href="#NETMSG_INPUT">NETMSG_INPUT</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 20 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
-            contains the inputdata from the client
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>20</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>Sent on changed user input</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td><a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a></td>
+                </tr>
+            </table>
+            Contains the inputdata from the client (hook/walk/fire/meta data and more).
         </p>
         <hr>
         <h3 id="NETMSG_RCON_CMD"><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a></h3>
         <p>
-            <strong>Sender:</strong> Client <br>
-            <strong>Recipient:</strong> Server <br>
-            <strong>Message ID:</strong> 21 <br>
-            <strong>Response to:</strong> TODO <br>
-            <strong>Expected response:</strong> TODO <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>21</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th><td>Sent when the client submits a rcon command</td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        [ <a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a> ] | <br>
+                        [ <a href="#NETMSG_RCON_AUTH_OFF">NETMSG_RCON_AUTH_OFF</a> ]
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td>Command</td>
+                    <td>String</td>
+                    <td>The rcon command like for example <code>status</code> or <code>shutdown</code></td>
+                </tr>
+            </table>
+            <br>
+            Sent by the client using the
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L378-L383">
+                CClient::Rcon(const char *pCmd)
+            </a>
+            method.
+            <pre class="code-snippet">
+                <code>
+    void CClient::Rcon(const char *pCmd)
+    {
+        CMsgPacker Msg(NETMSG_RCON_CMD, true);
+        Msg.AddString(pCmd, 256);
+        SendMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h3 id="NETMSG_RCON_AUTH"><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></h3>
