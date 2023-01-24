@@ -20,7 +20,7 @@
         <hr>
     </div>
     <div class="content">
-        <h2>List of snap items</h2>
+        <h1>List of snap items</h1>
         <p>
             Note there is also documentation about snapshots in <a href="https://github.com/heinrich5991/libtw2/blob/master/doc/snapshot.md">libtw2</a>.
             <br>
@@ -31,7 +31,7 @@
             All of those items are encoded as packed integers.
             The snapshot is build by the server and sent to the client.
  
-            <h3>Size list</h3>
+            <h2>Size list</h2>
 
             When it comes to byte layout that is sent over the network.
             There are two types of snap items:
@@ -54,7 +54,7 @@
                 </li>
             </ul>
  
-            <h3>Size list edge case</h3>
+            <h2>Size list edge case</h2>
     
             There are two snap items (obj_player_info_race and obj_game_data_race) that were added after the 0.7 release and their size
             is technically fixed and they should be included in the known size list.
@@ -64,7 +64,7 @@
             unknown to the client as long as the size is included so the client knows how many bytes
             to ignore.
         </p>
-        <h3>Known size table</h3>
+        <h2>Known size table</h2>
         <table>
             <tr>
                 <th>type_id</th>
@@ -377,7 +377,7 @@
                 <td>desc</td>
             </tr>
         </table>
-        <h3>Unknown size table (0.7.x extension)</h3>
+        <h2>Unknown size table (0.7.x extension)</h2>
         <table>
             <tr>
                 <th>type_id</th>

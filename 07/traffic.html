@@ -20,7 +20,7 @@
         <hr>
     </div>
     <div class="content">
-        <h2>Teeworlds 0.7 sample traffic</h2>
+        <h1>Teeworlds 0.7 sample traffic</h1>
         <p>
             If you are trying to build your own teeworlds compatible client or server. You have to understand what to send when.
             So this page is showing annotated raw data of a real conversation between client and server. I very much recommend using
@@ -71,7 +71,7 @@
         </p>
 
         <hr>
-        <h3 id="cl_srv_token"><a href="#cl_srv_token">[CLIENT->SERVER] Hello server this is my token</a></h3>
+        <h2 id="cl_srv_token"><a href="#cl_srv_token">[CLIENT->SERVER] Hello server this is my token</a></h2>
         <p>
             The first packet that is being sent is from the client to the server.
             The only data that is being transmitted is the <a href="fundamentals.html#tokens">security token</a> from the client.
@@ -91,7 +91,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_token"><a href="#srv_cl_token">[SERVER->CLIENT] Hello client this my token</a></h3>
+        <h2 id="srv_cl_token"><a href="#srv_cl_token">[SERVER->CLIENT] Hello client this my token</a></h2>
         <p>
             As a response to the clients hello the server answers with its <a href="fundamentals.html#tokens">token</a>.
             So after the packet header containing the clients token. The only data that is being sent.
@@ -108,7 +108,7 @@
         </pre>
 
         <hr>
-        <h3 id="cl_srv_connect"><a href="#cl_srv_connect">[CLIENT->SERVER] Connect</a></h3>
+        <h2 id="cl_srv_connect"><a href="#cl_srv_connect">[CLIENT->SERVER] Connect</a></h2>
         <p>
             After server and client exchanged <a href="fundamentals.html#tokens">tokens</a> the client will once again send its token.
             This time setting the Control Message to <a href="ctrl_messages.html#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a> to initiate the connection.
@@ -126,7 +126,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_accept"><a href="#srv_cl_accept">[SERVER->CLIENT] Accept connection</a></h3>
+        <h2 id="srv_cl_accept"><a href="#srv_cl_accept">[SERVER->CLIENT] Accept connection</a></h2>
         <p>
             If this packet is sent the server log will show this message.
             <br>
@@ -146,7 +146,7 @@
         </pre>
 
         <hr>
-        <h3 id="cl_srv_info"><a href="#cl_srv_info">[CLIENT->SERVER] Version and password</a></h3>
+        <h2 id="cl_srv_info"><a href="#cl_srv_info">[CLIENT->SERVER] Version and password</a></h2>
         <p>
             Now the client will inform the server about its version.
             This packet is defined in
@@ -184,7 +184,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_mapinfo"><a href="#srv_cl_mapinfo">[SERVER->CLIENT] Map info</a></h3>
+        <h2 id="srv_cl_mapinfo"><a href="#srv_cl_mapinfo">[SERVER->CLIENT] Map info</a></h2>
         <p>
             Now the server is informing the client about the map. This is NOT the mapfile it self. Just its metadata.
             To see what exactly is being sent checkout the code of <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">CServer::SendMap</a>
@@ -221,7 +221,7 @@
         </p>
 
         <hr>
-        <h3 id="cl_srv_ready"><a href="#cl_srv_ready">[CLIENT->SERVER] Ready</a></h3>
+        <h2 id="cl_srv_ready"><a href="#cl_srv_ready">[CLIENT->SERVER] Ready</a></h2>
         <p>
             If the client already has the map or finished the download process it will respond with the ready packet.
             The map download packets are yet to be documented.
@@ -264,7 +264,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_motd_sett_rdy"><a href="#srv_cl_motd_sett_rdy">[SERVER->CLIENT] Motd, Server Settings, Ready</a></h3>
+        <h2 id="srv_cl_motd_sett_rdy"><a href="#srv_cl_motd_sett_rdy">[SERVER->CLIENT] Motd, Server Settings, Ready</a></h2>
         <p>
             Now the server sends the first packet with a compressed payload. It is using huffman compression to do so.
             The payload is 3 chunks:
@@ -293,7 +293,7 @@
         </pre>
 
         <hr>
-        <h3 id="cl_srv_startinfo"><a href="#cl_srv_startinfo">[CLIENT->SERVER] Start info (skin data)</a></h3>
+        <h2 id="cl_srv_startinfo"><a href="#cl_srv_startinfo">[CLIENT->SERVER] Start info (skin data)</a></h2>
         <p>
             Now the client calls <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/gameclient.cpp#L1878-L1891">CGameClient::SendStartInfo()</a>
             which sends all the needed infos to render a tee in the world: Name, Clan, Country, Skinparts
@@ -320,7 +320,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_vote_tune_rdy"><a href="#srv_cl_vote_tune_rdy">[SERVER->CLIENT] Vote Clear, Tune Params, Ready To Enter</a></h3>
+        <h2 id="srv_cl_vote_tune_rdy"><a href="#srv_cl_vote_tune_rdy">[SERVER->CLIENT] Vote Clear, Tune Params, Ready To Enter</a></h2>
             This packet is usually compressed too.
             The payload is 3 chunks:
             <ul>
@@ -347,7 +347,7 @@
         </pre>
 
         <hr>
-        <h3 id="cl_srv_entergame"><a href="#cl_srv_entergame">[CLIENT->SERVER] Enter game</a></h3>
+        <h2 id="cl_srv_entergame"><a href="#cl_srv_entergame">[CLIENT->SERVER] Enter game</a></h2>
         <p>
             Now the client sends <code>NETMSG_ENTERGAME (19)</code> using <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">CClient::SendEnterGame()</a>
             Keep in mind those net messages are packed and mixed with the system flag. So hex <code>0x27</code>
@@ -371,7 +371,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_serverinfo"><a href="#srv_cl_serverinfo">[SERVER->CLIENT] Server info</a></h3>
+        <h2 id="srv_cl_serverinfo"><a href="#srv_cl_serverinfo">[SERVER->CLIENT] Server info</a></h2>
         <p>
             The server sends version, map name, gametype, playerlist and more prepared in the method
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L1091-L1149">
@@ -394,7 +394,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_game_info_client_info_snap"><a href="#srv_cl_game_info_client_info_snap">[SERVER->CLIENT] Game Info, Client Info, Snap Single</a></h3>
+        <h2 id="srv_cl_game_info_client_info_snap"><a href="#srv_cl_game_info_client_info_snap">[SERVER->CLIENT] Game Info, Client Info, Snap Single</a></h2>
         <p>
             The payload is 3 chunks:
             <ul>
@@ -444,7 +444,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_snap_single"><a href="#srv_cl_snap_single">[SERVER->CLIENT] Snap Single</a></h3>
+        <h2 id="srv_cl_snap_single"><a href="#srv_cl_snap_single">[SERVER->CLIENT] Snap Single</a></h2>
         <p>
             If nothing further happens. Nobody presses any button, reconnects or sends a chat message.
             The server will keep sending this snap single packet. If the client then sends a packet and
@@ -492,7 +492,7 @@
         </pre>
 
         <hr>
-        <h3 id="cl_srv_input"><a href="#cl_srv_input">[CLIENT->SERVER] Client Input (hook/move/fire/jump)</a></h3>
+        <h2 id="cl_srv_input"><a href="#cl_srv_input">[CLIENT->SERVER] Client Input (hook/move/fire/jump)</a></h2>
         <p>
             Also the client uses huffman compression to send its inputs. It makes a call to
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L395-L432">
@@ -556,7 +556,7 @@
         </pre>
 
         <hr>
-        <h3 id="srv_cl_input_timing_snap_empty"><a href="#srv_cl_input_timing_snap_empty">[SERVER->CLIENT] Input Timing, Snap Empty</a></h3>
+        <h2 id="srv_cl_input_timing_snap_empty"><a href="#srv_cl_input_timing_snap_empty">[SERVER->CLIENT] Input Timing, Snap Empty</a></h2>
         <p>
             After the client sends some input the server will respond with input timing. Which is usually bundled with a snap chunk.
             In this case there is no new snap data so the snap chunk is of type SNAP_EMPTY.
@@ -578,8 +578,8 @@
         </pre>
 
         <hr>
-        <h3 id="cl_srv_disconnect"><a href="#cl_srv_disconnect">[CLIENT->SERVER] Client says bye</a></h3>
-        <h3 id="srv_cl_disconnect"><a href="#srv_cl_disconnect">[SERVER->CLIENT] Server says bye</a></h3>
+        <h2 id="cl_srv_disconnect"><a href="#cl_srv_disconnect">[CLIENT->SERVER] Client says bye</a></h2>
+        <h2 id="srv_cl_disconnect"><a href="#srv_cl_disconnect">[SERVER->CLIENT] Server says bye</a></h2>
         <p>
             If a client is properly shutdown or the user presses the disconnect button.
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L209-L231">

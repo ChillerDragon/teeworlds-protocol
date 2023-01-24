@@ -20,12 +20,12 @@
         <hr>
     </div>
     <div class="content">
-        <h2>Fundamentals</h2>
+        <h1>Fundamentals</h1>
         <p>
             There are a few base concepts that you need to understand to fully grasp the whole network protocol from scratch.
         </p>
         <hr>
-        <h3 id="tokens">Tokens</h3>
+        <h2 id="tokens">Tokens</h2>
         <p>
             Every game related packet (ignoring server info for now) has a packet header with a token field.
             From
@@ -95,7 +95,7 @@
             tokens are silently dropped.
         </p>
         <hr>
-        <h3 id="sequence_numbers"><a href="#sequence_numbers">Sequence numbers</a></h3>
+        <h2 id="sequence_numbers"><a href="#sequence_numbers">Sequence numbers</a></h2>
         <p>
             Every chunk header can contain a vital flag. Note that one teeworlds packet can
             contain multiple chunks. If said vital flag is set to true the receiving party
@@ -133,7 +133,7 @@
             </a>
         </p>
         <hr>
-        <h3 id="int_packing"><a href="#int_packing">Int packing</a></h3>
+        <h2 id="int_packing"><a href="#int_packing">Int packing</a></h2>
         <p>
             Note there is also documentation on ints in
             <a href="https://github.com/heinrich5991/libtw2/blob/bb63d4d6344a2330ba22d10d638b2cf0d8959544/doc/int.md">
@@ -210,7 +210,7 @@
             which soley focusses on int packing.
         </p>
         <hr>
-        <h3 id="string_packing"><a href="#string_packing">String packing</a></h3>
+        <h2 id="string_packing"><a href="#string_packing">String packing</a></h2>
         <p>
             When strings are sent via the network. They are sent as plain C strings.
             They do not contain a length. And have to be null terminated.
@@ -248,7 +248,7 @@
             </ul>
         </p>
         <hr>
-        <h3 id="raw_packing"><a href="#raw_packing">Raw packing</a></h3>
+        <h2 id="raw_packing"><a href="#raw_packing">Raw packing</a></h2>
         <p>
             If you want to send raw bytes over the network. The teeworlds protocol got you covered.
             <br>
@@ -270,7 +270,7 @@
             This usually happens by a leading <a href="#int_packing">integer field</a> holding the size.
         </p>
         <hr>
-        <h3 id="huffman"><a href="#huffman">Huffman compression</a></h3>
+        <h2 id="huffman"><a href="#huffman">Huffman compression</a></h2>
         <p>
             Packets can be compressed using huffman compression.
             The teeworlds packet header is never compressed only its payload.
