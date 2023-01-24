@@ -70,6 +70,45 @@
                     <th><strong>Expected response:</strong></th><td><a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a></td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td>Net Version</td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        The official name is "NetVersion" but a more fitting name in my opinion would be "Protocol Version".
+                        <br>
+                        The variable <code>GAME_NETVERSION</code> always expands to <code>"0.7 802f1be60a05665f"</code><br>
+                        If the server gets another string it actually rejects the connection. This is what prohibits
+                        0.6 clients to join 0.7 servers.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Password</td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        If the config option <code>password</code> is set on the server. This password has to match to join the server.
+                        The vanilla 0.7 client always sends the last used passwords to all servers no matter if they expect a password or not.
+                        And servers simply ignore this field if no password is expected.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Client Version</td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Another version field which does not have to match the servers
+                        version to establish a connection. The first net version field makes sure
+                        that client and server use the same major protocol and are compatible.
+                        This "Client Version" field then informs the server about the clients minor version.
+                        The server can use it to activate some non protocol breaking features
+                        that were introduced in minor releases.
+                    </td>
+                </tr>
+            </table>
             <br>
             Sent by the client in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L340-L353">
@@ -1099,7 +1138,7 @@
                 </tr>
                 <tr>
                     <td>Command</td>
-                    <td>String</td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>The rcon command like for example <code>status</code> or <code>shutdown</code></td>
                 </tr>
             </table>
