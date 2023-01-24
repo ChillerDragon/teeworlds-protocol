@@ -580,7 +580,16 @@
                     <th><strong>Expected response:</strong></th><td><a href="game_messages.html#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a></td>
                 </tr>
             </table>
-
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
             The server sends this to the client when the connection is ready.
             It also tells the client to now send the startinfo.
             <br>
@@ -606,7 +615,7 @@
             bool ConnectAsSpec = m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC;
             m_aClients[ClientID].m_State = CClient::STATE_READY;
             GameServer()->OnClientConnected(ClientID, ConnectAsSpec);
-            SendConnectionReady(ClientID);
+            <a href="https://github.com/teeworlds/teeworlds/blob/master/src/engine/server/server.cpp#L721-L725">SendConnectionReady(ClientID);</a>
         }
     }
                 </code>
@@ -616,7 +625,7 @@
                 <code>
     else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_CON_READY)
     {
-        GameClient()->OnConnected();
+        <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/gameclient.cpp#L453-L468">GameClient()->OnConnected();</a>
     }
                 </code>
             </pre>
