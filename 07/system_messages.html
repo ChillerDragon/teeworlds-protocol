@@ -866,6 +866,16 @@
                     <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
             If the client did send the correct rcon admin or mod password.
             The server sends this to inform the client that the rcon console is now enabled.
             <pre class="code-snippet">
@@ -915,6 +925,16 @@
                 </tr>
                 <tr>
                     <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
             rcon authentication disabled
@@ -980,6 +1000,18 @@
                     <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_LINE_cmd"><a href="#NETMSG_RCON_LINE_cmd">Command</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>Command or config variable with parameters</td>
+                </tr>
+            </table>
             Line that should be printed to the remote console.
             <br>
             All messages that show up in the clients rcon console are coming from this message.
@@ -1030,6 +1062,28 @@
                 </tr>
                 <tr>
                     <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_ADD_name"><a href="#NETMSG_RCON_CMD_ADD_name">Name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_ADD_help"><a href="#NETMSG_RCON_CMD_ADD_help">Help</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_ADD_params"><a href="#NETMSG_RCON_CMD_ADD_params">Params</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
                 </tr>
             </table>
             The server will send his list of rcon commands with parameters and help text
@@ -1093,6 +1147,18 @@
                     <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_REM_name"><a href="#NETMSG_RCON_CMD_REM_name">Name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>Name of command to be deleted</td>
+                </tr>
+            </table>
             This is the opposite as <a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a>.
             And is used by the server to remove commands from the clients known command list.
             While adding takes three parameters: name, parameters and help text. Removing
@@ -1154,7 +1220,17 @@
                     <th><strong>Expected response:</strong></th><td>Unused</td>
                 </tr>
             </table>
-            Seems to be unused
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">Unused</td>
+                </tr>
+            </table>
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_RESULT"><a href="#NETMSG_AUTH_RESULT">NETMSG_AUTH_RESULT</a></h2>
@@ -1176,7 +1252,17 @@
                     <th><strong>Expected response:</strong></th><td>Unused</td>
                 </tr>
             </table>
-            Seems to be unused
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">Unused</td>
+                </tr>
+            </table>
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_READY"><a href="#NETMSG_READY">NETMSG_READY</a></h2>
@@ -1198,6 +1284,17 @@
                     <th><strong>Expected response:</strong></th><td><a href="#NETMSG_CON_READY">NETMSG_CON_READY</a></td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            This message ID is unused
             The client sends this to the server when it finished downloading the map
             or when it wants to skip the map download because it already has it in the downloadedmaps/ folder.
             The client uses the
@@ -1276,6 +1373,17 @@
                     </td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            This message ID is unused
             Sent by the client in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">
                 CClient::SendEnterGame()
@@ -1333,7 +1441,245 @@
                     <th><strong>Expected response:</strong></th><td><a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a></td>
                 </tr>
             </table>
-            Contains the inputdata from the client (hook/walk/fire/meta data and more).
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_ack_game_tick"><a href="#NETMSG_INPUT_ack_game_tick">Ack Game Tick</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_pred_tick"><a href="#NETMSG_INPUT_pred_tick">Prediction Tick</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_size"><a href="#NETMSG_INPUT_size">Size</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Size in bytes of the <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                        The client uses <code>sizeof(CNetObj_PlayerInput)</code> to calculate this size.
+                        Since all fields of the struct are integers and integers are expected to be 4 bytes in C++
+                        this size is 4 times bigger than the amount of integers that are being sent.
+                        So until someone changes the layout of the <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a>
+                        struct
+                        <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/datasrc/network.py#L88-L104">here</a>
+                        this value will always be <code>40</code> and the
+                        <a href="#NETMSG_INPUT_data">data</a> field will be in the message
+                        <code>10</code> times.
+                    </td>
+                </tr>
+                <tr id="NETMSG_INPUT_data">
+                    <td id="NETMSG_INPUT_data_m_Direction"><a href="#NETMSG_INPUT_data_m_Direction">[data] Direction</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Direction">m_Direction</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        Indicating the direction the tee wants to walk in.
+                        <ul>
+                            <li>-1 is left</li>
+                            <li>1 is right</li>
+                            <li>0 is stop</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_TargetX"><a href="#NETMSG_INPUT_data_m_TargetX">[data] TargetX</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_TargetX">m_TargetX</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        X coordinate of the tees cursor. The coordinate is not absolute in the world  but relative to the tee.
+                        The tee being the origin 0,0 and aiming left would be a negative x coordinate
+                        and aiming right would be a positive x coordinate.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_TargetY"><a href="#NETMSG_INPUT_data_m_TargetY">[data] TargetY</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_TargetY">m_TargetY</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        Y coordinate of the tees cursor. The coordinate is not absolute in the world but relative to the tee.
+                        The tee being the origin 0,0 and aiming up would be a negative y coordinate
+                        and aiming down would be a positive y coordinate.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_Jump"><a href="#NETMSG_INPUT_data_m_Jump">[data] Jump</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Jump">m_Jump</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        <ul>
+                            <li>1 to jump while on ground</li>
+                            <li>1 to double jump while in air</li>
+                            <li>0 to stop holding jump</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_Fire"><a href="#NETMSG_INPUT_data_m_Fire">[data] Fire</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Fire">m_Fire</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_Hook"><a href="#NETMSG_INPUT_data_m_Hook">[data] Hook</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Hook">m_Hook</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                        <ul>
+                            <li>1 to hook</li>
+                            <li>0 to stop hooking</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_PlayerFlags"><a href="#NETMSG_INPUT_data_m_PlayerFlags">[data] PlayerFlags</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_PlayerFlags">m_PlayerFlags</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_WantedWeapon"><a href="#NETMSG_INPUT_data_m_WantedWeapon">[data] WantedWeapon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_WantedWeapon">m_WantedWeapon</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_NextWeapon"><a href="#NETMSG_INPUT_data_m_NextWeapon">[data] NextWeapon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_NextWeapon">m_NextWeapon</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_PrevWeapon"><a href="#NETMSG_INPUT_data_m_PrevWeapon">[data] PrevWeapon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_PrevWeapon">m_PrevWeapon</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_ping_correction"><a href="#NETMSG_INPUT_ping_correction">Ping Correction</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            Contains the input data from the client (hook/walk/fire/meta data and more).
+            <h3 id="NETMSG_INPUT_when_is_sent"><a href="#NETMSG_INPUT_when_is_sent">When is NETMSG_INPUT sent</a></h3>
+            The server assumes the input is held if no input message updates the state.
+            So the official client also keeps the network bandwith minimal and does not
+            resend this message if a key is held.
+            <br>
+            But if the client is active and in game it sends inputs at least in 10hz intervals
+            <pre class="code-snippet">
+                <code>
+    // send at at least 10hz
+    if(time_get() > s_LastSendTime + time_freq()/25)
+        Send = true;
+                </code>
+            </pre>
+            While the client is in the menu. Empty inputs will be send every second.
+            <pre class="code-snippet">
+                <code>
+    // we freeze the input if chat or menu is activated
+    if(m_pClient->m_pChat->IsActive() || m_pClient->m_pMenus->IsActive())
+    {
+        OnReset();
+
+        mem_copy(pData, &m_InputData, sizeof(m_InputData));
+
+        // send once a second just to be sure
+        if(time_get() > s_LastSendTime + time_freq())
+            Send = true;
+    }
+                </code>
+            </pre>
+            <h3 id="NETMSG_INPUT_what_is_sent"><a href="#NETMSG_INPUT_what_is_sent">What is sent in NETMSG_INPUT</a></h3>
+            The message always contains 4 simple Integer fields:
+            <a href="#NETMSG_INPUT_ack_game_tick">Ack Game Tick</a>,
+            <a href="#NETMSG_INPUT_pred_tick">Prediction Tick</a>,
+            <a href="#NETMSG_INPUT_size">Size</a>,
+            <a href="#NETMSG_INPUT_ping_correction">Ping correction</a>.
+            <br>
+            And then there is <a href="#NETMSG_INPUT_size">Size / 4</a> amount of
+            <a href="#NETMSG_INPUT_data">data</a> fields
+            between the <a href="#NETMSG_INPUT_size">Size</a> field and the <a href="#NETMSG_INPUT_ping_correction">Ping correction</a>
+            field. The official client is using a <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct to store
+            the users key presses. All fields are integers so every field in the struct will become one
+            <a href="#NETMSG_INPUT_data">data</a> field in the NETMSG_INPUT message.
+            <pre id="CNetObj_PlayerInput" class="code-snippet">
+                <code>
+    struct <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/datasrc/network.py#L88-L104">CNetObj_PlayerInput</a>
+    {
+        int <a id="NETMSG_INPUT_m_Direction" href="#NETMSG_INPUT_m_Direction">m_Direction</a>;
+        int <a id="NETMSG_INPUT_m_TargetX" href="#NETMSG_INPUT_m_TargetX">m_TargetX</a>;
+        int <a id="NETMSG_INPUT_m_TargetY" href="#NETMSG_INPUT_m_TargetY">m_TargetY</a>;
+        int <a id="NETMSG_INPUT_m_Jump" href="#NETMSG_INPUT_m_Jump">m_Jump</a>;
+        int <a id="NETMSG_INPUT_m_Fire" href="#NETMSG_INPUT_m_Fire">m_Fire</a>;
+        int <a id="NETMSG_INPUT_m_Hook" href="#NETMSG_INPUT_m_Hook">m_Hook</a>;
+        int <a id="NETMSG_INPUT_m_PlayerFlags" href="#NETMSG_INPUT_m_PlayerFlags">m_PlayerFlags</a>;
+        int <a id="NETMSG_INPUT_m_WantedWeapon" href="#NETMSG_INPUT_m_WantedWeapon">m_WantedWeapon</a>;
+        int <a id="NETMSG_INPUT_m_NextWeapon" href="#NETMSG_INPUT_m_NextWeapon">m_NextWeapon</a>;
+        int <a id="NETMSG_INPUT_m_PrevWeapon" href="#NETMSG_INPUT_m_PrevWeapon">m_PrevWeapon</a>;
+    };
+                </code>
+            </pre>
+            <h3 id="NETMSG_INPUT_what_is_reply"><a href="#NETMSG_INPUT_what_is_reply">What does the server reply to NETMSG_INPUT</a></h3>
+            The server unpacks this message in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L924-L951">
+                CServer::ProcessClientPacket(CNetChunk *pPacket)
+            </a>
+            and replys with <a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_INPUT)
+    {
+        CClient::CInput *pInput;
+        int64 TagTime;
+        int64 Now = time_get();
+
+        m_aClients[ClientID].m_LastAckedSnapshot = Unpacker.GetInt();
+        int IntendedTick = Unpacker.GetInt();
+        int Size = Unpacker.GetInt();
+
+        // check for errors
+        if(Unpacker.Error() || Size/4 > MAX_INPUT_SIZE)
+            return;
+
+        if(m_aClients[ClientID].m_LastAckedSnapshot > 0)
+            m_aClients[ClientID].m_SnapRate = CClient::SNAPRATE_FULL;
+
+        // add message to report the input timing
+        // skip packets that are old
+        if(IntendedTick > m_aClients[ClientID].m_LastInputTick)
+        {
+            int TimeLeft = ((TickStartTime(IntendedTick)-Now)*1000) / time_freq();
+
+            CMsgPacker Msg(NETMSG_INPUTTIMING, true);
+            Msg.AddInt(IntendedTick);
+            Msg.AddInt(TimeLeft);
+            SendMsg(&Msg, 0, ClientID);
+        }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_RCON_CMD"><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a></h2>
