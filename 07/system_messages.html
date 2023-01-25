@@ -1750,12 +1750,49 @@
                     <th><strong>Message ID:</strong></th><td>22</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th><td>Sent on user input (password attempt in console)</td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        <a href="#NETMSG_RCON_AUTH_ON">NETMSG_RCON_AUTH_ON</a> | <br>
+                        <a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a> (wrong password/no password set) | <br>
+                        <a href="ctrl_messages.html#NET_CTRLMSG_CLOSE">NET_CTRLMSG_CLOSE</a> (Too many remote console authentication tries)
+                    </td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_AUTH_password"><a href="#NETMSG_RCON_AUTH_password">Password</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        The password has to match either
+                        <code>sv_rcon_password</code>
+                        or
+                        <code>sv_rcon_mod_password</code>
+                        to successfully authenticate. <br>
+                        If both are set to an empty string <code>""</code>
+                        users can not authenticate.
+                    </td>
+                </tr>
+            </table>
+            <h3>No encryption</h3>
+            Since the field type is a normal <a href="fundamentals.html#string_packing">String</a>
+            the password is sent as plaintext. Which shows up as a fully readable string
+            when looking at the network traffic.
+            <h3>Weak bruteforce protection</h3>
+            Clients can send this packet up to <code>sv_rcon_max_tries</code> (default 3) times.
+            But it is tracked per client not per ip. So one user with one ip
+            can attempt (<code>sv_max_clients_per_ip</code> x <code>sv_rcon_max_tries</code>)
+            passwords without reconnecting. Which is <code>4 x 3 = 12</code> by default.
+            Reconnecting then resets the whole client data including the rcon attempt counter
+            so you get <code>sv_rcon_max_tries</code> again. Note that reconnecting takes some
+            time and the server kicks ips that reconnect too fast for 1 minute.
         </p>
         <hr>
         <h2 id="NETMSG_REQUEST_MAP_DATA"><a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a></h2>
