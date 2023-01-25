@@ -98,7 +98,7 @@
         <hr>
         <h2 id="sequence_numbers"><a href="#sequence_numbers">Sequence numbers</a></h2>
         <p>
-            Every chunk header can contain a vital flag. Note that one teeworlds packet can
+            Every chunk header can contain a vital flag (MSGFLAG_VITAL). Note that one teeworlds packet can
             contain multiple chunks. If said vital flag is set to true the receiving party
             has to increment a counter. This counter is called the sequence or acknowledge number.
             Client and server will send the amount of vital chunks they received as sequence number
