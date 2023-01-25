@@ -1808,76 +1808,128 @@
                     <th><strong>Message ID:</strong></th><td>23</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> (download start) | <br>
+                        <a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a> (continue download)
+                    </td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td><a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a></td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            After the server did send <code>sv_map_download_speed</code> (default 8)
+            <a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a> chunks the client has to request
+            more by sending this message.
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_START"><a href="#NETMSG_AUTH_START">NETMSG_AUTH_START</a></h2>
         <p>
             <table>
                 <tr>
-                    <th><strong>Sender:</strong></th><td>Client</td>
+                    <th><strong>Sender:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
-                    <th><strong>Recipient:</strong></th><td>Server</td>
+                    <th><strong>Recipient:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
                     <th><strong>Message ID:</strong></th><td>24</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td>Unused</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            This message ID is unused 
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_RESPONSE"><a href="#NETMSG_AUTH_RESPONSE">NETMSG_AUTH_RESPONSE</a></h2>
         <p>
             <table>
                 <tr>
-                    <th><strong>Sender:</strong></th><td>Client</td>
+                    <th><strong>Sender:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
-                    <th><strong>Recipient:</strong></th><td>Server</td>
+                    <th><strong>Recipient:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
                     <th><strong>Message ID:</strong></th><td>25</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td>Unused</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            This message ID is unused 
         </p>
         <hr>
         <h2 id="NETMSG_PING"><a href="#NETMSG_PING">NETMSG_PING</a></h2>
         <p>
             <table>
                 <tr>
-                    <th><strong>Sender:</strong></th><td>Client <br> Server</td>
+                    <th><strong>Sender:</strong></th><td>Client</td>
                 </tr>
                 <tr>
-                    <th><strong>Recipient:</strong></th><td>Client <br> Server</td>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
                 </tr>
                 <tr>
                     <th><strong>Message ID:</strong></th><td>26</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th><td>Triggerd client side by the <code>ping</code> console command</td>
                 </tr>
                 <tr>
                     <th><strong>Expected response:</strong></th><td><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></td>
                 </tr>
             </table>
-            sent by both
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            Sent by the client to the server to measure the time until the
+            <a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a>.
+            One of the most optional messages in the protocol only used by clients that are
+            interested in the delay between server and client.
         </p>
         <hr>
         <h2 id="NETMSG_PING_REPLY"><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></h2>
@@ -1887,41 +1939,62 @@
                     <th><strong>Sender:</strong></th><td>Client <br> Server</td>
                 </tr>
                 <tr>
-                    <th><strong>Recipient:</strong></th><td>Client <br> Server</td>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
                 </tr>
                 <tr>
                     <th><strong>Message ID:</strong></th><td>27</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></td>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_PING">NETMSG_PING</a></td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
-            sent by both
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            Even though the client technically replys to <a href="#NETMSG_PING">NETMSG_PING</a>
+            with this message it practically never does since the server never sends <a href="#NETMSG_PING">NETMSG_PING</a>.
         </p>
         <hr>
         <h2 id="NETMSG_ERROR"><a href="#NETMSG_ERROR">NETMSG_ERROR</a></h2>
         <p>
             <table>
                 <tr>
-                    <th><strong>Sender:</strong></th><td>Client <br> Server</td>
+                    <th><strong>Sender:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
-                    <th><strong>Recipient:</strong></th><td>Client <br> Server</td>
+                    <th><strong>Recipient:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
                     <th><strong>Message ID:</strong></th><td>28</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td>Unused</td>
                 </tr>
             </table>
-            sent by both
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_MAPLIST_ENTRY_ADD"><a href="#NETMSG_MAPLIST_ENTRY_ADD">NETMSG_MAPLIST_ENTRY_ADD</a></h2>
@@ -1937,20 +2010,40 @@
                     <th><strong>Message ID:</strong></th><td>29</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th><td><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAPLIST_ENTRY_ADD_map_name"><a href="#NETMSG_MAPLIST_ENTRY_ADD_map_name">Map name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>Name of the map that should be added to the clients autocompletion list</td>
+                </tr>
+            </table>
+            <strong>Note:</strong>
             the msg id is planned to be changed in 0.8
+            <br>
+            <br>
+            Similar to the rcon command autocompletion in the clients remote console (<a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a>).
+            This sends autocompletion for the argument of the rcon commands <code>sv_map</code> and <code>change_map</code>.
+            The server sends every map entry from its map folder to the clients that authenticated in the rcon console.
+            Admininistrators and moderators can then type <code>sv_map</code> into the remote console
+            and see/autocomplete the list of possible maps.
         </p>
         <hr>
         <h2 id="NETMSG_MAPLIST_ENTRY_REM"><a href="#NETMSG_MAPLIST_ENTRY_REM">NETMSG_MAPLIST_ENTRY_REM</a></h2>
         <p>
             <table>
                 <tr>
-                    <th><strong>Sender:</strong></th><td>Server</td>
+                    <th><strong>Sender:</strong></th><td>[Server]</td>
                 </tr>
                 <tr>
                     <th><strong>Recipient:</strong></th><td>Client</td>
@@ -1959,13 +2052,32 @@
                     <th><strong>Message ID:</strong></th><td>30</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th><td>Unused</td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAPLIST_ENTRY_REM_map_name"><a href="#NETMSG_MAPLIST_ENTRY_REM_map_name">Map name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>Name of the map that should be removed from the clients autocompletion list</td>
+                </tr>
+            </table>
+            <strong>Note:</strong>
             the msg id is planned to be changed in 0.8
+            <br>
+            <br>
+            Counter part to <a href="#NETMSG_MAPLIST_ENTRY_ADD">NETMSG_MAPLIST_ENTRY_ADD</a>.
+            Removing map names from the autocompletion list.
+            There is code in the server that can send this message and there is code in the client
+            that removes the entry. But it is never run. So this message is technically unused (for now).
         </p>
     </div> <!-- content -->
     <footer>
