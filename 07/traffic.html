@@ -268,12 +268,14 @@
         <h2 id="srv_cl_motd_sett_rdy"><a href="#srv_cl_motd_sett_rdy">[SERVER->CLIENT] Motd, Server Settings, Ready</a></h2>
         <p>
             Now the server sends the first packet with a compressed payload. It is using huffman compression to do so.
-            The payload is 3 chunks:
+            The payload are 3 chunks:
             <ul>
                 <li><a href="game_messages.html#NETMSGTYPE_SV_MOTD">NETMSGTYPE_SV_MOTD</a> - the message of the day</li>
                 <li><a href="game_messages.html#NETMSGTYPE_SV_SERVERSETTINGS">NETMSGTYPE_SV_SERVERSETTINGS</a> - custom server settings</li>
                 <li><a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a> - telling the client he can send his startinfo</li>
             </ul>
+            Read more about <a href="fundamentals.html#flushing">chunk queueing and flushing in the fundamentals</a>
+            if you want to understand why one packet contains 3 messages.
         </p>
         <pre class="code-snippet">
             <code>
@@ -323,7 +325,7 @@
         <hr>
         <h2 id="srv_cl_vote_tune_rdy"><a href="#srv_cl_vote_tune_rdy">[SERVER->CLIENT] Vote Clear, Tune Params, Ready To Enter</a></h2>
             This packet is usually compressed too.
-            The payload is 3 chunks:
+            The payload are 3 chunks:
             <ul>
                 <li><a href="game_messages.html#NETMSGTYPE_SV_VOTECLEAROPTIONS">NETMSGTYPE_SV_VOTECLEAROPTIONS</a> - TODO</li>
                 <li><a href="game_messages.html#NETMSGTYPE_SV_TUNEPARAMS">NETMSGTYPE_SV_TUNEPARAMS</a> - TODO</li>
@@ -397,7 +399,7 @@
         <hr>
         <h2 id="srv_cl_game_info_client_info_snap"><a href="#srv_cl_game_info_client_info_snap">[SERVER->CLIENT] Game Info, Client Info, Snap Single</a></h2>
         <p>
-            The payload is 3 chunks:
+            The payload are 3 chunks:
             <ul>
                 <li><a href="game_messages.html#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a> - score limit, time limit and match</li>
                 <li><a href="game_messages.html#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a> - all players name, skin and other infos</li>

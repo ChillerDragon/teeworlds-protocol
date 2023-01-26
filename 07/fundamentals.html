@@ -134,6 +134,155 @@
             </a>
         </p>
         <hr>
+        <h2 id="flushing"><a href="#flushing">Message queueing, chunks and flushing</a></h2>
+        <a href="ctrl_messages.html">Control messages</a> are sent immediately.
+        All ctrl messages go through the <code>SendControlMsg()</code> method which calls
+        <code>SendPacket()</code> directly. In <code>SendPacket()</code> the teeworlds packet header
+        gets added and the packet is sent over the network. Note that control messages always have
+        0 chunks because of the <code>Construct.m_NumChunks = 0;</code> line
+        <pre class="code-snippet">
+            <code>
+    void CNetBase::SendControlMsg(const NETADDR *pAddr, TOKEN Token, int Ack, int ControlMsg, const void *pExtra, int ExtraSize)
+    {
+        CNetPacketConstruct Construct;
+        Construct.m_Token = Token;
+        Construct.m_Flags = NET_PACKETFLAG_CONTROL;
+        Construct.m_Ack = Ack;
+        Construct.m_NumChunks = 0;
+        Construct.m_DataSize = 1+ExtraSize;
+        Construct.m_aChunkData[0] = ControlMsg;
+        if(ExtraSize > 0)
+            mem_copy(&Construct.m_aChunkData[1], pExtra, ExtraSize);
+
+        // send the control message
+        SendPacket(pAddr, &Construct);
+    }
+            </code>
+        </pre>
+        But <a href="game_messages.html">Game messages</a> and <a href="system_messages.html">system messages</a>
+        usually go through <code>SendMsg()</code> -> <code>m_NetClient.Send(&Packet);</code>
+        where they end up in
+        <pre class="code-snippet">
+            <code>
+    if(pChunk->m_Flags&NETSENDFLAG_CONNLESS)
+    {
+        // [..]
+    }
+    else
+    {
+        // [..]
+        m_Connection.QueueChunk(Flags, pChunk->m_DataSize, pChunk->m_pData);
+    }
+            </code>
+        </pre>
+        And <code>m_Connection.QueueChunk()</code> as the name suggests only puts
+        these messages into a queue of so called chunks. So no packet header is created
+        and no data is being sent over the network yet. For now the messages only get
+        collected in a queue.
+        This queue is then sent as soon as it is full or a message with the flag
+        <code>MSGFLAG_FLUSH</code> is being send. When it is being send
+        all messages in the queue get their own chunk header and in the very beginning of
+        the udp packet there is the packet header which also includes one field that says
+        how many chunks are in the packet.
+        <br>
+        <br>
+        This is probably done for performance reasons to not waste bandwith on teeworlds/udp/ip headers
+        when non time critical messages are being sent that are followed by other messages anyways.
+        So they are bundled up and sent together.
+        <br>
+        <br>
+        So if you are calling <code>SendMsg()</code> and care about time delay make sure to use the
+        <code>MSGFLAG_FLUSH</code> flag otherwise it might be slightly delayed. The delay is not very dramatic
+        since flushes happen quite frequently so only use it for super time sensitive things such as
+        user inputs or tee positions.
+        <br>
+        <br>
+        Lets illustrate chunks and flushing via a real world example.
+        When a client connects to a server the first packet with multiple chunks is
+        <a href="traffic.html#srv_cl_motd_sett_rdy">Motd, Server Settings, Ready</a>.
+        This is happening because when a client connects <code>OnClientConnected()</code>
+        is being called. Where the motd and server settings are being sent.
+        <pre class="code-snippet">
+            <code>
+    void CGameContext::OnClientConnected(int ClientID, bool Dummy, bool AsSpec)
+    {
+        // [..]
+
+        // send motd
+        SendMotd(ClientID);
+
+        // send settings
+        SendSettings(ClientID);
+    }
+            </code>
+        </pre>
+        <pre class="code-snippet">
+            <code>
+    void CGameContext::SendMotd(int ClientID)
+    {
+        CNetMsg_Sv_Motd Msg;
+        Msg.m_pMessage = Config()->m_SvMotd;
+        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+
+    void CGameContext::SendSettings(int ClientID)
+    {
+        CNetMsg_Sv_ServerSettings Msg;
+        Msg.m_KickVote = Config()->m_SvVoteKick;
+        Msg.m_KickMin = Config()->m_SvVoteKickMin;
+        Msg.m_SpecVote = Config()->m_SvVoteSpectate;
+        Msg.m_TeamLock = m_LockTeams != 0;
+        Msg.m_TeamBalance = Config()->m_SvTeambalanceTime != 0;
+        Msg.m_PlayerSlots = Config()->m_SvPlayerSlots;
+        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+            </code>
+        </pre>
+        Note that the call to <code>SendPackMsg()</code>
+        does contain the flag <code>MSGFLAG_VITAL</code> but no <code>MSGFLAG_FLUSH</code>
+        so they are not sent and just added to the queue.
+        Directly after <code>OnClientConnected()</code> is called
+        <code>SendConnectionReady()</code> gets called.
+        <pre class="code-snippet">
+            <code>
+    GameServer()->OnClientConnected(ClientID, ConnectAsSpec);
+    SendConnectionReady(ClientID);
+            </code>
+        </pre>
+        <pre class="code-snippet">
+            <code>
+    void CServer::SendConnectionReady(int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_CON_READY, true);
+        SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+    }
+            </code>
+        </pre>
+        Note that this time the flag <code>MSGFLAG_FLUSH</code> is used
+        which causes the whole queue (Motd, Settings) to be sent inclusing the newly
+        added CON_READY. So basically we send 3 messages here but they just get
+        queued and then sent together. But this is all happening in the same tick
+        so it feels instant.
+        <br>
+        <br>
+        So these three pseudo code method calls
+        <pre class="code-snippet">
+            <code>
+    Send(CNetMsg_Sv_Motd, MSGFLAG_VITAL);                   // nothing is sent
+    Send(CNetMsg_Sv_ServerSettings, MSGFLAG_VITAL);         // nothing is sent
+    Send(NETMSG_CON_READY, MSGFLAG_VITAL|MSGFLAG_FLUSH);    // all 3 are sent
+            </code>
+        </pre>
+        cause one udp packet to be sent that looks like this
+        <pre class="code-snippet">
+            <code>
+    +-------------------------+---------------+-------+---------------+-----------------+---------------+-----------+
+    | teeworlds packet header | chunk header  | motd  | chunk header  | server settings | chunk header  | CON_READY |
+    |        chumks = 3       |     vital     |       |     vital     |                 | vital &amp; flush |           |
+    +-------------------------+---------------+-------+---------------+-----------------+---------------+-----------+
+            </code>
+        </pre>
+        <hr>
         <h2 id="int_packing"><a href="#int_packing">Int packing</a></h2>
         <p>
             Note there is also documentation on ints in
