@@ -70,29 +70,144 @@
                     <th><strong>Message ID:</strong></th><td>1</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>TODO</td>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="system_messages.html#NETMSG_READY">NETMSG_READY</a> | <br>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <code>sv_motd</code>
+                    </td>
                 </tr>
                 <tr>
-                    <th><strong>Expected response:</strong></th><td>TODO</td>
+                    <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
                 <tr>
                     <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_MOTD_message"><a href="#NETMSGTYPE_SV_MOTD_message">Message</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        The message of the day (motd) that will be displayed to clients
+                        that connect. (The one with the dark background)
+                    </td>
                 </tr>
             </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_BROADCAST"><a href="#NETMSGTYPE_SV_BROADCAST">NETMSGTYPE_SV_BROADCAST</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 2 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>2</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <code>broadcast</code>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_BROADCAST_message"><a href="#NETMSGTYPE_SV_BROADCAST_message">Message</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        The broadcast message.
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_CHAT"><a href="#NETMSGTYPE_SV_CHAT">NETMSGTYPE_SV_CHAT</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 3 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>3</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="#NETMSGTYPE_CL_SAY">NETMSGTYPE_CL_SAY</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_BROADCAST_mode"><a href="#NETMSGTYPE_SV_BROADCAST_mode">Mode</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Chat mode can be one of those
+                        <ul>
+                            <li>1 - CHAT_ALL</li>
+                            <li>2 - CHAT_TEAM</li>
+                            <li>3 - CHAT_WHISPER</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_BROADCAST_client_id"><a href="#NETMSGTYPE_SV_BROADCAST_client_id">Client ID</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        The id of the message author.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_BROADCAST_target_id"><a href="#NETMSGTYPE_SV_BROADCAST_target_id">Target ID</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Recipient client id of the chat message.
+                        If there is no specific target (no whisper message) it is set to <code>-1</code> which stands for ALL.
+                        And set to the target if it is a whipser message.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_SAY_message"><a href="#NETMSGTYPE_CL_SAY_message">Message</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        The text of the chat message.
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_TEAM"><a href="#NETMSGTYPE_SV_TEAM">NETMSGTYPE_SV_TEAM</a></h2>
