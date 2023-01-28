@@ -212,9 +212,66 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_TEAM"><a href="#NETMSGTYPE_SV_TEAM">NETMSGTYPE_SV_TEAM</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 4 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>4</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (swap_teams, set_team, set_team_all, shuffle_teams, force_teambalance) | <br>
+                        <a href="#NETMSGTYPE_CL_SETTEAM">NETMSGTYPE_CL_SETTEAM</a> | <br>
+                        Afk moved to spectators
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_TEAM_client_id"><a href="#NETMSGTYPE_SV_TEAM_client_id">Client ID</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_TEAM_team"><a href="#NETMSGTYPE_SV_TEAM_team">Team</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_TEAM_silent"><a href="#NETMSGTYPE_SV_TEAM_silent">Silent</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_TEAM_cooldown_tick"><a href="#NETMSGTYPE_SV_TEAM_cooldown_tick">Cooldown Tick</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_KILLMSG"><a href="#NETMSGTYPE_SV_KILLMSG">NETMSGTYPE_SV_KILLMSG</a></h2>
