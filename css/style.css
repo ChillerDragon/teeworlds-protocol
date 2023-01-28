@@ -83,11 +83,6 @@ footer {
     z-index: 1;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-}
-
 .tooltip {
     border: 1px dotted rgba(255, 255, 255, 0.39);
 }
@@ -95,6 +90,12 @@ footer {
 .tooltip:hover {
     font-weight: bold;
     border: 1px solid rgba(255, 255, 255, 0.39);
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    font-weight: normal;
 }
 
 /* table */
