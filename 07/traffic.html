@@ -417,28 +417,41 @@
             </code>
         </pre>
         <p>
-            Here is what it decompresses to. Again <code>NETMSG_SERVERINFO (4)</code>
-            is extracted out of <code>0x26</code> together with the system flag.
+            Here is what it decompresses to.
+            Note that the 4th byte of every chunk is the message id.
+            They are packed <a href="fundamentals.html#int_packing">integers</a>
+            and the first bit is the system flag. Thats how for example
+            the byte hex <code>0x26</code> represents the decimal
+            message id <code>29</code> (NETMSGTYPE_SV_GAMEINFO).
         </p>
         <pre class="code-snippet">
             <code>
     [PACKET HEADER]
     10  04  03  <span class="token">51  3B  59  46</span>
 
-    [GAME INFO]
-    &lt;40  06&gt;&lt;09&gt; 26  00  14  00  00  01    @..&.....
-        ^        ^
- Flags & Size    |
+    [GAME INFO]                     [GAME INFO ASCII]
+    40 06 09 26  00 14 00 00  01    @..&.....
+    ^  ^  ^  ^
+  flags|  |  |
+  vital|  |  |
+      size|  |
+       6  |  |
+    sequence |
+          9  |
+             |
      NETMSGTYPE_SV_GAMEINFO
+             19
 
-    [CLIENT INFO]                                     [CLIENT INFO ASCII]
-    41 1e 0a 24 00 01 00 6e 61 6d 65 6c 65 73 73 20   A..$...nameless 
-    74 65 65 00 00 40 67 72 65 65 6e 73 77 61 72 64   tee..@greensward
-    00 64 75 6f 64 6f 6e 6e 79 00 00 73 74 61 6e 64   .duodonny..stand
-    61 72 64 00 73 74 61 6e 64 61 72 64 00 73 74 61   ard.standard.sta
-    6e 64 61 72 64 00 01 01 00 00 00 00 80 fc af 05   ndard...........
-    eb 83 d0 0a 80 fe 07 80 fe 07 80 fe 07 80 fe 07   ................
-    00                                                .
+    [CLIENT INFO]                              [CLIENT INFO ASCII]
+    41 1e 0a 24  00 01 00 6e  61 6d 65 6c      A..$...namel
+    65 73 73 20  74 65 65 00  00 40 67 72      ess tee..@gr
+    65 65 6e 73  77 61 72 64  00 64 75 6f      eensward.duo
+    64 6f 6e 6e  79 00 00 73  74 61 6e 64      donny..stand
+    61 72 64 00  73 74 61 6e  64 61 72 64      ard.standard
+    00 73 74 61  6e 64 61 72  64 00 01 01      .standard...
+    00 00 00 00  80 fc af 05  eb 83 d0 0a      ............
+    80 fe 07 80  fe 07 80 fe  07 80 fe 07      ............
+    00                                         .
 
     [SNAP SINGLE]                              [SNAP SINGLE ASCII]
     01 18 11 ac  31 ad 31 ae  89 01 8e 01      ....1.1.....
