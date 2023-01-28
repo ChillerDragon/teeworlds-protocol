@@ -834,44 +834,420 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTECLEAROPTIONS"><a href="#NETMSGTYPE_SV_VOTECLEAROPTIONS">NETMSGTYPE_SV_VOTECLEAROPTIONS</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 11 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>11</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            This message is used by the server to empty all vote entries in the client menu.
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTEOPTIONLISTADD"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD">NETMSGTYPE_SV_VOTEOPTIONLISTADD</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 12 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>12</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_num"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_num">Num options</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Indicates how many string fields are following.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_vote_description">
+                        <a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_vote_description">
+                            Vote description
+                            (repeated "Num options" times)
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Display name of the vote option
+                    </td>
+                </tr>
+            </table>
+            One of the few messages with a dynamic amount of fields.
+            The first field is always a int determining how many string fields are following.
+            The strings represent the descriptions of the votes that will show up in the client
+            menu vote option list.
+            <pre class="code-snippet">
+                <code>
+    else if(MsgId == NETMSGTYPE_SV_VOTEOPTIONLISTADD)
+    {
+        int NumOptions = pUnpacker->GetInt();
+        for(int i = 0; i < NumOptions; i++)
+        {
+            const char *pDescription = pUnpacker->GetString(CUnpacker::SANITIZE_CC);
+            if(pUnpacker->Error())
+                return;
+
+            m_pVoting->AddOption(pDescription);
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTEOPTIONADD"><a href="#NETMSGTYPE_SV_VOTEOPTIONADD">NETMSGTYPE_SV_VOTEOPTIONADD</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 13 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>13</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                        <a href="#NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                            Vote description
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Display name of the vote option
+                    </td>
+                </tr>
+            </table>
+            Same use case as the <a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD">NETMSGTYPE_SV_VOTEOPTIONLISTADD</a>
+            but for single vote option entries.
+            <pre class="code-snippet">
+                <code>
+    else if(MsgType == NETMSGTYPE_SV_VOTEOPTIONADD)
+    {
+        CNetMsg_Sv_VoteOptionAdd *pMsg = (CNetMsg_Sv_VoteOptionAdd *)pRawMsg;
+        AddOption(pMsg->m_pDescription);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTEOPTIONREMOVE"><a href="#NETMSGTYPE_SV_VOTEOPTIONREMOVE">NETMSGTYPE_SV_VOTEOPTIONREMOVE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 14 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>14</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                        <a href="#NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                            Vote description
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Display name of the vote option to be deleted
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTESET"><a href="#NETMSGTYPE_SV_VOTESET">NETMSGTYPE_SV_VOTESET</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 15 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>15</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESET_client_id">
+                        <a href="#NETMSGTYPE_SV_VOTESET_client_id">
+                            Client ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESET_type">
+                        <a href="#NETMSGTYPE_SV_VOTESET_type">
+                            Type
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESET_timeout">
+                        <a href="#NETMSGTYPE_SV_VOTESET_timeout">
+                            Timeout
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESET_vote_description">
+                        <a href="#NETMSGTYPE_SV_VOTESET_vote_description">
+                            Description
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESET_reason">
+                        <a href="#NETMSGTYPE_SV_VOTESET_reason">
+                            Reason
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            Indicates that a new vote was started. The client will
+            render the current vote status and the server is ready
+            to receive yes or no votes via <a href="#NETMSGTYPE_CL_VOTE">NETMSGTYPE_CL_VOTE</a>.
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTESTATUS"><a href="#NETMSGTYPE_SV_VOTESTATUS">NETMSGTYPE_SV_VOTESTATUS</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 16 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>16</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_yes">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_yes">
+                            Yes
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_no">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_no">
+                            No
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_pass">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_pass">
+                            Pass
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_total">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_total">
+                            Total
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_SERVERSETTINGS"><a href="#NETMSGTYPE_SV_SERVERSETTINGS">NETMSGTYPE_SV_SERVERSETTINGS</a></h2>
