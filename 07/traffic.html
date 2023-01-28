@@ -420,7 +420,7 @@
             Here is what it decompresses to.
             Note that the 4th byte of every chunk is the message id.
             They are packed <a href="fundamentals.html#int_packing">integers</a>
-            and the first bit is the system flag. Thats how for example
+            and the last bit is the system flag. Thats how for example
             the byte hex <code>0x26</code> represents the decimal
             message id <code>29</code> (NETMSGTYPE_SV_GAMEINFO).
         </p>
@@ -443,7 +443,18 @@
              19
 
     [CLIENT INFO]                              [CLIENT INFO ASCII]
-    41 1e 0a 24  00 01 00 6e  61 6d 65 6c      A..$...namel
+    41 1e 0a <span class="tooltip">24<span class="tooltiptext">
+0x24    hex
+36      decimal
+100100  binary
+^   ^^
+ \  /|
+10010|
+  |  |
+  v  |
+ 18  |
+    game message
+    </span></span>  00 01 00 6e  61 6d 65 6c      A..$...namel
     65 73 73 20  74 65 65 00  00 40 67 72      ess tee..@gr
     65 65 6e 73  77 61 72 64  00 64 75 6f      eensward.duo
     64 6f 6e 6e  79 00 00 73  74 61 6e 64      donny..stand
