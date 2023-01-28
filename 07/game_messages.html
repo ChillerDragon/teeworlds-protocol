@@ -636,11 +636,46 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_READYTOENTER"><a href="#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a></h2>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 8 <br>
-            <strong>Response to:</strong> <a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a> <br>
-            <strong>Expected response:</strong> <a href="system_messages.html#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a> <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>8</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        <a href="system_messages.html#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a> &amp;
+                        <a href="fundamentals.html#flushing">MSGFLAG_FLUSH</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
             It is sent by the server as a response to <a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a>
             in the method
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/server/gamecontext.cpp#L1157-L1158">
