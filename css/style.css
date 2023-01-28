@@ -108,6 +108,10 @@ th {
     background-color: #c3c3c30a;
 }
 
+table {
+    margin: 10px 0px;
+}
+
 /* fake table */
 
 .num {
