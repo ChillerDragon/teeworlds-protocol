@@ -376,12 +376,14 @@
         <hr>
         <h2 id="srv_cl_serverinfo"><a href="#srv_cl_serverinfo">[SERVER->CLIENT] Server info</a></h2>
         <p>
-            The server sends version, map name, gametype, playerlist and more prepared in the method
+            The server sends version, map name, gametype, server name and more prepared in the method
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L1091-L1149">
                 CServer::GenerateServerInfo(CPacker *pPacker, int Token)
             </a>
             <br>
-            Since this server is empty the packet data does not include any player data.
+            The same <a href="system_messages.html#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a>
+            message is used for the server browser where it includes
+            additional information like the player list.
         </p>
         <pre class="code-snippet">
             <code>
