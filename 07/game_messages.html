@@ -1884,16 +1884,382 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_CLIENTDROP"><a href="#NETMSGTYPE_SV_CLIENTDROP">NETMSGTYPE_SV_CLIENTDROP</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 20 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>20</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a> &amp;
+                        MSGFLAG_NORECORD
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTDROP_client_id">
+                        <a href="#NETMSGTYPE_SV_CLIENTDROP_client_id">
+                            Client ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTDROP_reason">
+                        <a href="#NETMSGTYPE_SV_CLIENTDROP_reason">
+                            Reason
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTDROP_silent">
+                        <a href="#NETMSGTYPE_SV_CLIENTDROP_silent">
+                            Silent
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_GAMEMSG"><a href="#NETMSGTYPE_SV_GAMEMSG">NETMSGTYPE_SV_GAMEMSG</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 21 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>21</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEMSG_game_msg_id">
+                        <a href="#NETMSGTYPE_SV_GAMEMSG_game_msg_id">
+                            Game message ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEMSG_game_msg_id">
+                        <a href="#NETMSGTYPE_SV_GAMEMSG_game_msg_id">
+                            Game message ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEMSG_para_int_1">
+                        <a href="#NETMSGTYPE_SV_GAMEMSG_para_int_1">
+                            Parameter 1
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEMSG_game_msg_id">
+                        <a href="#NETMSGTYPE_SV_GAMEMSG_game_msg_id">
+                            Game message ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEMSG_para_int_1">
+                        <a href="#NETMSGTYPE_SV_GAMEMSG_para_int_1">
+                            Parameter 1
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEMSG_para_int_2">
+                        <a href="#NETMSGTYPE_SV_GAMEMSG_para_int_2">
+                            Parameter 2
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEMSG_para_int_3">
+                        <a href="#NETMSGTYPE_SV_GAMEMSG_para_int_3">
+                            Parameter 3
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            The amount of parameters depends on the
+            <a href="#NETMSGTYPE_SV_GAMEMSG_game_msg_id">
+                Game message ID
+            </a>
+            The server has 3 overloaded methods to send this message
+            with either 0, 1 or 3 parameters
+            <pre class="code-snippet">
+                <code>
+    void CGameContext::SendGameMsg(int GameMsgID, int ClientID)
+    {
+        CMsgPacker Msg(NETMSGTYPE_SV_GAMEMSG);
+        Msg.AddInt(GameMsgID);
+        Server()->SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+
+    void CGameContext::SendGameMsg(int GameMsgID, int ParaI1, int ClientID)
+    {
+        CMsgPacker Msg(NETMSGTYPE_SV_GAMEMSG);
+        Msg.AddInt(GameMsgID);
+        Msg.AddInt(ParaI1);
+        Server()->SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+
+    void CGameContext::SendGameMsg(int GameMsgID, int ParaI1, int ParaI2, int ParaI3, int ClientID)
+    {
+        CMsgPacker Msg(NETMSGTYPE_SV_GAMEMSG);
+        Msg.AddInt(GameMsgID);
+        Msg.AddInt(ParaI1);
+        Msg.AddInt(ParaI2);
+        Msg.AddInt(ParaI3);
+        Server()->SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+                </code>
+            </pre>
+            Server and client have a shared list of pre agreed "Game message ID" to "parameter"
+            mappings. The client unpacks the message like this:
+            <pre class="code-snippet">
+                <code>
+    else if(MsgId == NETMSGTYPE_SV_GAMEMSG)
+    {
+        int GameMsgID = pUnpacker->GetInt();
+
+        // check for valid gamemsgid
+        if(GameMsgID < 0 || GameMsgID >= NUM_GAMEMSGS)
+            return;
+
+        int aParaI[3];
+        int NumParaI = 0;
+
+        // get paras
+        switch(gs_GameMsgList[GameMsgID].m_ParaType)
+        {
+        case PARA_I: NumParaI = 1; break;
+        case PARA_II: NumParaI = 2; break;
+        case PARA_III: NumParaI = 3; break;
+        }
+        for(int i = 0; i < NumParaI; i++)
+        {
+            aParaI[i] = pUnpacker->GetInt();
+        }
+
+        // check for unpacking errors
+        if(pUnpacker->Error())
+            return;
+
+        // handle special messages
+        char aBuf[256];
+        bool TeamPlay = m_GameInfo.m_GameFlags&GAMEFLAG_TEAMS;
+        if(gs_GameMsgList[GameMsgID].m_Action == DO_SPECIAL)
+        {
+            switch(GameMsgID)
+            {
+            case GAMEMSG_CTF_DROP:
+                m_pSounds->Enqueue(CSounds::CHN_GLOBAL, SOUND_CTF_DROP);
+                break;
+            case GAMEMSG_CTF_RETURN:
+                m_pSounds->Enqueue(CSounds::CHN_GLOBAL, SOUND_CTF_RETURN);
+                break;
+            case GAMEMSG_TEAM_ALL:
+                {
+                    const char *pMsg = "";
+                    switch(GetStrTeam(aParaI[0], TeamPlay))
+                    {
+                    case STR_TEAM_GAME: pMsg = Localize("All players were moved to the game"); break;
+                    case STR_TEAM_RED: pMsg = Localize("All players were moved to the red team"); break;
+                    case STR_TEAM_BLUE: pMsg = Localize("All players were moved to the blue team"); break;
+                    case STR_TEAM_SPECTATORS: pMsg = Localize("All players were moved to the spectators"); break;
+                    }
+                    m_pBroadcast->DoClientBroadcast(pMsg);
+                }
+                break;
+            case GAMEMSG_TEAM_BALANCE_VICTIM:
+                {
+                    const char *pMsg = "";
+                    switch(GetStrTeam(aParaI[0], TeamPlay))
+                    {
+                    case STR_TEAM_RED: pMsg = Localize("You were moved to the red team due to team balancing"); break;
+                    case STR_TEAM_BLUE: pMsg = Localize("You were moved to the blue team due to team balancing"); break;
+                    }
+                    m_pBroadcast->DoClientBroadcast(pMsg);
+                }
+                break;
+            case GAMEMSG_CTF_GRAB:
+                if(m_LocalClientID != -1 && (m_aClients[m_LocalClientID].m_Team != aParaI[0] || (m_Snap.m_SpecInfo.m_Active &&
+                                ((m_Snap.m_SpecInfo.m_SpectatorID != -1 && m_aClients[m_Snap.m_SpecInfo.m_SpectatorID].m_Team != aParaI[0]) ||
+                                (m_Snap.m_SpecInfo.m_SpecMode == SPEC_FLAGRED && aParaI[0] != TEAM_RED) ||
+                                (m_Snap.m_SpecInfo.m_SpecMode == SPEC_FLAGBLUE && aParaI[0] != TEAM_BLUE)))))
+                    m_pSounds->Enqueue(CSounds::CHN_GLOBAL, SOUND_CTF_GRAB_PL);
+                else
+                    m_pSounds->Enqueue(CSounds::CHN_GLOBAL, SOUND_CTF_GRAB_EN);
+                break;
+            case GAMEMSG_GAME_PAUSED:
+                {
+                    int ClientID = clamp(aParaI[0], 0, MAX_CLIENTS - 1);
+                    char aLabel[64];
+                    GetPlayerLabel(aLabel, sizeof(aLabel), ClientID, m_aClients[ClientID].m_aName);
+                    str_format(aBuf, sizeof(aBuf), Localize("'%s' initiated a pause"), aLabel);
+                    m_pChat->AddLine(aBuf);
+                }
+                break;
+            case GAMEMSG_CTF_CAPTURE:
+                m_pSounds->Enqueue(CSounds::CHN_GLOBAL, SOUND_CTF_CAPTURE);
+                int ClientID = clamp(aParaI[1], 0, MAX_CLIENTS - 1);
+                m_pStats->OnFlagCapture(ClientID);
+                char aLabel[64];
+                GetPlayerLabel(aLabel, sizeof(aLabel), ClientID, m_aClients[ClientID].m_aName);
+
+                float Time = aParaI[2] / (float)Client()->GameTickSpeed();
+                if(Time <= 60)
+                {
+                    if(aParaI[0])
+                    {
+                        str_format(aBuf, sizeof(aBuf), Localize("The blue flag was captured by '%s' (%.2f seconds)"), aLabel, Time);
+                    }
+                    else
+                    {
+                        str_format(aBuf, sizeof(aBuf), Localize("The red flag was captured by '%s' (%.2f seconds)"), aLabel, Time);
+                    }
+                }
+                else
+                {
+                    if(aParaI[0])
+                    {
+                        str_format(aBuf, sizeof(aBuf), Localize("The blue flag was captured by '%s'"), aLabel);
+                    }
+                    else
+                    {
+                        str_format(aBuf, sizeof(aBuf), Localize("The red flag was captured by '%s'"), aLabel);
+                    }
+                }
+                m_pChat->AddLine(aBuf);
+            }
+            return;
+        }
+
+        // build message
+        const char *pText = "";
+        if(NumParaI == 0)
+        {
+            pText = Localize(gs_GameMsgList[GameMsgID].m_pText);
+        }
+
+        // handle message
+        switch(gs_GameMsgList[GameMsgID].m_Action)
+        {
+        case DO_CHAT:
+            m_pChat->AddLine(pText);
+            break;
+        case DO_BROADCAST:
+            m_pBroadcast->DoClientBroadcast(pText);
+            break;
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_DE_CLIENTENTER"><a href="#NETMSGTYPE_DE_CLIENTENTER">NETMSGTYPE_DE_CLIENTENTER</a></h2>
@@ -2021,9 +2387,76 @@
         <hr>
         <h2 id="NETMSGTYPE_DE_CLIENTLEAVE"><a href="#NETMSGTYPE_DE_CLIENTLEAVE">NETMSGTYPE_DE_CLIENTLEAVE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 23 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>[ Client, Server] (not send over the network just used for demos)</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>[ Client ] (not send over the network just used for demos)</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>23</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        MSGFLAG_NOSEND &amp; MSGFLAG_RECORD
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_DE_CLIENTLEAVE_name">
+                        <a href="#NETMSGTYPE_DE_CLIENTLEAVE_name">
+                            Name
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_DE_CLIENTLEAVE_client_id">
+                        <a href="#NETMSGTYPE_DE_CLIENTLEAVE_client_id">
+                            Client ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_DE_CLIENTLEAVE_reason">
+                        <a href="#NETMSGTYPE_DE_CLIENTLEAVE_reason">
+                            Reason
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_SAY"><a href="#NETMSGTYPE_CL_SAY">NETMSGTYPE_CL_SAY</a></h2>
