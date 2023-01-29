@@ -1360,9 +1360,371 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_CLIENTINFO"><a href="#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 18 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>18</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="system_messages.html#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a> &amp;
+                        MSGFLAG_NORECORD
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_client_id">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_client_id">
+                            Client ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_local">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_local">
+                            Local
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Is set to true (1) if the client gets his own info. <br>
+                        Used to inform the client about his own Client ID.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_team">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_team">
+                            Team
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_name">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_name">
+                            Name
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_clan">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_clan">
+                            Clan
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_country">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_country">
+                            Country
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_part_name_body">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_part_name_body">body</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_part_name_marking">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_part_name_marking">marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_part_name_decoration">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_part_name_decoration">decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_part_name_hands">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_part_name_hands">hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_part_name_feet">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_part_name_feet">feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_part_name_eyes">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_part_name_eyes">eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[5]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_body">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_body">Custom color body</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_marking">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_marking">Custom color marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_decoration">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_decoration">Custom color decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_hands">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_hands">Custom color hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_feet">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_feet">Custom color feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_eyes">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_custom_color_eyes">Custom color eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[5]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_color_body">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_color_body">Color body</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_color_marking">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_color_marking">Color marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_color_decoration">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_color_decoration">Color decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_color_hands">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_color_hands">Color hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_color_feet">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_color_feet">Color feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_skin_color_eyes">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_skin_color_eyes">Color eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[5]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CLIENTINFO_silent">
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO_silent">Silent</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        A int field used as a boolean. Indicating wether the client
+                        should show a client enter message in the chat or not.
+                        <br>
+                        Possible values are:
+                        <ul>
+                            <li>1 - silent (no chat message)</li>
+                            <li>0 - not silent (enter game chat message)</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <h3>What is sent in NETMSGTYPE_SV_CLIENTINFO?</h3>
+            In
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/components/skins.cpp#L17">
+                skins.cpp
+            </a>
+            all the skin part names are listed in order.
+            <pre class="code-snippet">
+                <code>
+    const char * const CSkins::ms_apSkinPartNames[NUM_SKINPARTS] = {"body", "marking", "decoration", "hands", "feet", "eyes"};
+                </code>
+            </pre>
+            Every skin part has his own name and color.
+            Thats why the argument list has 6 fields with all the names
+            followed by 6 fields if that part is using a custom color or not
+            followed by 6 fields with the corresponding custom color values.
+
+            <h3>When is NETMSGTYPE_SV_CLIENTINFO sent?</h3>
+
+            Every time a new client connects its info will be sent to all
+            clients that were already connected.
+            And also the info of every client that is already connected
+            will be sent to the client that just connected.
+            <pre class="code-snippet">
+                <code>
+    void CGameContext::OnClientEnter(int ClientID)
+    {
+        // [..]
+
+        // update client infos (others before local)
+        CNetMsg_Sv_ClientInfo NewClientInfoMsg;
+        NewClientInfoMsg.m_ClientID = ClientID;
+        NewClientInfoMsg.m_Local = 0;
+        NewClientInfoMsg.m_Team = m_apPlayers[ClientID]->GetTeam();
+        NewClientInfoMsg.m_pName = Server()->ClientName(ClientID);
+        NewClientInfoMsg.m_pClan = Server()->ClientClan(ClientID);
+        NewClientInfoMsg.m_Country = Server()->ClientCountry(ClientID);
+        NewClientInfoMsg.m_Silent = false;
+
+        if(Config()->m_SvSilentSpectatorMode && m_apPlayers[ClientID]->GetTeam() == TEAM_SPECTATORS)
+            NewClientInfoMsg.m_Silent = true;
+
+        for(int p = 0; p < NUM_SKINPARTS; p++)
+        {
+            NewClientInfoMsg.m_apSkinPartNames[p] = m_apPlayers[ClientID]->m_TeeInfos.m_aaSkinPartNames[p];
+            NewClientInfoMsg.m_aUseCustomColors[p] = m_apPlayers[ClientID]->m_TeeInfos.m_aUseCustomColors[p];
+            NewClientInfoMsg.m_aSkinPartColors[p] = m_apPlayers[ClientID]->m_TeeInfos.m_aSkinPartColors[p];
+        }
+
+        for(int i = 0; i < MAX_CLIENTS; ++i)
+        {
+            if(i == ClientID || !m_apPlayers[i] || (!Server()->ClientIngame(i) && !m_apPlayers[i]->IsDummy()))
+                continue;
+
+            // new info for others
+            if(Server()->ClientIngame(i))
+                Server()->SendPackMsg(&NewClientInfoMsg, MSGFLAG_VITAL|MSGFLAG_NORECORD, i);
+
+            // existing infos for new player
+            CNetMsg_Sv_ClientInfo ClientInfoMsg;
+            ClientInfoMsg.m_ClientID = i;
+            ClientInfoMsg.m_Local = 0;
+            ClientInfoMsg.m_Team = m_apPlayers[i]->GetTeam();
+            ClientInfoMsg.m_pName = Server()->ClientName(i);
+            ClientInfoMsg.m_pClan = Server()->ClientClan(i);
+            ClientInfoMsg.m_Country = Server()->ClientCountry(i);
+            ClientInfoMsg.m_Silent = false;
+            for(int p = 0; p < NUM_SKINPARTS; p++)
+            {
+                ClientInfoMsg.m_apSkinPartNames[p] = m_apPlayers[i]->m_TeeInfos.m_aaSkinPartNames[p];
+                ClientInfoMsg.m_aUseCustomColors[p] = m_apPlayers[i]->m_TeeInfos.m_aUseCustomColors[p];
+                ClientInfoMsg.m_aSkinPartColors[p] = m_apPlayers[i]->m_TeeInfos.m_aSkinPartColors[p];
+            }
+            Server()->SendPackMsg(&ClientInfoMsg, MSGFLAG_VITAL|MSGFLAG_NORECORD, ClientID);
+        }
+
+        // local info
+        NewClientInfoMsg.m_Local = 1;
+        Server()->SendPackMsg(&NewClientInfoMsg, MSGFLAG_VITAL|MSGFLAG_NORECORD, ClientID);
+
+        // [..]
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_GAMEINFO"><a href="#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a></h2>
@@ -1414,6 +1776,46 @@
                     <th><strong>Flags:</strong></th>
                     <td>
                         MSGFLAG_NOSEND & MSGFLAG_RECORD
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_DE_CLIENTENTER_name">
+                        <a href="#NETMSGTYPE_DE_CLIENTENTER_name">
+                            Name
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_DE_CLIENTENTER_client_id">
+                        <a href="#NETMSGTYPE_DE_CLIENTENTER_client_id">
+                            Client ID
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_DE_CLIENTENTER_team">
+                        <a href="#NETMSGTYPE_DE_CLIENTENTER_team">
+                            Team
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
                     </td>
                 </tr>
             </table>
