@@ -1252,9 +1252,110 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_SERVERSETTINGS"><a href="#NETMSGTYPE_SV_SERVERSETTINGS">NETMSGTYPE_SV_SERVERSETTINGS</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 17 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>17</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="system_messages.html#NETMSG_READY">NETMSG_READY</a> | <br>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <br>
+                        (lock_teams, sv_vote_kick, sv_vote_kick_min, sv_vote_spectate, sv_teambalance_time, sv_player_slots, sv_max_clients)
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SERVERSETTINGS_kick_vote">
+                        <a href="#NETMSGTYPE_SV_SERVERSETTINGS_kick_vote">
+                            Kick vote
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SERVERSETTINGS_kick_min">
+                        <a href="#NETMSGTYPE_SV_SERVERSETTINGS_kick_min">
+                            Kick minimum
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Minimum amount of players needed on the server to allow kick votes to be started.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SERVERSETTINGS_spec_vote">
+                        <a href="#NETMSGTYPE_SV_SERVERSETTINGS_spec_vote">
+                            Spectator vote
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SERVERSETTINGS_team_lock">
+                        <a href="#NETMSGTYPE_SV_SERVERSETTINGS_team_lock">
+                            Team lock
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SERVERSETTINGS_team_balance">
+                        <a href="#NETMSGTYPE_SV_SERVERSETTINGS_team_balance">
+                            Team balance
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SERVERSETTINGS_player_slots">
+                        <a href="#NETMSGTYPE_SV_SERVERSETTINGS_player_slots">
+                            Player slots
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_CLIENTINFO"><a href="#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a></h2>
