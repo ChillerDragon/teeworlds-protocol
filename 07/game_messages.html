@@ -1729,9 +1729,157 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_GAMEINFO"><a href="#NETMSGTYPE_SV_GAMEINFO">NETMSGTYPE_SV_GAMEINFO</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 19 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>19</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        Round end | <br>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <code>sv_scorelimit, sv_timelimit, sv_maprotation, sv_matches_per_map</code> | <br>
+                        <a href="system_messages.html#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a> &amp;
+                        MSGFLAG_NORECORD
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEINFO_game_flags">
+                        <a href="#NETMSGTYPE_SV_GAMEINFO_game_flags">
+                            Game flags
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEINFO_score_limit">
+                        <a href="#NETMSGTYPE_SV_GAMEINFO_score_limit">
+                            Score limit
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEINFO_time_limit">
+                        <a href="#NETMSGTYPE_SV_GAMEINFO_time_limit">
+                            Time limit
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEINFO_match_num">
+                        <a href="#NETMSGTYPE_SV_GAMEINFO_match_num">
+                            Match num
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_GAMEINFO_match_current">
+                        <a href="#NETMSGTYPE_SV_GAMEINFO_match_current">
+                            Match current
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            Sent by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/server/gamecontroller.cpp#L886-L914">
+                UpdateGameInfo()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void IGameController::UpdateGameInfo(int ClientID)
+    {
+        CNetMsg_Sv_GameInfo GameInfoMsg;
+        GameInfoMsg.m_GameFlags = m_GameFlags;
+        GameInfoMsg.m_ScoreLimit = m_GameInfo.m_ScoreLimit;
+        GameInfoMsg.m_TimeLimit = m_GameInfo.m_TimeLimit;
+        GameInfoMsg.m_MatchNum = m_GameInfo.m_MatchNum;
+        GameInfoMsg.m_MatchCurrent = m_GameInfo.m_MatchCurrent;
+    
+        CNetMsg_Sv_GameInfo GameInfoMsgNoRace = GameInfoMsg;
+        GameInfoMsgNoRace.m_GameFlags &= ~GAMEFLAG_RACE;
+    
+        if(ClientID == -1)
+        {
+            for(int i = 0; i < MAX_CLIENTS; ++i)
+            {
+                if(!GameServer()->m_apPlayers[i] || !Server()->ClientIngame(i))
+                    continue;
+    
+                CNetMsg_Sv_GameInfo *pInfoMsg = (Server()->GetClientVersion(i) < CGameContext::MIN_RACE_CLIENTVERSION) ? &GameInfoMsgNoRace : &GameInfoMsg;
+                Server()->SendPackMsg(pInfoMsg, MSGFLAG_VITAL|MSGFLAG_NORECORD, i);
+            }
+        }
+        else
+        {
+            CNetMsg_Sv_GameInfo *pInfoMsg = (Server()->GetClientVersion(ClientID) < CGameContext::MIN_RACE_CLIENTVERSION) ? &GameInfoMsgNoRace : &GameInfoMsg;
+            Server()->SendPackMsg(pInfoMsg, MSGFLAG_VITAL|MSGFLAG_NORECORD, ClientID);
+        }
+    }
+                </code>
+            </pre>
+
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/gameclient.cpp#L939-L949">
+                gameclient.cpp
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgId == NETMSGTYPE_SV_GAMEINFO && Client()->State() != IClient::STATE_DEMOPLAYBACK)
+    {
+        Client()->RecordGameMessage(false);
+        CNetMsg_Sv_GameInfo *pMsg = (CNetMsg_Sv_GameInfo *)pRawMsg;
+
+        m_GameInfo.m_GameFlags = pMsg->m_GameFlags;
+        m_GameInfo.m_ScoreLimit = pMsg->m_ScoreLimit;
+        m_GameInfo.m_TimeLimit = pMsg->m_TimeLimit;
+        m_GameInfo.m_MatchNum = pMsg->m_MatchNum;
+        m_GameInfo.m_MatchCurrent = pMsg->m_MatchCurrent;
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_CLIENTDROP"><a href="#NETMSGTYPE_SV_CLIENTDROP">NETMSGTYPE_SV_CLIENTDROP</a></h2>
