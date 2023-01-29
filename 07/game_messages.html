@@ -2938,51 +2938,863 @@
         <hr>
         <h2 id="NETMSGTYPE_CL_KILL"><a href="#NETMSGTYPE_CL_KILL">NETMSGTYPE_CL_KILL</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 28 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>28</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_READYCHANGE"><a href="#NETMSGTYPE_CL_READYCHANGE">NETMSGTYPE_CL_READYCHANGE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 29 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>29</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    void CGameClient::SendReadyChange()
+    {
+        CNetMsg_Cl_ReadyChange Msg;
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    else if (MsgID == NETMSGTYPE_CL_READYCHANGE)
+    {
+        if(pPlayer->m_LastReadyChangeTick && pPlayer->m_LastReadyChangeTick+Server()->TickSpeed()*1 > Server()->Tick())
+            return;
+
+        pPlayer->m_LastReadyChangeTick = Server()->Tick();
+        m_pController->OnPlayerReadyChange(pPlayer);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_EMOTICON"><a href="#NETMSGTYPE_CL_EMOTICON">NETMSGTYPE_CL_EMOTICON</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 30 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>30</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        User picking emote in emote wheel or
+                        using the local console command <code>emote (emote id)</code>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        <a href="#NETMSGTYPE_SV_EMOTICON">NETMSGTYPE_SV_EMOTICON</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_EMOTICON_emoticon"><a href="#NETMSGTYPE_CL_EMOTICON_emoticon">Emoticon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <ul>
+                            <li>0 - oop!</li>
+                            <li>1 - alert</li>
+                            <li>2 - heart</li>
+                            <li>3 - tear</li>
+                            <li>4 - ...</li>
+                            <li>5 - music</li>
+                            <li>6 - sorry</li>
+                            <li>7 - ghost</li>
+                            <li>8 - annoyed</li>
+                            <li>9 - angry</li>
+                            <li>10 - devil</li>
+                            <li>11 - swearing</li>
+                            <li>12 - zzZ</li>
+                            <li>13 - WTF</li>
+                            <li>14 - happy</li>
+                            <li>15 - ??</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    void CEmoticon::Emote(int Emoticon)
+    {
+        CNetMsg_Cl_Emoticon Msg;
+        Msg.m_Emoticon = Emoticon;
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    else if (MsgID == NETMSGTYPE_CL_EMOTICON && !m_World.m_Paused)
+    {
+        CNetMsg_Cl_Emoticon *pMsg = (CNetMsg_Cl_Emoticon *)pRawMsg;
+
+        if(Config()->m_SvSpamprotection && pPlayer->m_LastEmoteTick && pPlayer->m_LastEmoteTick+Server()->TickSpeed()*3 > Server()->Tick())
+            return;
+
+        pPlayer->m_LastEmoteTick = Server()->Tick();
+
+        SendEmoticon(ClientID, pMsg->m_Emoticon);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_VOTE"><a href="#NETMSGTYPE_CL_VOTE">NETMSGTYPE_CL_VOTE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 31 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>31</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_VOTE_vote"><a href="#NETMSGTYPE_CL_VOTE_vote">Vote</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    void CVoting::Vote(int Choice)
+    {
+        CNetMsg_Cl_Vote Msg = { Choice };
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgID == NETMSGTYPE_CL_VOTE)
+    {
+        if(!m_VoteCloseTime)
+            return;
+
+        if(pPlayer->m_Vote == VOTE_CHOICE_PASS)
+        {
+            CNetMsg_Cl_Vote *pMsg = (CNetMsg_Cl_Vote *)pRawMsg;
+            if(pMsg->m_Vote == VOTE_CHOICE_PASS)
+                return;
+
+            pPlayer->m_Vote = pMsg->m_Vote;
+            pPlayer->m_VotePos = ++m_VotePos;
+            m_VoteUpdate = true;
+        }
+        else if(m_VoteCreator == pPlayer->GetCID())
+        {
+            CNetMsg_Cl_Vote *pMsg = (CNetMsg_Cl_Vote *)pRawMsg;
+            if(pMsg->m_Vote != VOTE_CHOICE_NO || m_VoteCancelTime&lt;time_get())
+                return;
+
+            m_VoteCloseTime = -1;
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_CALLVOTE"><a href="#NETMSGTYPE_CL_CALLVOTE">NETMSGTYPE_CL_CALLVOTE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 32 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>32</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_CALLVOTE_type"><a href="#NETMSGTYPE_CL_CALLVOTE_type">Type</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_CALLVOTE_value"><a href="#NETMSGTYPE_CL_CALLVOTE_value">Value</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_CALLVOTE_reason"><a href="#NETMSGTYPE_CL_CALLVOTE_reason">Reason</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_CALLVOTE_force"><a href="#NETMSGTYPE_CL_CALLVOTE_force">Force</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            Sent by the client via
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/components/voting.cpp#L14-L21">
+                Callvote()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CVoting::Callvote(const char *pType, const char *pValue, const char *pReason, bool ForceVote)
+    {
+        CNetMsg_Cl_CallVote Msg = {0};
+        Msg.m_Type = pType;
+        Msg.m_Value = pValue;
+        Msg.m_Reason = pReason;
+        Msg.m_Force = ForceVote;
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
+            Unpacked by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/server/gamecontext.cpp#L859-L991">
+                CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
+            </a>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_SKINCHANGE"><a href="#NETMSGTYPE_SV_SKINCHANGE">NETMSGTYPE_SV_SKINCHANGE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 33 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>33</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
+                        &amp;
+                        MSGFLAG_NORECORD
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_client_id">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_client_id">Client ID</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_body">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_body">body</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_marking">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_marking">marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_decoration">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_decoration">decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_hands">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_hands">hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_feet">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_feet">feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_eyes">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_eyes">eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[5]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_body">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_body">Custom color body</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_marking">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_marking">Custom color marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_decoration">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_decoration">Custom color decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_hands">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_hands">Custom color hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_feet">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_feet">Custom color feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_eyes">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_eyes">Custom color eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[5]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_body">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_body">Color body</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_marking">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_marking">Color marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_decoration">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_decoration">Color decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_hands">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_hands">Color hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_feet">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_feet">Color feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_eyes">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_eyes">Color eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[5]</code>
+                    </td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    void CGameContext::SendSkinChange(int ClientID, int TargetID)
+    {
+        CNetMsg_Sv_SkinChange Msg;
+        Msg.m_ClientID = ClientID;
+        for(int p = 0; p < NUM_SKINPARTS; p++)
+        {
+            Msg.m_apSkinPartNames[p] = m_apPlayers[ClientID]->m_TeeInfos.m_aaSkinPartNames[p];
+            Msg.m_aUseCustomColors[p] = m_apPlayers[ClientID]->m_TeeInfos.m_aUseCustomColors[p];
+            Msg.m_aSkinPartColors[p] = m_apPlayers[ClientID]->m_TeeInfos.m_aSkinPartColors[p];
+        }
+        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NORECORD, TargetID);
+    }
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgId == NETMSGTYPE_SV_SKINCHANGE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
+	{
+		Client()->RecordGameMessage(false);
+		CNetMsg_Sv_SkinChange *pMsg = (CNetMsg_Sv_SkinChange *)pRawMsg;
+
+		if(!m_aClients[pMsg->m_ClientID].m_Active)
+		{
+			if(Config()->m_Debug)
+				Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "client", "invalid skin info");
+			return;
+		}
+
+		for(int i = 0; i < NUM_SKINPARTS; i++)
+		{
+			str_utf8_copy_num(m_aClients[pMsg->m_ClientID].m_aaSkinPartNames[i], pMsg->m_apSkinPartNames[i], sizeof(m_aClients[pMsg->m_ClientID].m_aaSkinPartNames[i]), MAX_SKIN_LENGTH);
+			m_aClients[pMsg->m_ClientID].m_aUseCustomColors[i] = pMsg->m_aUseCustomColors[i];
+			m_aClients[pMsg->m_ClientID].m_aSkinPartColors[i] = pMsg->m_aSkinPartColors[i];
+		}
+		m_aClients[pMsg->m_ClientID].UpdateRenderInfo(this, pMsg->m_ClientID, true);
+	}
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_SKINCHANGE"><a href="#NETMSGTYPE_CL_SKINCHANGE">NETMSGTYPE_CL_SKINCHANGE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 34 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>34</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a> &amp;
+                        <a href="fundamentals.html#flushing">MSGFLAG_FLUSH</a> &amp;
+                        MSGFLAG_NORECORD
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_body">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_body">body</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_marking">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_marking">marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_decoration">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_decoration">decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_hands">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_hands">hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_feet">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_feet">feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_part_name_eyes">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_part_name_eyes">eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Stored in <code>m_aaSkinPartNames[5]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_body">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_body">Custom color body</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_marking">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_marking">Custom color marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_decoration">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_decoration">Custom color decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_hands">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_hands">Custom color hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_feet">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_feet">Custom color feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_eyes">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_custom_color_eyes">Custom color eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
+                    <td>
+                        Stored in <code>m_aUseCustomColors[5]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_body">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_body">Color body</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[0]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_marking">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_marking">Color marking</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[1]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_decoration">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_decoration">Color decoration</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[2]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_hands">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_hands">Color hands</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[3]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_feet">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_feet">Color feet</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[4]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_SKINCHANGE_skin_color_eyes">
+                        <a href="#NETMSGTYPE_SV_SKINCHANGE_skin_color_eyes">Color eyes</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Stored in <code>m_aSkinPartColors[5]</code>
+                    </td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    void CGameClient::SendSkinChange()
+    {
+        CNetMsg_Cl_SkinChange Msg;
+        for(int p = 0; p < NUM_SKINPARTS; p++)
+        {
+            Msg.m_apSkinPartNames[p] = CSkins::ms_apSkinVariables[p];
+            Msg.m_aUseCustomColors[p] = *CSkins::ms_apUCCVariables[p];
+            Msg.m_aSkinPartColors[p] = *CSkins::ms_apColorVariables[p];
+        }
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NORECORD|MSGFLAG_FLUSH);
+        m_LastSkinChangeTime = Client()->LocalTime();
+    }
+                </code>
+            </pre>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgID == NETMSGTYPE_CL_SKINCHANGE)
+    {
+        if(pPlayer->m_LastChangeInfoTick && pPlayer->m_LastChangeInfoTick+Server()->TickSpeed()*5 > Server()->Tick())
+            return;
+
+        pPlayer->m_LastChangeInfoTick = Server()->Tick();
+        CNetMsg_Cl_SkinChange *pMsg = (CNetMsg_Cl_SkinChange *)pRawMsg;
+
+        for(int p = 0; p < NUM_SKINPARTS; p++)
+        {
+            str_utf8_copy_num(pPlayer->m_TeeInfos.m_aaSkinPartNames[p], pMsg->m_apSkinPartNames[p], sizeof(pPlayer->m_TeeInfos.m_aaSkinPartNames[p]), MAX_SKIN_LENGTH);
+            pPlayer->m_TeeInfos.m_aUseCustomColors[p] = pMsg->m_aUseCustomColors[p];
+            pPlayer->m_TeeInfos.m_aSkinPartColors[p] = pMsg->m_aSkinPartColors[p];
+        }
+
+        // update all clients
+        for(int i = 0; i < MAX_CLIENTS; ++i)
+        {
+            if(!m_apPlayers[i] || (!Server()->ClientIngame(i) && !m_apPlayers[i]->IsDummy()) || Server()->GetClientVersion(i) < MIN_SKINCHANGE_CLIENTVERSION)
+                continue;
+
+            SendSkinChange(pPlayer->GetCID(), i);
+        }
+
+        m_pController->OnPlayerInfoChange(pPlayer);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_RACEFINISH"><a href="#NETMSGTYPE_SV_RACEFINISH">NETMSGTYPE_SV_RACEFINISH</a></h2>
