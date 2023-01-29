@@ -1388,9 +1388,85 @@
         <hr>
         <h2 id="NETMSGTYPE_DE_CLIENTENTER"><a href="#NETMSGTYPE_DE_CLIENTENTER">NETMSGTYPE_DE_CLIENTENTER</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 22 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>[ Client ] (not send over the network just used for demos)</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>[ Client ] (not send over the network just used for demos)</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>22</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        <a href="#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        MSGFLAG_NOSEND & MSGFLAG_RECORD
+                    </td>
+                </tr>
+            </table>
+            This message is only used when the client is recording a demo.
+            There is no udp packet being sent to the server or anywhere else.
+            This is just added by the client to the demo file to be later read
+            from the demo file by the client again.
+            <br>
+            <br>
+            The client basically translates the <a href="#NETMSGTYPE_SV_CLIENTINFO">NETMSGTYPE_SV_CLIENTINFO</a>
+            message to this <a href="#NETMSGTYPE_DE_CLIENTENTER">NETMSGTYPE_DE_CLIENTENTER</a> message.
+            Note that it only happens when the client is recording a demo <code>if(m_pDemoRecorder->IsRecording())</code>
+            <pre class="code-snippet">
+                <code>
+    if(MsgId == NETMSGTYPE_SV_CLIENTINFO && Client()->State() != IClient::STATE_DEMOPLAYBACK)
+    {
+        // [..]
+
+        if(pMsg->m_Local)
+        {
+            // [..]
+        }
+        else
+        {
+            // [..]
+
+            if(m_LocalClientID != -1 && !pMsg->m_Silent)
+            {
+                if(m_pDemoRecorder->IsRecording())
+                {
+                    CNetMsg_De_ClientEnter Msg;
+                    Msg.m_pName = pMsg->m_pName;
+                    Msg.m_ClientID = pMsg->m_ClientID;
+                    Msg.m_Team = pMsg->m_Team;
+                    Client()->SendPackMsg(&Msg, MSGFLAG_NOSEND|MSGFLAG_RECORD);
+                }
+            }
+        }
+    }
+                </code>
+            </pre>
+            And then the client only unpacks this message when in demo playback mode
+            <code>Client()->State() == IClient::STATE_DEMOPLAYBACK</code>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgId == NETMSGTYPE_DE_CLIENTENTER && Client()->State() == IClient::STATE_DEMOPLAYBACK)
+    {
+        CNetMsg_De_ClientEnter *pMsg = (CNetMsg_De_ClientEnter *)pRawMsg;
+        DoEnterMessage(pMsg->m_pName, pMsg->m_ClientID, pMsg->m_Team);
+        m_pStats->OnPlayerEnter(pMsg->m_ClientID, pMsg->m_Team);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_DE_CLIENTLEAVE"><a href="#NETMSGTYPE_DE_CLIENTLEAVE">NETMSGTYPE_DE_CLIENTLEAVE</a></h2>
