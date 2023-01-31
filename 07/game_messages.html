@@ -3799,37 +3799,458 @@
         <hr>
         <h2 id="NETMSGTYPE_SV_RACEFINISH"><a href="#NETMSGTYPE_SV_RACEFINISH">NETMSGTYPE_SV_RACEFINISH</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 35 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>[Server] (vanilla servers do not send it)</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>35</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        Decided by mod implementations.
+                        Should indicate that a tee finished the race.
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        Unused
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_RACEFINISH_client_id">
+                        <a href="#NETMSGTYPE_SV_RACEFINISH_client_id">Client ID</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_RACEFINISH_time">
+                        <a href="#NETMSGTYPE_SV_RACEFINISH_time">Time</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_RACEFINISH_diff">
+                        <a href="#NETMSGTYPE_SV_RACEFINISH_diff">Diff</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_RACEFINISH_record_personal">
+                        <a href="#NETMSGTYPE_SV_RACEFINISH_record_personal">Record personal</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_RACEFINISH_record_server">
+                        <a href="#NETMSGTYPE_SV_RACEFINISH_record_server">Record server</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgType == NETMSGTYPE_SV_RACEFINISH && Race)
+    {
+        CNetMsg_Sv_RaceFinish *pMsg = (CNetMsg_Sv_RaceFinish *)pRawMsg;
+
+        char aBuf[256];
+        char aTime[32];
+        char aLabel[64];
+
+        FormatTime(aTime, sizeof(aTime), pMsg->m_Time, m_pClient->RacePrecision());
+        m_pClient->GetPlayerLabel(aLabel, sizeof(aLabel), pMsg->m_ClientID, m_pClient->m_aClients[pMsg->m_ClientID].m_aName);
+
+        str_format(aBuf, sizeof(aBuf), "%2d: %s: finished in %s", pMsg->m_ClientID, m_pClient->m_aClients[pMsg->m_ClientID].m_aName, aTime);
+        Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "race", aBuf);
+
+        if(pMsg->m_RecordPersonal || pMsg->m_RecordServer)
+        {
+            if(pMsg->m_RecordServer)
+                str_format(aBuf, sizeof(aBuf), Localize("'%s' has set a new map record: %s"), aLabel, aTime);
+            else // m_RecordPersonal
+                str_format(aBuf, sizeof(aBuf), Localize("'%s' has set a new personal record: %s"), aLabel, aTime);
+            
+            if(pMsg->m_Diff < 0)
+            {
+                char aImprovement[64];
+                char aDiff[32];
+                FormatTimeDiff(aDiff, sizeof(aDiff), absolute(pMsg->m_Diff), m_pClient->RacePrecision(), false);
+                str_format(aImprovement, sizeof(aImprovement), Localize(" (%s seconds faster)"), aDiff);
+                str_append(aBuf, aImprovement, sizeof(aBuf));
+            }
+
+            m_pClient->m_pChat->AddLine(aBuf);
+        }
+
+        if(m_pClient->m_Snap.m_pGameDataRace && m_pClient->m_Snap.m_pGameDataRace->m_RaceFlags&RACEFLAG_FINISHMSG_AS_CHAT)
+        {
+            if(!pMsg->m_RecordPersonal && !pMsg->m_RecordServer) // don't print the time twice
+            {
+                str_format(aBuf, sizeof(aBuf), Localize("'%s' finished in: %s"), aLabel, aTime);
+                m_pClient->m_pChat->AddLine(aBuf);
+            }
+        }
+        else
+        {
+            CInfoMsg Finish;
+            Finish.m_Player1ID = pMsg->m_ClientID;
+            Finish.m_Player1RenderInfo = m_pClient->m_aClients[Finish.m_Player1ID].m_RenderInfo;
+            
+            Finish.m_TimeCursor.m_FontSize = 36.0f;
+            if(pMsg->m_RecordServer)
+                TextRender()->TextColor(1.0f, 0.5f, 0.0f, 1.0f);
+            else if(pMsg->m_RecordPersonal)
+                TextRender()->TextColor(0.2f, 0.6f, 1.0f, 1.0f);
+            TextRender()->TextDeferred(&Finish.m_TimeCursor, aTime, -1);
+
+            if(Config()->m_ClShowsocial)
+            {
+                Finish.m_Player1NameCursor.m_FontSize = 36.0f;
+                TextRender()->TextDeferred(&Finish.m_Player1NameCursor, m_pClient->m_aClients[pMsg->m_ClientID].m_aName, -1);
+            }
+
+            FormatTimeDiff(aTime, sizeof(aTime), pMsg->m_Diff, m_pClient->RacePrecision());
+            str_format(aBuf, sizeof(aBuf), "(%s)", aTime);
+            Finish.m_DiffCursor.m_FontSize = 36.0f;
+            if(pMsg->m_Diff < 0)
+                TextRender()->TextColor(0.5f, 1.0f, 0.5f, 1.0f);
+            else
+                TextRender()->TextColor(1.0f, 0.5f, 0.5f, 1.0f);
+            TextRender()->TextDeferred(&Finish.m_DiffCursor, aBuf, -1);
+            TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+            Finish.m_Time = pMsg->m_Time;
+            Finish.m_Diff = pMsg->m_Diff;
+            Finish.m_RecordPersonal = pMsg->m_RecordPersonal;
+            Finish.m_RecordServer = pMsg->m_RecordServer;
+
+            AddInfoMsg(INFOMSG_FINISH, Finish);
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_CHECKPOINT"><a href="#NETMSGTYPE_SV_CHECKPOINT">NETMSGTYPE_SV_CHECKPOINT</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 36 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>[Server] (vanilla servers do not send it)</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>36</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        Decided by mod implementations.
+                        Should indicate that a tee reached a race checkpoint.
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th>
+                    <td>
+                        None
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th>
+                    <td>
+                        Unused
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CHECKPOINT_diff">
+                        <a href="#NETMSGTYPE_SV_CHECKPOINT_diff">Diff</a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    void CHud::OnMessage(int MsgType, void *pRawMsg)
+    {
+        if(MsgType == NETMSGTYPE_SV_CHECKPOINT)
+        {
+            CNetMsg_Sv_Checkpoint *pMsg = (CNetMsg_Sv_Checkpoint *)pRawMsg;
+            m_CheckpointDiff = pMsg->m_Diff;
+            m_CheckpointTime = time_get();
+        }
+        // [..]
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_COMMANDINFO"><a href="#NETMSGTYPE_SV_COMMANDINFO">NETMSGTYPE_SV_COMMANDINFO</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 37 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>37</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_COMMANDINFO_name"><a href="#NETMSGTYPE_SV_COMMANDINFO_name">Name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Name of the command. If a user types <code>/commandname</code> in the chat.
+                        The command will be run.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_COMMANDINFO_args_format"><a href="#NETMSGTYPE_SV_COMMANDINFO_args_format">Args format</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        The argument format specifies how many and what type of arguments this chat command takes.
+                        <br>
+                        Valid types are:
+                        <ul>
+                            <li>s - string word split</li>
+                            <li>r - string consume till the end</li>
+                            <li>i - integer</li>
+                        </ul>
+                        And then a leading <code>?</code> can indicate if it is a optional argument.
+                        And <code>[details]</code> following the type can give more details on what the value should be.
+                        <br>
+                        An example for a say command could be:
+                        <br>
+                        <code>r[message]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_COMMANDINFO_help_text"><a href="#NETMSGTYPE_SV_COMMANDINFO_help_text">Help text</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Command description displayed to the user when autocompleting chat commands.
+                    </td>
+                </tr>
+            </table>
+            This can be seen as the chat equivalent to the rcon counter part <a href="system_messages.html#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a>
+            <pre class="code-snippet">
+                <code>
+    void CChat::OnMessage(int MsgType, void *pRawMsg)
+    {
+        // [..]
+        else if(MsgType == NETMSGTYPE_SV_COMMANDINFO)
+        {
+            CNetMsg_Sv_CommandInfo *pMsg = (CNetMsg_Sv_CommandInfo *)pRawMsg;
+            if(!m_CommandManager.AddCommand(pMsg->m_Name, pMsg->m_HelpText, pMsg->m_ArgsFormat, ServerCommandCallback, this))
+                dbg_msg("chat_commands", "adding server chat command: name='%s' args='%s' help='%s'", pMsg->m_Name, pMsg->m_ArgsFormat, pMsg->m_HelpText);
+            else
+                dbg_msg("chat_commands", "failed to add command '%s'", pMsg->m_Name);
+
+        }
+        // [..]
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_COMMANDINFOREMOVE"><a href="#NETMSGTYPE_SV_COMMANDINFOREMOVE">NETMSGTYPE_SV_COMMANDINFOREMOVE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 38 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>38</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>None</td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_COMMANDINFOREMOVE_name"><a href="#NETMSGTYPE_SV_COMMANDINFOREMOVE_name">Name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Name of the command to be deleted from the clients autocompletion list.
+                    </td>
+                </tr>
+            </table>
+            <pre class="code-snippet">
+                <code>
+    void CChat::OnMessage(int MsgType, void *pRawMsg)
+    {
+        // [..]
+        else if(MsgType == NETMSGTYPE_SV_COMMANDINFOREMOVE)
+        {
+            CNetMsg_Sv_CommandInfoRemove *pMsg = (CNetMsg_Sv_CommandInfoRemove *)pRawMsg;
+
+            if(!m_CommandManager.RemoveCommand(pMsg->m_Name))
+            {
+                dbg_msg("chat_commands", "removed chat command: name='%s'", pMsg->m_Name);
+            }
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_COMMAND"><a href="#NETMSGTYPE_CL_COMMAND">NETMSGTYPE_CL_COMMAND</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 39 <br>
+            <table>
+                <tr>
+                    <th><strong>Sender:</strong></th><td>Client</td>
+                </tr>
+                <tr>
+                    <th><strong>Recipient:</strong></th><td>Server</td>
+                </tr>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>39</td>
+                </tr>
+                <tr>
+                    <th><strong>Response to:</strong></th>
+                    <td>
+                        Client typing a command into chat.
+                    </td>
+                </tr>
+                <tr>
+                    <th><strong>Expected response:</strong></th><td>Depends on command</td>
+                </tr>
+                <tr>
+                    <th><strong>Flags:</strong></th><td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_COMMAND_name"><a href="#NETMSGTYPE_CL_COMMAND_name">Name</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        Name of the command to be executed.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_COMMAND_arguments"><a href="#NETMSGTYPE_CL_COMMAND_arguments">Arguments</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+            </table>
+            The client fills in command and arguments and sends it via the
+            <code>ServerCommandCallback()</code> method
+            <pre class="code-snippet">
+                <code>
+    void CChat::ServerCommandCallback(IConsole::IResult *pResult, void *pContext)
+    {
+        CCommandManager::SCommandContext *pComContext = (CCommandManager::SCommandContext *)pContext;
+        CChat *pChatData = (CChat *)pComContext->m_pContext;
+
+        CNetMsg_Cl_Command Msg;
+        Msg.m_Name = pComContext->m_pCommand;
+        Msg.m_Arguments = pComContext->m_pArgs;
+        pChatData->Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+
+        pChatData->m_pHistoryEntry = 0x0;
+        pChatData->Disable();
+        pChatData->m_pClient->OnRelease();
+    }
+                </code>
+            </pre>
+            The server then calls the right callback method matching the command name
+            <pre class="code-snippet">
+                <code>
+    else if (MsgID == NETMSGTYPE_CL_COMMAND)
+    {
+        CNetMsg_Cl_Command *pMsg = (CNetMsg_Cl_Command*)pRawMsg;
+        CommandManager()->OnCommand(pMsg->m_Name, pMsg->m_Arguments, ClientID);
+    }
+                </code>
+            </pre>
         </p>
     </div> <!-- content -->
     <footer>
