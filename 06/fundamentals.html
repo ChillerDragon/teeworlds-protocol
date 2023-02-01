@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html">
+            <img src="../img/tee.svg" alt="tee">
+        </a>
+        <a href="../index.html">home</a>
+        <a href="fundamentals.html">fundamentals</a>
+        <a href="snap_items.html">snap_items</a>
+        <hr>
+    </div>
+    <div class="content">
+        <h1>Fundamentals</h1>
+        <p>
+            There are a few base concepts that you need to understand to fully grasp the whole network protocol from scratch.
+        </p>
+        <hr>
+        <h2 id="flushing"><a href="#flushing">Message queueing, chunks and flushing</a></h2>
+        <a href="ctrl_messages.html">Control messages</a> are sent immediately.
+        All ctrl messages go through the <code>SendControlMsg()</code> method which calls
+        <code>SendPacket()</code> directly. In <code>SendPacket()</code> the teeworlds packet header
+        gets added and the packet is sent over the network. Note that control messages always have
+        0 chunks because of the <code>Construct.m_NumChunks = 0;</code> line
+        <pre class="code-snippet">
+            <code>
+    void CNetBase::SendControlMsg(const NETADDR *pAddr, TOKEN Token, int Ack, int ControlMsg, const void *pExtra, int ExtraSize)
+    {
+        CNetPacketConstruct Construct;
+        Construct.m_Token = Token;
+        Construct.m_Flags = NET_PACKETFLAG_CONTROL;
+        Construct.m_Ack = Ack;
+        Construct.m_NumChunks = 0;
+        Construct.m_DataSize = 1+ExtraSize;
+        Construct.m_aChunkData[0] = ControlMsg;
+        if(ExtraSize > 0)
+            mem_copy(&Construct.m_aChunkData[1], pExtra, ExtraSize);
+
+        // send the control message
+        SendPacket(pAddr, &Construct);
+    }
+            </code>
+        </pre>
+        But <a href="game_messages.html">Game messages</a> and <a href="system_messages.html">system messages</a>
+        usually go through <code>SendMsg()</code> -> <code>m_NetClient.Send(&Packet);</code>
+        where they end up in
+        <pre class="code-snippet">
+            <code>
+    if(pChunk->m_Flags&NETSENDFLAG_CONNLESS)
+    {
+        // [..]
+    }
+    else
+    {
+        // [..]
+        m_Connection.QueueChunk(Flags, pChunk->m_DataSize, pChunk->m_pData);
+    }
+            </code>
+        </pre>
+        And <code>m_Connection.QueueChunk()</code> as the name suggests only puts
+        these messages into a queue of so called chunks. So no packet header is created
+        and no data is being sent over the network yet. For now the messages only get
+        collected in a queue.
+        This queue is then sent as soon as it is full or a message with the flag
+        <code>MSGFLAG_FLUSH</code> is being send. When it is being send
+        all messages in the queue get their own chunk header and in the very beginning of
+        the udp packet there is the packet header which also includes one field that says
+        how many chunks are in the packet.
+        <br>
+        <br>
+        This is probably done for performance reasons to not waste bandwith on teeworlds/udp/ip headers
+        when non time critical messages are being sent that are followed by other messages anyways.
+        So they are bundled up and sent together.
+        <br>
+        <br>
+        So if you are calling <code>SendMsg()</code> and care about time delay make sure to use the
+        <code>MSGFLAG_FLUSH</code> flag otherwise it might be slightly delayed. The delay is not very dramatic
+        since flushes happen quite frequently so only use it for super time sensitive things such as
+        user inputs or tee positions.
+        <br>
+        <br>
+        Lets illustrate chunks and flushing via a real world example.
+        When a client connects to a server the first packet with multiple chunks is
+        <a href="traffic.html#srv_cl_motd_sett_rdy">Motd, Server Settings, Ready</a>.
+        This is happening because when a client connects <code>OnClientConnected()</code>
+        is being called. Where the motd and server settings are being sent.
+        <pre class="code-snippet">
+            <code>
+    void CGameContext::OnClientConnected(int ClientID, bool Dummy, bool AsSpec)
+    {
+        // [..]
+
+        // send motd
+        SendMotd(ClientID);
+
+        // send settings
+        SendSettings(ClientID);
+    }
+            </code>
+        </pre>
+        <pre class="code-snippet">
+            <code>
+    void CGameContext::SendMotd(int ClientID)
+    {
+        CNetMsg_Sv_Motd Msg;
+        Msg.m_pMessage = Config()->m_SvMotd;
+        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+
+    void CGameContext::SendSettings(int ClientID)
+    {
+        CNetMsg_Sv_ServerSettings Msg;
+        Msg.m_KickVote = Config()->m_SvVoteKick;
+        Msg.m_KickMin = Config()->m_SvVoteKickMin;
+        Msg.m_SpecVote = Config()->m_SvVoteSpectate;
+        Msg.m_TeamLock = m_LockTeams != 0;
+        Msg.m_TeamBalance = Config()->m_SvTeambalanceTime != 0;
+        Msg.m_PlayerSlots = Config()->m_SvPlayerSlots;
+        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+            </code>
+        </pre>
+        Note that the call to <code>SendPackMsg()</code>
+        does contain the flag <code>MSGFLAG_VITAL</code> but no <code>MSGFLAG_FLUSH</code>
+        so they are not sent and just added to the queue.
+        Directly after <code>OnClientConnected()</code> is called
+        <code>SendConnectionReady()</code> gets called.
+        <pre class="code-snippet">
+            <code>
+    GameServer()->OnClientConnected(ClientID, ConnectAsSpec);
+    SendConnectionReady(ClientID);
+            </code>
+        </pre>
+        <pre class="code-snippet">
+            <code>
+    void CServer::SendConnectionReady(int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_CON_READY, true);
+        SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+    }
+            </code>
+        </pre>
+        Note that this time the flag <code>MSGFLAG_FLUSH</code> is used
+        which causes the whole queue (Motd, Settings) to be sent inclusing the newly
+        added CON_READY. So basically we send 3 messages here but they just get
+        queued and then sent together. But this is all happening in the same tick
+        so it feels instant.
+        <br>
+        <br>
+        So these three pseudo code method calls
+        <pre class="code-snippet">
+            <code>
+    Send(CNetMsg_Sv_Motd, MSGFLAG_VITAL);                   // nothing is sent
+    Send(CNetMsg_Sv_ServerSettings, MSGFLAG_VITAL);         // nothing is sent
+    Send(NETMSG_CON_READY, MSGFLAG_VITAL|MSGFLAG_FLUSH);    // all 3 are sent
+            </code>
+        </pre>
+        cause one udp packet to be sent that looks like this
+        <pre class="code-snippet">
+            <code>
+    +-------------------------+---------------+-------+---------------+-----------------+---------------+-----------+
+    | teeworlds packet header | chunk header  | motd  | chunk header  | server settings | chunk header  | CON_READY |
+    |        chumks = 3       |     vital     |       |     vital     |                 | vital &amp; flush |           |
+    +-------------------------+---------------+-------+---------------+-----------------+---------------+-----------+
+            </code>
+        </pre>
+        <hr>
+        <h2 id="int_packing"><a href="#int_packing">Int packing</a></h2>
+        <p>
+            Note there is also documentation on ints in
+            <a href="https://github.com/heinrich5991/libtw2/blob/bb63d4d6344a2330ba22d10d638b2cf0d8959544/doc/int.md">
+                the libtw2 docs.
+            </a>
+            <br>
+            <br>
+            All numbers (integers) sent via the network are packed using a custom
+            teeworlds specific packer.
+            <br>
+            Eventho it being a custom packer the numbers 0-63
+            are pretty much the standard binary representation.
+            <br>
+            <br>
+            So binary <code>00000001</code> is decimal <code>1</code><br>
+            and binary <code>00000010</code> is decimal <code>2</code><br>
+            and so on..
+            <br>
+            <br>
+            If we exceed 63 it starts to differ.
+            <br>
+            The int packer code can be found
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/compression.cpp#L7-L29">
+                here.
+            </a>
+            Together with this annotation comment.
+            <pre class="code-snippet">
+                <code>
+    Format: ESDDDDDD EDDDDDDD EDD... Extended, Data, Sig
+                </code>
+            </pre>
+            What it means is that the second bit of the the first byte of the integer is its sign bit.
+            Meaning that if the second bit of the first byte is <code>1</code> it is a negative number.
+            If the second bit of the first byte is a <code>0</code> it is a positive number.
+            And the first bit of every byte is the extension bit. If it is set to <code>1</code>
+            it means another byte is following if it is set to <code>0</code> the current byte is the last.
+            This extension bit allows to send small numbers (-62 to 63) as a single byte over the network.
+            This extension bit also means that technically the protocol allows numbers of any size.
+            Which you should not send tho since they are read into a C++ <code>int</code> which is only 4 bytes.
+            <br>
+            <br>
+            Also note that the byte order is little endian.
+            The smallest positive two byte number 64 is represented as those bits: <code>10000000 00000001</code><br>
+            Which can be dissected as:
+            <pre class="code-snippet">
+                <code>
+    ESDDDDDD EDDDDDDD
+    10000000 00000001
+    ^^^    ^ ^^    ^
+    ||\   /  | \   /
+    || \ / not  \ /
+    ||  \ extended
+    ||   \      /
+    ||    \    /
+    ||     \  /
+    ||      \/
+    ||      /\
+    ||     /  \
+    ||    /    \
+    || 0000001 000000
+    ||       |
+    ||       v
+    ||       64
+    ||
+    |positive
+    extended
+                </code>
+            </pre>
+            <br>
+            There is a rust crate named
+            <a href="https://github.com/edg-l/teeint">
+                teeint
+            </a>
+            which soley focusses on int packing.
+        </p>
+        <hr>
+        <h2 id="string_packing"><a href="#string_packing">String packing</a></h2>
+        <p>
+            When strings are sent via the network. They are sent as plain C strings.
+            They do not contain a length. And have to be null terminated.
+            <br>
+            <br>
+            The receiver then can use diffent types of sanitizers when unpacking the string:
+            <ul>
+                <li>
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.h#L39">
+                        SANITIZE
+                    </a> - Is calling
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/base/system.c#L2209-L2219">
+                        str_sanitize(char *str_in)
+                    </a>
+                    which  makes sure that the string only contains the characters between 32 and 255 + \r\n\t
+                </li>
+                <li>
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.h#L40">
+                        SANITIZE_CC
+                    </a> - Is calling
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/base/system.c#L2157-L2167">
+                        str_sanitize_cc(char *)
+                    </a>
+                    which makes sure that the string only contains the characters between 32 and 255
+                </li>
+                <li>
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.h#L41">
+                        SKIP_START_WHITESPACES
+                    </a> - Is calling
+                    <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/base/system.c#L2599-L2616">
+                        str_utf8_skip_whitespaces(const char *str)
+                    </a>
+                    on the string to remove all leading whitespaces.
+                </li>
+            </ul>
+        </p>
+        <hr>
+        <h2 id="raw_packing"><a href="#raw_packing">Raw packing</a></h2>
+        <p>
+            If you want to send raw bytes over the network. The teeworlds protocol got you covered.
+            <br>
+            There is
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.cpp#L68-L85">
+                void CPacker::AddRaw(const void *pData, int Size)
+            </a>
+            and its counter part
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.cpp#L155-L171">
+                const unsigned char *CUnpacker::GetRaw(int Size)
+            </a>
+            <br>
+            <br>
+            It will just send and receive byte by byte the raw data you give it.
+            Note that while reading you have to know the size. The raw data does not include a size
+            field or is terminated in any way.
+            <br>
+            So raw can only be used in contexts where the length is known to the recipient.
+            This usually happens by a leading <a href="#int_packing">integer field</a> holding the size.
+        </p>
+        <hr>
+        <h2 id="huffman"><a href="#huffman">Huffman compression</a></h2>
+        <p>
+            Packets can be compressed using huffman compression.
+            The teeworlds packet header is never compressed only its payload.
+            The packet header sets the COMPRESSION flag if the payload is compressed.
+            Usually the same packets are compressed. But technically every packet could be compressed or
+            uncompressed.
+            <br>
+            <br>
+            Huffman compression is an alorithm not specific to teeworlds. To understand its fundamentals you
+            can simply checkout any non teeworlds related huffman documentation. Like this <a href="https://www.youtube.com/watch?v=iiGZ947Tcck">youtube video</a>.
+            Huffman compression depends on a weight tree. So if you reimplement huffman your self
+            make sure it uses the same weight tree as the official teeworlds server and client.
+            The official teeworlds frequence table can be found
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/huffman.cpp#L7-L20">
+                here</a>.
+            <br>
+            But chances are you do not have to reimplement the huffman alorithm
+            even if you want to build a server or client in a new programming language.
+            There are community implemenations for
+            <a href="https://github.com/edg-l/TeeAI/blob/18ae5eac39e82a882e751c01df2f3b1896e6ba4c/engine/huffman.py">
+                python,
+            </a>
+            <a href="https://gitlab.com/swarfey/teeworlds-client/-/blob/b3ad21d2da60b5db8c22630cae7036f8ca582ea4/lib/huffman.ts">
+                javascript,
+            </a>
+            <a href="https://github.com/ChillerDragon/huffman-tw">
+                ruby
+            </a>
+            and
+            <a href="https://github.com/edg-l/rustyman">
+                rust
+            </a>
+            already.
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+</body>
