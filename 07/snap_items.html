@@ -32,7 +32,7 @@
             The snapshot data is containing snap items which represent things like tees, projectiles and similar.
             All of those items are encoded as packed integers.
             The snapshot is build by the server and sent to the client.
- 
+
             <h2>Size list</h2>
 
             When it comes to byte layout that is sent over the network.
@@ -55,9 +55,9 @@
                     Which is filled by the server.
                 </li>
             </ul>
- 
+
             <h2>Size list edge case</h2>
-    
+
             There are two snap items (obj_player_info_race and obj_game_data_race) that were added after the 0.7 release and their size
             is technically fixed and they should be included in the known size list.
             But since there was already a official client release without those items,
@@ -270,10 +270,10 @@
                 </td>
                 <td>desc</td>
             </tr>
-            <tr id="obj_game_info">
+            <tr id="obj_de_game_info">
                 <td>14</td>
                 <td>5</td>
-                <td><a href="#obj_game_info">obj_game_info</a></td>
+                <td><a href="#obj_de_game_info">obj_de_game_info</a></td>
                 <td>
                     int m_GameFlags;<br>
                     int m_ScoreLimit;<br>
@@ -281,16 +281,16 @@
                     int m_MatchNum;<br>
                     int m_MatchCurrent;<br>
                 </td>
-                <td>desc</td>
+                <td>Only used for server side demos</td>
             </tr>
-            <tr id="obj_tune_params">
+            <tr id="obj_de_tune_params">
                 <td>15</td>
                 <td>32</td>
-                <td><a href="#obj_tune_params">obj_tune_params</a></td>
+                <td><a href="#obj_de_tune_params">obj_de_tune_params</a></td>
                 <td>
                     int m_aTuneParams[32];
                 </td>
-                <td>desc</td>
+                <td>Only used for server side demos</td>
             </tr>
             <tr id="event_common">
                 <td>16</td>
