@@ -65,6 +65,25 @@
             The client skips all items with a unknown type_id so the server can send snap items
             unknown to the client as long as the size is included so the client knows how many bytes
             to ignore.
+
+            <h2>Snap item layout</h2>
+            <pre class="code-snippet">
+                <code>
+    +---------+----+-----------+
+    | type_id | id | payload.. |
+    +---------+----+-----------+
+                </code>
+            </pre>
+            Every type_id has its own ids. So there can be a projectile with id 0 and a
+            character with id 0.
+            Here a fully annotated real sample snapshot with the raw bytes on the left
+            and annotations on the right. It was generated using the
+            <a href="https://github.com/ChillerDragon/teeworlds_network">teeworlds_network ruby library</a>
+            <div>
+                <img class="rounded-img" src="../img/snap_dump_07.png" alt="">
+            </div>
+            It shows the layout which always starts with the header containing the amount of deleted items.
+            The amount of deltas and a unused zero field. Followed by snap items.
         </p>
         <h2>Known size table</h2>
         <table>
