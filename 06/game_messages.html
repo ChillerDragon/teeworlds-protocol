@@ -101,15 +101,17 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_MOTD_todo"><a href="#NETMSGTYPE_SV_MOTD_todo">TODO</a></td>
+                    <td id="NETMSGTYPE_SV_MOTD_message"><a href="#NETMSGTYPE_SV_MOTD_message">Message</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        The message of the day (motd) that will be displayed to clients
+                        that connect. (The one with the dark background)
+                    </td>
                 </tr>
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_BROADCAS"><a href="#NETMSGTYPE_SV_BROADCAST">NETMSGTYPE_SV_BROADCAST</a></h2>
+        <h2 id="NETMSGTYPE_SV_BROADCAST"><a href="#NETMSGTYPE_SV_BROADCAST">NETMSGTYPE_SV_BROADCAST</a></h2>
         <p>
             <table>
                 <tr>
@@ -143,10 +145,11 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_BROADCAST_todo"><a href="#NETMSGTYPE_SV_BROADCAST_todo">TODO</a></td>
+                    <td id="NETMSGTYPE_SV_BROADCAST_message"><a href="#NETMSGTYPE_SV_BROADCAST_message">Message</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        The broadcast message.
+                    </td>
                 </tr>
             </table>
         </p>
@@ -185,15 +188,24 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_CHAT_todo"><a href="#NETMSGTYPE_SV_CHAT_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_CHAT_team"><a href="#NETMSGTYPE_SV_CHAT_team">Team</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CHAT_client_id"><a href="#NETMSGTYPE_SV_CHAT_client_id">Client ID</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_CHAT_message"><a href="#NETMSGTYPE_SV_CHAT_message">Message</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_KILLMSG "><a href="#NETMSGTYPE_SV_KILLMSG">NETMSGTYPE_SV_KILLMSG</a></h2>
+        <h2 id="NETMSGTYPE_SV_KILLMSG"><a href="#NETMSGTYPE_SV_KILLMSG">NETMSGTYPE_SV_KILLMSG</a></h2>
         <p>
             <table>
                 <tr>
@@ -227,15 +239,37 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_KILLMSG_todo"><a href="#NETMSGTYPE_SV_KILLMSG_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_KILLMSG_killer"><a href="#NETMSGTYPE_SV_KILLMSG_killer">Killer</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_KILLMSG_victim"><a href="#NETMSGTYPE_SV_KILLMSG_victim">Victim</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_KILLMSG_weapon"><a href="#NETMSGTYPE_SV_KILLMSG_weapon">Weapon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_KILLMSG_mode_special"><a href="#NETMSGTYPE_SV_KILLMSG_mode_special">Mode special</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
                 </tr>
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_SOUNDGLOBAL "><a href="#NETMSGTYPE_SV_SOUNDGLOBAL">NETMSGTYPE_SV_SOUNDGLOBAL</a></h2>
+        <h2 id="NETMSGTYPE_SV_SOUNDGLOBAL"><a href="#NETMSGTYPE_SV_SOUNDGLOBAL">NETMSGTYPE_SV_SOUNDGLOBAL</a></h2>
         <p>
             <table>
                 <tr>
@@ -269,15 +303,14 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_SOUNDGLOBAL_todo"><a href="#NETMSGTYPE_SV_SOUNDGLOBAL_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_SOUNDGLOBAL_sound_id"><a href="#NETMSGTYPE_SV_SOUNDGLOBAL_sound_id">Sound ID</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_TUNEPARAMS  "><a href="#NETMSGTYPE_SV_TUNEPARAMS">NETMSGTYPE_SV_TUNEPARAMS</a></h2>
+        <h2 id="NETMSGTYPE_SV_TUNEPARAMS"><a href="#NETMSGTYPE_SV_TUNEPARAMS">NETMSGTYPE_SV_TUNEPARAMS</a></h2>
         <p>
             <table>
                 <tr>
@@ -319,7 +352,7 @@
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_EXTRAPROJECTILE "><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE">NETMSGTYPE_SV_EXTRAPROJECTILE</a></h2>
+        <h2 id="NETMSGTYPE_SV_EXTRAPROJECTILE"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE">NETMSGTYPE_SV_EXTRAPROJECTILE</a></h2>
         <p>
             <table>
                 <tr>
@@ -353,12 +386,61 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_todo"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_num"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_num">Num</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>The amount of <code>CNetObj_Projectile</code> structs in this message</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_m_X"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_m_X">X</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td><code>m_X</code> in the <code>CNetObj_Projectile</code> struct</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_m_Y"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_m_Y">Y</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td><code>m_Y</code> in the <code>CNetObj_Projectile</code> struct</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_m_VelX"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_m_VelX">VelX</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td><code>m_VelX</code> in the <code>CNetObj_Projectile</code> struct</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_m_VelY"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_m_VelY">VelY</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td><code>m_VelY</code> in the <code>CNetObj_Projectile</code> struct</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_m_Type"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_m_Type">Type</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td><code>m_Type</code> in the <code>CNetObj_Projectile</code> struct</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_EXTRAPROJECTILE_m_StartTick"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE_m_StartTick">StartTick</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td><code>m_StartTick</code> in the <code>CNetObj_Projectile</code> struct</td>
                 </tr>
             </table>
+            Latest 0.6 clients do not know this message.
+            It was
+            <a href="https://github.com/teeworlds/teeworlds/commit/4bcc0c6aae656b611a5cbc82fae3590b2ced17fd">
+                removed in 2015.
+            </a>
+            It has two different fields. The first being the amount of projectiles.
+            The rest being integer fields representing this struct.
+            <pre class="code-snippet">
+                <code>
+    struct CNetObj_Projectile
+    {
+        int m_X;
+        int m_Y;
+        int m_VelX;
+        int m_VelY;
+        int m_Type;
+        int m_StartTick;
+    };
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_READYTOENTER"><a href="#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a></h2>
@@ -395,12 +477,16 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_READYTOENTER_todo"><a href="#NETMSGTYPE_SV_READYTOENTER_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            Sent by the server in CGameContext::OnMessage
+            <pre class="code-snippet">
+                <code>
+    CNetMsg_Sv_ReadyToEnter m;
+    Server()->SendPackMsg(&m, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_WEAPONPICKUP"><a href="#NETMSGTYPE_SV_WEAPONPICKUP">NETMSGTYPE_SV_WEAPONPICKUP</a></h2>
@@ -479,10 +565,35 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_EMOTICON_todo"><a href="#NETMSGTYPE_SV_EMOTICON_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_EMOTICON_client_id"><a href="#NETMSGTYPE_SV_EMOTICON_client_id">Client ID</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        Client ID of the tee who sent the emoticon.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_EMOTICON_emoticon"><a href="#NETMSGTYPE_SV_EMOTICON_emoticon">Emoticon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <ul>
+                            <li>0 - oop!</li>
+                            <li>1 - alert</li>
+                            <li>2 - heart</li>
+                            <li>3 - tear</li>
+                            <li>4 - ...</li>
+                            <li>5 - music</li>
+                            <li>6 - sorry</li>
+                            <li>7 - ghost</li>
+                            <li>8 - annoyed</li>
+                            <li>9 - angry</li>
+                            <li>10 - devil</li>
+                            <li>11 - swearing</li>
+                            <li>12 - zzZ</li>
+                            <li>13 - WTF</li>
+                            <li>14 - happy</li>
+                            <li>15 - ??</li>
+                        </ul>
+                    </td>
                 </tr>
             </table>
         </p>
@@ -529,7 +640,7 @@
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_VOTEOPTIONLISTAD"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD">NETMSGTYPE_SV_VOTEOPTIONLISTADD</a></h2>
+        <h2 id="NETMSGTYPE_SV_VOTEOPTIONLISTADD"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD">NETMSGTYPE_SV_VOTEOPTIONLISTADD</a></h2>
         <p>
             <table>
                 <tr>
@@ -571,7 +682,7 @@
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_VOTEOPTIONAD"><a href="#NETMSGTYPE_SV_VOTEOPTIONADD">NETMSGTYPE_SV_VOTEOPTIONADD</a></h2>
+        <h2 id="NETMSGTYPE_SV_VOTEOPTIONADD"><a href="#NETMSGTYPE_SV_VOTEOPTIONADD">NETMSGTYPE_SV_VOTEOPTIONADD</a></h2>
         <p>
             <table>
                 <tr>
@@ -655,7 +766,7 @@
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_VOTESET "><a href="#NETMSGTYPE_SV_VOTESET">NETMSGTYPE_SV_VOTESET</a></h2>
+        <h2 id="NETMSGTYPE_SV_VOTESET"><a href="#NETMSGTYPE_SV_VOTESET">NETMSGTYPE_SV_VOTESET</a></h2>
         <p>
             <table>
                 <tr>
@@ -697,7 +808,7 @@
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_SV_VOTESTATUS  "><a href="#NETMSGTYPE_SV_VOTESTATUS">NETMSGTYPE_SV_VOTESTATUS</a></h2>
+        <h2 id="NETMSGTYPE_SV_VOTESTATUS"><a href="#NETMSGTYPE_SV_VOTESTATUS">NETMSGTYPE_SV_VOTESTATUS</a></h2>
         <p>
             <table>
                 <tr>
@@ -739,7 +850,7 @@
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_CL_SAY "><a href="#NETMSGTYPE_CL_SAY">NETMSGTYPE_CL_SAY</a></h2>
+        <h2 id="NETMSGTYPE_CL_SAY"><a href="#NETMSGTYPE_CL_SAY">NETMSGTYPE_CL_SAY</a></h2>
         <p>
             <table>
                 <tr>
@@ -773,15 +884,31 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_CL_SAY_todo"><a href="#NETMSGTYPE_CL_SAY_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_CL_SAY_team">
+                        <a href="#NETMSGTYPE_CL_SAY_team">
+                            Team
+                        </a>
+                    </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_SAY_message">
+                        <a href="#NETMSGTYPE_CL_SAY_message">
+                            Message
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>
+                        TODO
+                    </td>
                 </tr>
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_CL_SETTEAM "><a href="#NETMSGTYPE_CL_SETTEAM">NETMSGTYPE_CL_SETTEAM</a></h2>
+        <h2 id="NETMSGTYPE_CL_SETTEAM"><a href="#NETMSGTYPE_CL_SETTEAM">NETMSGTYPE_CL_SETTEAM</a></h2>
         <p>
             <table>
                 <tr>
@@ -865,7 +992,7 @@
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_CL_STARTINF"><a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a></h2>
+        <h2 id="NETMSGTYPE_CL_STARTINFO"><a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a></h2>
         <p>
             <table>
                 <tr>
@@ -899,15 +1026,44 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_CL_STARTINFO_todo"><a href="#NETMSGTYPE_CL_STARTINFO_todo">TODO</a></td>
+                    <td id="NETMSGTYPE_CL_STARTINFO_name"><a href="#NETMSGTYPE_CL_STARTINFO_name">Name</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_STARTINFO_clan"><a href="#NETMSGTYPE_CL_STARTINFO_clan">Clan</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_STARTINFO_country"><a href="#NETMSGTYPE_CL_STARTINFO_country">Country</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_STARTINFO_skin"><a href="#NETMSGTYPE_CL_STARTINFO_skin">Skin</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_STARTINFO_use_custom_color"><a href="#NETMSGTYPE_CL_STARTINFO_use_custom_color">Use custom color</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_STARTINFO_color_body"><a href="#NETMSGTYPE_CL_STARTINFO_color_body">Color body</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_STARTINFO_color_feet"><a href="#NETMSGTYPE_CL_STARTINFO_color_feet">Color feet</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
         </p>
         <hr>
-        <h2 id="NETMSGTYPE_CL_CHANGEINFO  "><a href="#NETMSGTYPE_CL_CHANGEINFO">NETMSGTYPE_CL_CHANGEINFO</a></h2>
+        <h2 id="NETMSGTYPE_CL_CHANGEINFO"><a href="#NETMSGTYPE_CL_CHANGEINFO">NETMSGTYPE_CL_CHANGEINFO</a></h2>
         <p>
             <table>
                 <tr>
@@ -1025,10 +1181,28 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_CL_EMOTICON_todo"><a href="#NETMSGTYPE_CL_EMOTICON_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_CL_EMOTICON_emoticon"><a href="#NETMSGTYPE_CL_EMOTICON_emoticon">Emoticon</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        <ul>
+                            <li>0 - oop!</li>
+                            <li>1 - alert</li>
+                            <li>2 - heart</li>
+                            <li>3 - tear</li>
+                            <li>4 - ...</li>
+                            <li>5 - music</li>
+                            <li>6 - sorry</li>
+                            <li>7 - ghost</li>
+                            <li>8 - annoyed</li>
+                            <li>9 - angry</li>
+                            <li>10 - devil</li>
+                            <li>11 - swearing</li>
+                            <li>12 - zzZ</li>
+                            <li>13 - WTF</li>
+                            <li>14 - happy</li>
+                            <li>15 - ??</li>
+                        </ul>
+                    </td>
                 </tr>
             </table>
         </p>
