@@ -240,7 +240,38 @@
                     int m_Score;<br>
                     int m_Latency;<br>
                 </td>
-                <td>desc</td>
+                <td>
+                    Unpacked by the client in gameclient.cpp
+                    <code>CGameClient::OnNewSnapshot()</code>
+                    <pre class="code-snippet">
+                        <code>
+    if(Item.m_Type == NETOBJTYPE_PLAYERINFO)
+    {
+        const CNetObj_PlayerInfo *pInfo = (const CNetObj_PlayerInfo *)pData;
+        int ClientID = Item.m_ID;
+        if(ClientID < MAX_CLIENTS && m_aClients[ClientID].m_Active)
+        {
+            m_Snap.m_paPlayerInfos[ClientID] = pInfo;
+            m_Snap.m_aInfoByScore[ClientID].m_pPlayerInfo = pInfo;
+            m_Snap.m_aInfoByScore[ClientID].m_ClientID = ClientID;
+
+            if(m_LocalClientID == ClientID)
+            {
+                m_Snap.m_pLocalInfo = pInfo;
+
+                if(m_aClients[ClientID].m_Team == TEAM_SPECTATORS)
+                {
+                    m_Snap.m_SpecInfo.m_Active = true;
+                    m_Snap.m_SpecInfo.m_SpecMode = SPEC_FREEVIEW;
+                    m_Snap.m_SpecInfo.m_SpectatorID = -1;
+                }
+            }
+            m_aClients[ClientID].UpdateBotRenderInfo(this, ClientID);
+        }
+    }
+                        </code>
+                    </pre>
+                </td>
             </tr>
             <tr id="obj_spectator_info">
                 <td>12</td>
