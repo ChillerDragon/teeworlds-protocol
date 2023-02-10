@@ -221,7 +221,37 @@
                     int m_Latency;<br>
                 </td>
                 <td>
-                    desc
+                    Unpacked by the client in gameclient.cpp
+                    <pre class="code-snippet">
+                        <code>
+    else if(Item.m_Type == NETOBJTYPE_PLAYERINFO)
+    {
+        const CNetObj_PlayerInfo *pInfo = (const CNetObj_PlayerInfo *)pData;
+
+        m_aClients[pInfo->m_ClientID].m_Team = pInfo->m_Team;
+        m_aClients[pInfo->m_ClientID].m_Active = true;
+        m_Snap.m_paPlayerInfos[pInfo->m_ClientID] = pInfo;
+        m_Snap.m_NumPlayers++;
+
+        if(pInfo->m_Local)
+        {
+            m_Snap.m_LocalClientID = Item.m_ID;
+            m_Snap.m_pLocalInfo = pInfo;
+
+            if(pInfo->m_Team == TEAM_SPECTATORS)
+            {
+                m_Snap.m_SpecInfo.m_Active = true;
+                m_Snap.m_SpecInfo.m_SpectatorID = SPEC_FREEVIEW;
+            }
+        }
+
+        // calculate team-balance
+        if(pInfo->m_Team != TEAM_SPECTATORS)
+            m_Snap.m_aTeamSize[pInfo->m_Team]++;
+
+    }
+                        </code>
+                    </pre>
                 </td>
             </tr>
             <tr id="obj_client_info">
