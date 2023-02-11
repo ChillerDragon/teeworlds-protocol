@@ -78,12 +78,28 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_INFO_todo"><a href="#NETMSG_INFO_todo">TODO</a></td>
+                    <td id="NETMSG_INFO_net_version"><a href="#NETMSG_INFO_net_version">Net Version</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INFO_password"><a href="#NETMSG_INFO_password">Password</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            Sent by the client in CClient::SendInfo()
+            <pre class="code-snippet">
+                <code>
+    void CClient::SendInfo()
+    {
+        CMsgPacker Msg(NETMSG_INFO);
+        Msg.AddString(GameClient()->NetVersion(), 128);
+        Msg.AddString(g_Config.m_Password, 128);
+        SendMsgEx(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_MAP_CHANGE  "><a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a></h2>
