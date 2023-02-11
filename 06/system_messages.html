@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html">
+            <img src="../img/tee.svg" alt="tee">
+        </a>
+        <a href="../index.html">home</a>
+        <a href="../06.html">overview</a>
+        <a href="fundamentals.html">fundamentals</a>
+        <a href="snap_items.html">snap_items</a>
+        <a href="system_messages.html">system_messages</a>
+        <a href="game_messages.html">game_messages</a>
+        <hr>
+    </div>
+    <div class="content">
+        <h1>List of network system messages</h1>
+        <p>
+            There are three types of messages with overlapping message ids: <br>
+            <a href="system_messages.html">system messages</a>,
+            <a href="game_messages.html">game messages</a> and
+            <a href="ctrl_messages.html">control messages</a>
+            <br>
+            This list is only covering system messages.
+            <br>
+            <br>
+            When the client and server exchange packets.
+            An integer field which usually does not exceed one byte.
+            Is indicating which type of message was sent.
+            This field is called the message id.
+            These message ids are defined in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/shared/protocol.h#L33-L72">
+                src/engine/shared/protocol.h
+            </a>
+            and their payload is defined where they are sent and received.
+            There can be multiple messages in so called chunks in one teeworlds packet.
+            <br>
+            <br>
+            In the list below you will find those message.
+            With their name, id and payload.
+        </p>
+        <hr>
+        <h2 id="NETMSG_NULL"><a href="#NETMSG_NULL">NETMSG_NULL</a></h2>
+        <p>
+            <table>
+                <tr>
+                    <th><strong>Message ID:</strong></th><td>0</td>
+                </tr>
+            </table>
+            <br>
+        </p>
+        <hr>
+        <h2 id="NETMSG_INFO"><a href="#NETMSG_INFO">NETMSG_INFO</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INFO_todo"><a href="#NETMSG_INFO_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_MAP_CHANGE  "><a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAP_CHANGE_todo"><a href="#NETMSG_MAP_CHANGE_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_MAP_DATA"><a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAP_DATA_todo"><a href="#NETMSG_MAP_DATA_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_CON_READY   "><a href="#NETMSG_CON_READY">NETMSG_CON_READY</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_CON_READY_todo"><a href="#NETMSG_CON_READY_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_SNAP"><a href="#NETMSG_SNAP">NETMSG_SNAP</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAP_todo"><a href="#NETMSG_SNAP_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_SNAPEMPTY   "><a href="#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAPEMPTY_todo"><a href="#NETMSG_SNAPEMPTY_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_SNAPSINGLE  "><a href="#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAPSINGLE_todo"><a href="#NETMSG_SNAPSINGLE_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_SNAPSMALL   "><a href="#NETMSG_SNAPSMALL">NETMSG_SNAPSMALL</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAPSMALL_todo"><a href="#NETMSG_SNAPSMALL_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_INPUTTIMING "><a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUTTIMING_todo"><a href="#NETMSG_INPUTTIMING_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_RCON_AUTH_STATUS"><a href="#NETMSG_RCON_AUTH_STATUS">NETMSG_RCON_AUTH_STATUS</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_AUTH_STATUS_todo"><a href="#NETMSG_RCON_AUTH_STATUS_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_RCON_LINE   "><a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_LINE_todo"><a href="#NETMSG_RCON_LINE_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_AUTH_CHALLANGE  "><a href="#NETMSG_AUTH_CHALLANGE">NETMSG_AUTH_CHALLANGE</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_AUTH_CHALLANGE_todo"><a href="#NETMSG_AUTH_CHALLANGE_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_AUTH_RESULT "><a href="#NETMSG_AUTH_RESULT">NETMSG_AUTH_RESULT</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_AUTH_RESULT_todo"><a href="#NETMSG_AUTH_RESULT_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_READY   "><a href="#NETMSG_READY">NETMSG_READY</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_READY_todo"><a href="#NETMSG_READY_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_ENTERGAME   "><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_ENTERGAME_todo"><a href="#NETMSG_ENTERGAME_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_INPUT   "><a href="#NETMSG_INPUT">NETMSG_INPUT</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_todo"><a href="#NETMSG_INPUT_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_RCON_CMD"><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_todo"><a href="#NETMSG_RCON_CMD_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_RCON_AUTH   "><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_AUTH_todo"><a href="#NETMSG_RCON_AUTH_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_REQUEST_MAP_DATA"><a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_REQUEST_MAP_DATA_todo"><a href="#NETMSG_REQUEST_MAP_DATA_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_AUTH_RESPONSE   "><a href="#NETMSG_AUTH_RESPONSE">NETMSG_AUTH_RESPONSE</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_AUTH_RESPONSE_todo"><a href="#NETMSG_AUTH_RESPONSE_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_PING"><a href="#NETMSG_PING">NETMSG_PING</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_PING_todo"><a href="#NETMSG_PING_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_PING_REPLY  "><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_PING_REPLY_todo"><a href="#NETMSG_PING_REPLY_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_ERROR   "><a href="#NETMSG_ERROR">NETMSG_ERROR</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_ERROR_todo"><a href="#NETMSG_ERROR_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_RCON_CMD_ADD"><a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_ADD_todo"><a href="#NETMSG_RCON_CMD_ADD_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+        <hr>
+        <h2 id="NETMSG_RCON_CMD_REM"><a href="#NETMSG_RCON_CMD_REM">NETMSG_RCON_CMD_REM</a></h2>
+        <p>
+            <table>
+                <tr><th>Sender:</th><td>TODO</td></tr>
+                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Message ID:</th><td>TODO</td></tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_REM_todo"><a href="#NETMSG_RCON_CMD_REM_todo">TODO</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+            </table>
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+</body>
