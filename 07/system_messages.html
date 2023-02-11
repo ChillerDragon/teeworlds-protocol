@@ -1236,7 +1236,8 @@
                     <td colspan="3">Unused</td>
                 </tr>
             </table>
-            This message ID is unused
+            This message ID is unused <br>
+            Note challenge is misspelled (here to optimize search results)
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_RESULT"><a href="#NETMSG_AUTH_RESULT">NETMSG_AUTH_RESULT</a></h2>
@@ -1729,7 +1730,7 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td>Command</td>
+                    <td id="NETMSG_RCON_CMD_command"><a href="#NETMSG_RCON_CMD_command">Command</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>The rcon command like for example <code>status</code> or <code>shutdown</code></td>
                 </tr>
@@ -1808,6 +1809,25 @@
             Reconnecting then resets the whole client data including the rcon attempt counter
             so you get <code>sv_rcon_max_tries</code> again. Note that reconnecting takes some
             time and the server kicks ips that reconnect too fast for 1 minute.
+            <br>
+            <br>
+            Sent by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L368-L376">
+                CClient::RconAuth()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CClient::RconAuth(const char *pName, const char *pPassword)
+    {
+        if(RconAuthed())
+            return;
+
+        CMsgPacker Msg(NETMSG_RCON_AUTH, true);
+        Msg.AddString(pPassword, 32);
+        SendMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_REQUEST_MAP_DATA"><a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a></h2>
@@ -1846,6 +1866,30 @@
             After the server did send <code>sv_map_download_speed</code> (default 8)
             <a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a> chunks the client has to request
             more by sending this message.
+            <br>
+            <br>
+            Sent to kickstart the download on <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L1214-L1216">
+                CClient::ProcessServerPacket()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    // request first chunk package of map data
+    CMsgPacker Msg(NETMSG_REQUEST_MAP_DATA, true);
+    SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+                </code>
+            </pre>
+            And also in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L1263-L1265">
+                CClient::ProcessServerPacket()
+            </a> on <a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a> to keep the download going
+            <pre class="code-snippet">
+                <code>
+    // request next chunk package of map data
+    CMsgPacker Msg(NETMSG_REQUEST_MAP_DATA, true);
+    SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_START"><a href="#NETMSG_AUTH_START">NETMSG_AUTH_START</a></h2>
@@ -1877,7 +1921,7 @@
                     <td colspan="3">None</td>
                 </tr>
             </table>
-            This message ID is unused 
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_RESPONSE"><a href="#NETMSG_AUTH_RESPONSE">NETMSG_AUTH_RESPONSE</a></h2>
@@ -1909,7 +1953,7 @@
                     <td colspan="3">None</td>
                 </tr>
             </table>
-            This message ID is unused 
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_PING"><a href="#NETMSG_PING">NETMSG_PING</a></h2>

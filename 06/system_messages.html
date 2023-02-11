@@ -384,8 +384,8 @@
         <h2 id="NETMSG_INPUTTIMING"><a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>9</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -403,23 +403,73 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_INPUTTIMING_todo"><a href="#NETMSG_INPUTTIMING_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSG_INPUTTIMING_intended_tick"><a href="#NETMSG_INPUTTIMING_intended_tick">Intended tick</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUTTIMING_time_left"><a href="#NETMSG_INPUTTIMING_time_left">Time left</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
                 </tr>
             </table>
+            Sent by the server in <code>CServer::ProcessClientPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    if(IntendedTick > m_aClients[ClientID].m_LastInputTick)
+    {
+        int TimeLeft = ((TickStartTime(IntendedTick)-time_get())*1000) / time_freq();
+
+        CMsgPacker Msg(NETMSG_INPUTTIMING);
+        Msg.AddInt(IntendedTick);
+        Msg.AddInt(TimeLeft);
+        SendMsgEx(&Msg, 0, ClientID, true);
+    }
+                </code>
+            </pre>
+            Unpacked by the client in <code>CClient::ProcessServerPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_INPUTTIMING)
+    {
+        int InputPredTick = Unpacker.GetInt();
+        int TimeLeft = Unpacker.GetInt();
+
+        // adjust our prediction time
+        int64 Target = 0;
+        for(int k = 0; k &lt; 200; k++)
+        {
+            if(m_aInputs[k].m_Tick == InputPredTick)
+            {
+                Target = m_aInputs[k].m_PredictedTime + (time_get() - m_aInputs[k].m_Time);
+                Target = Target - (int64)(((TimeLeft-PREDICTION_MARGIN)/1000.0f)*time_freq());
+                break;
+            }
+        }
+
+        if(Target)
+            m_PredictedTime.Update(&m_InputtimeMarginGraph, Target, TimeLeft, 1);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_RCON_AUTH_STATUS"><a href="#NETMSG_RCON_AUTH_STATUS">NETMSG_RCON_AUTH_STATUS</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>10</td></tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>
+                        <a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <code>logout</code> | <br>
+                        <a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a>
+                    </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
@@ -433,19 +483,151 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_RCON_AUTH_STATUS_todo"><a href="#NETMSG_RCON_AUTH_STATUS_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSG_RCON_AUTH_STATUS_authed"><a href="#NETMSG_RCON_AUTH_STATUS_authed">Authed</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        <ul>
+                            <li>0 - off (logout)</li>
+                            <li>1 - on (login)</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_AUTH_STATUS_cmdlist"><a href="#NETMSG_RCON_AUTH_STATUS_cmdlist">Cmdlist</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <ul>
+                            <li>0 - off (logout)</li>
+                            <li>1 - on (login)</li>
+                        </ul>
+                    </td>
                 </tr>
             </table>
+            Sent on login and logout by the server to inform the client about its rcon state.
+            The client then activates or deactivates the remote console in the ui.
+            <br>
+            <br>
+            Sent by the server in <code>CServer::ProcessClientPacket()</code>
+            on successful login.
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_RCON_AUTH)
+    {
+        const char *pPw;
+        Unpacker.GetString(); // login name, not used
+        pPw = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+
+        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Unpacker.Error() == 0)
+        {
+            if(g_Config.m_SvRconPassword[0] == 0 && g_Config.m_SvRconModPassword[0] == 0)
+            {
+                SendRconLine(ClientID, "No rcon password set on server. Set sv_rcon_password and/or sv_rcon_mod_password to enable the remote console.");
+            }
+            else if(g_Config.m_SvRconPassword[0] && str_comp(pPw, g_Config.m_SvRconPassword) == 0)
+            {
+                CMsgPacker Msg(NETMSG_RCON_AUTH_STATUS);
+                Msg.AddInt(1);	//authed
+                Msg.AddInt(1);	//cmdlist
+                SendMsgEx(&Msg, MSGFLAG_VITAL, ClientID, true);
+
+                m_aClients[ClientID].m_Authed = AUTHED_ADMIN;
+                int SendRconCmds = Unpacker.GetInt();
+                if(Unpacker.Error() == 0 && SendRconCmds)
+                    m_aClients[ClientID].m_pRconCmdToSend = Console()->FirstCommandInfo(IConsole::ACCESS_LEVEL_ADMIN, CFGFLAG_SERVER);
+                SendRconLine(ClientID, "Admin authentication successful. Full remote console access granted.");
+                char aBuf[256];
+                str_format(aBuf, sizeof(aBuf), "ClientID=%d authed (admin)", ClientID);
+                Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+            }
+            else if(g_Config.m_SvRconModPassword[0] && str_comp(pPw, g_Config.m_SvRconModPassword) == 0)
+            {
+                CMsgPacker Msg(NETMSG_RCON_AUTH_STATUS);
+                Msg.AddInt(1);	//authed
+                Msg.AddInt(1);	//cmdlist
+                SendMsgEx(&Msg, MSGFLAG_VITAL, ClientID, true);
+
+                m_aClients[ClientID].m_Authed = AUTHED_MOD;
+                int SendRconCmds = Unpacker.GetInt();
+                if(Unpacker.Error() == 0 && SendRconCmds)
+                    m_aClients[ClientID].m_pRconCmdToSend = Console()->FirstCommandInfo(IConsole::ACCESS_LEVEL_MOD, CFGFLAG_SERVER);
+                SendRconLine(ClientID, "Moderator authentication successful. Limited remote console access granted.");
+                char aBuf[256];
+                str_format(aBuf, sizeof(aBuf), "ClientID=%d authed (moderator)", ClientID);
+                Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+            }
+            else if(g_Config.m_SvRconMaxTries)
+            {
+                m_aClients[ClientID].m_AuthTries++;
+                char aBuf[128];
+                str_format(aBuf, sizeof(aBuf), "Wrong password %d/%d.", m_aClients[ClientID].m_AuthTries, g_Config.m_SvRconMaxTries);
+                SendRconLine(ClientID, aBuf);
+                if(m_aClients[ClientID].m_AuthTries >= g_Config.m_SvRconMaxTries)
+                {
+                    if(!g_Config.m_SvRconBantime)
+                        m_NetServer.Drop(ClientID, "Too many remote console authentication tries");
+                    else
+                        m_ServerBan.BanAddr(m_NetServer.ClientAddr(ClientID), g_Config.m_SvRconBantime*60, "Too many remote console authentication tries");
+                }
+            }
+            else
+            {
+                SendRconLine(ClientID, "Wrong password.");
+            }
+        }
+    }
+                </code>
+            </pre>
+            And also send by the server in <code>CServer::ConLogout()</code>
+            when the rcon command <code>logout</code> is executed.
+            <pre class="code-snippet">
+                <code>
+    void CServer::ConLogout(IConsole::IResult *pResult, void *pUser)
+    {
+        CServer *pServer = (CServer *)pUser;
+
+        if(pServer->m_RconClientID >= 0 && pServer->m_RconClientID < MAX_CLIENTS &&
+            pServer->m_aClients[pServer->m_RconClientID].m_State != CServer::CClient::STATE_EMPTY)
+        {
+            CMsgPacker Msg(NETMSG_RCON_AUTH_STATUS);
+            Msg.AddInt(0);	//authed
+            Msg.AddInt(0);	//cmdlist
+            pServer->SendMsgEx(&Msg, MSGFLAG_VITAL, pServer->m_RconClientID, true);
+
+            pServer->m_aClients[pServer->m_RconClientID].m_Authed = AUTHED_NO;
+            pServer->m_aClients[pServer->m_RconClientID].m_AuthTries = 0;
+            pServer->m_aClients[pServer->m_RconClientID].m_pRconCmdToSend = 0;
+            pServer->SendRconLine(pServer->m_RconClientID, "Logout successful.");
+            char aBuf[32];
+            str_format(aBuf, sizeof(aBuf), "ClientID=%d logged out", pServer->m_RconClientID);
+            pServer->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+        }
+    }
+                </code>
+            </pre>
+            Unpacked by the client in <code>CClient::ProcessServerPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_AUTH_STATUS)
+    {
+        int Result = Unpacker.GetInt();
+        if(Unpacker.Error() == 0)
+            m_RconAuthed = Result;
+        int Old = m_UseTempRconCommands;
+        m_UseTempRconCommands = Unpacker.GetInt();
+        if(Unpacker.Error() != 0)
+            m_UseTempRconCommands = 0;
+        if(Old != 0 && m_UseTempRconCommands == 0)
+            m_pConsole->DeregisterTempAll();
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_RCON_LINE"><a href="#NETMSG_RCON_LINE">NETMSG_RCON_LINE</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>11</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -463,27 +645,37 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_RCON_LINE_todo"><a href="#NETMSG_RCON_LINE_todo">TODO</a></td>
+                    <td id="NETMSG_RCON_LINE_line"><a href="#NETMSG_RCON_LINE_line">Line</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            Sent by the server in <code>CServer::SendRconLine(int ClientID, const char *pLine)</code>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendRconLine(int ClientID, const char *pLine)
+    {
+        CMsgPacker Msg(NETMSG_RCON_LINE);
+        Msg.AddString(pLine, 512);
+        SendMsgEx(&Msg, MSGFLAG_VITAL, ClientID, true);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_CHALLANGE"><a href="#NETMSG_AUTH_CHALLANGE">NETMSG_AUTH_CHALLANGE</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Unused</td></tr>
+                <tr><th>Recipient:</th><td>Unused</td></tr>
                 <tr><th>Message ID:</th><td>12</td></tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
             </table>
             <table>
@@ -493,27 +685,26 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_AUTH_CHALLANGE_todo"><a href="#NETMSG_AUTH_CHALLANGE_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">Unused</td>
                 </tr>
             </table>
+            This message ID is unused <br>
+            Note challenge is misspelled (here to optimize search results)
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_RESULT"><a href="#NETMSG_AUTH_RESULT">NETMSG_AUTH_RESULT</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>unused</td></tr>
+                <tr><th>Recipient:</th><td>unused</td></tr>
                 <tr><th>Message ID:</th><td>13</td></tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>unused</td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>unused</td>
                 </tr>
             </table>
             <table>
@@ -523,19 +714,17 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_AUTH_RESULT_todo"><a href="#NETMSG_AUTH_RESULT_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">Unused</td>
                 </tr>
             </table>
+            This message ID is unused 
         </p>
         <hr>
         <h2 id="NETMSG_READY"><a href="#NETMSG_READY">NETMSG_READY</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>14</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -553,19 +742,26 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_READY_todo"><a href="#NETMSG_READY_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            Sent by the client in <code>CClient::SendReady()</code>
+            <pre class="code-snippet">
+                <code>
+    void CClient::SendReady()
+    {
+        CMsgPacker Msg(NETMSG_READY);
+        SendMsgEx(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_ENTERGAME"><a href="#NETMSG_ENTERGAME">NETMSG_ENTERGAME</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>15</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -583,19 +779,26 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_ENTERGAME_todo"><a href="#NETMSG_ENTERGAME_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            Sent by the client in <code>CClient::SendEnterGame()</code>
+            <pre class="code-snippet">
+                <code>
+    void CClient::SendEnterGame()
+    {
+        CMsgPacker Msg(NETMSG_ENTERGAME);
+        SendMsgEx(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_INPUT"><a href="#NETMSG_INPUT">NETMSG_INPUT</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>16</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -613,19 +816,146 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_INPUT_todo"><a href="#NETMSG_INPUT_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSG_INPUT_ack_game_tick"><a href="#NETMSG_INPUT_ack_game_tick">Ack Game Tick</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_pred_tick"><a href="#NETMSG_INPUT_pred_tick">Prediction Tick</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_size"><a href="#NETMSG_INPUT_size">Size</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr id="NETMSG_INPUT_data">
+                    <td id="NETMSG_INPUT_data_m_Direction"><a href="#NETMSG_INPUT_data_m_Direction">[data] Direction</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Direction">m_Direction</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        Indicating the direction the tee wants to walk in.
+                        <ul>
+                            <li>-1 is left</li>
+                            <li>1 is right</li>
+                            <li>0 is stop</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_TargetX"><a href="#NETMSG_INPUT_data_m_TargetX">[data] TargetX</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_TargetX">m_TargetX</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        X coordinate of the tees cursor. The coordinate is not absolute in the world  but relative to the tee.
+                        The tee being the origin 0,0 and aiming left would be a negative x coordinate
+                        and aiming right would be a positive x coordinate.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_TargetY"><a href="#NETMSG_INPUT_data_m_TargetY">[data] TargetY</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_TargetY">m_TargetY</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        Y coordinate of the tees cursor. The coordinate is not absolute in the world but relative to the tee.
+                        The tee being the origin 0,0 and aiming up would be a negative y coordinate
+                        and aiming down would be a positive y coordinate.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_Jump"><a href="#NETMSG_INPUT_data_m_Jump">[data] Jump</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Jump">m_Jump</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct. <br>
+                        <ul>
+                            <li>1 to jump while on ground</li>
+                            <li>1 to double jump while in air</li>
+                            <li>0 to stop holding jump</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_Fire"><a href="#NETMSG_INPUT_data_m_Fire">[data] Fire</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Fire">m_Fire</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_Hook"><a href="#NETMSG_INPUT_data_m_Hook">[data] Hook</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_Hook">m_Hook</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                        <ul>
+                            <li>1 to hook</li>
+                            <li>0 to stop hooking</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_PlayerFlags"><a href="#NETMSG_INPUT_data_m_PlayerFlags">[data] PlayerFlags</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_PlayerFlags">m_PlayerFlags</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_WantedWeapon"><a href="#NETMSG_INPUT_data_m_WantedWeapon">[data] WantedWeapon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_WantedWeapon">m_WantedWeapon</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_NextWeapon"><a href="#NETMSG_INPUT_data_m_NextWeapon">[data] NextWeapon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_NextWeapon">m_NextWeapon</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_INPUT_data_m_PrevWeapon"><a href="#NETMSG_INPUT_data_m_PrevWeapon">[data] PrevWeapon</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        <a href="#NETMSG_INPUT_m_PrevWeapon">m_PrevWeapon</a> of the
+                        <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                    </td>
+                </tr>
             </table>
+            <pre id="CNetObj_PlayerInput" class="code-snippet">
+                <code>
+    struct <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/datasrc/network.py#L88-L104">CNetObj_PlayerInput</a>
+    {
+        int <a id="NETMSG_INPUT_m_Direction" href="#NETMSG_INPUT_m_Direction">m_Direction</a>;
+        int <a id="NETMSG_INPUT_m_TargetX" href="#NETMSG_INPUT_m_TargetX">m_TargetX</a>;
+        int <a id="NETMSG_INPUT_m_TargetY" href="#NETMSG_INPUT_m_TargetY">m_TargetY</a>;
+        int <a id="NETMSG_INPUT_m_Jump" href="#NETMSG_INPUT_m_Jump">m_Jump</a>;
+        int <a id="NETMSG_INPUT_m_Fire" href="#NETMSG_INPUT_m_Fire">m_Fire</a>;
+        int <a id="NETMSG_INPUT_m_Hook" href="#NETMSG_INPUT_m_Hook">m_Hook</a>;
+        int <a id="NETMSG_INPUT_m_PlayerFlags" href="#NETMSG_INPUT_m_PlayerFlags">m_PlayerFlags</a>;
+        int <a id="NETMSG_INPUT_m_WantedWeapon" href="#NETMSG_INPUT_m_WantedWeapon">m_WantedWeapon</a>;
+        int <a id="NETMSG_INPUT_m_NextWeapon" href="#NETMSG_INPUT_m_NextWeapon">m_NextWeapon</a>;
+        int <a id="NETMSG_INPUT_m_PrevWeapon" href="#NETMSG_INPUT_m_PrevWeapon">m_PrevWeapon</a>;
+    };
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_RCON_CMD"><a href="#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>17</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -643,19 +973,52 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_RCON_CMD_todo"><a href="#NETMSG_RCON_CMD_todo">TODO</a></td>
+                    <td id="NETMSG_RCON_CMD_command"><a href="#NETMSG_RCON_CMD_command">Command</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>The rcon command like for example <code>status</code> or <code>shutdown</code></td>
                 </tr>
             </table>
+            Sent by the client in <code>CClient::Rcon(const char *pCmd)</code>
+            <pre class="code-snippet">
+                <code>
+    void CClient::Rcon(const char *pCmd)
+    {
+        CMsgPacker Msg(NETMSG_RCON_CMD);
+        Msg.AddString(pCmd, 256);
+        SendMsgEx(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
+            Unpacked by the server in <code>CServer::ProcessClientPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_RCON_CMD)
+    {
+        const char *pCmd = Unpacker.GetString();
+
+        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Unpacker.Error() == 0 && m_aClients[ClientID].m_Authed)
+        {
+            char aBuf[256];
+            str_format(aBuf, sizeof(aBuf), "ClientID=%d rcon='%s'", ClientID, pCmd);
+            Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
+            m_RconClientID = ClientID;
+            m_RconAuthLevel = m_aClients[ClientID].m_Authed;
+            Console()->SetAccessLevel(m_aClients[ClientID].m_Authed == AUTHED_ADMIN ? IConsole::ACCESS_LEVEL_ADMIN : IConsole::ACCESS_LEVEL_MOD);
+            Console()->ExecuteLineFlag(pCmd, CFGFLAG_SERVER);
+            Console()->SetAccessLevel(IConsole::ACCESS_LEVEL_ADMIN);
+            m_RconClientID = IServer::RCON_CID_SERV;
+            m_RconAuthLevel = AUTHED_ADMIN;
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_RCON_AUTH"><a href="#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>18</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -673,19 +1036,49 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_RCON_AUTH_todo"><a href="#NETMSG_RCON_AUTH_todo">TODO</a></td>
+                    <td id="NETMSG_RCON_AUTH_name"><a href="#NETMSG_RCON_AUTH_name">Name</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
+                <tr>
+                    <td id="NETMSG_RCON_AUTH_password"><a href="#NETMSG_RCON_AUTH_password">Password</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_AUTH_send_rcon_cmds"><a href="#NETMSG_RCON_AUTH_send_rcon_cmds">Send rcon commands</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        The official vanilla 0.6 clients uses the fixed value <code>1</code>
+                        at all times for this field.
+                        But technically the protocol allows optig out of the rcon command list
+                        receival. The server would not send any if this field was set to <code>0</code>
+                    </td>
+                </tr>
             </table>
+            Sent by the client in <code>CClient::RconAuth()</code>
+            <pre class="code-snippet">
+                <code>  
+    void CClient::RconAuth(const char *pName, const char *pPassword)
+    {
+        if(RconAuthed())
+            return;
+
+        CMsgPacker Msg(NETMSG_RCON_AUTH);
+        Msg.AddString(pName, 32);
+        Msg.AddString(pPassword, 32);
+        Msg.AddInt(1);
+        SendMsgEx(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_REQUEST_MAP_DATA"><a href="#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>19</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -703,27 +1096,68 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_REQUEST_MAP_DATA_todo"><a href="#NETMSG_REQUEST_MAP_DATA_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSG_REQUEST_MAP_DATA_chunk"><a href="#NETMSG_REQUEST_MAP_DATA_chunk">Chunk</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            Sent by the client in <code>CClient::ProcessServerPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_MAP_DATA)
+    {
+        int Last = Unpacker.GetInt();
+        int MapCRC = Unpacker.GetInt();
+        int Chunk = Unpacker.GetInt();
+        int Size = Unpacker.GetInt();
+        const unsigned char *pData = Unpacker.GetRaw(Size);
+
+        // check fior errors
+        if(Unpacker.Error() || Size <= 0 || MapCRC != m_MapdownloadCrc || Chunk != m_MapdownloadChunk || !m_MapdownloadFile)
+            return;
+
+        io_write(m_MapdownloadFile, pData, Size);
+
+        m_MapdownloadAmount += Size;
+
+        if(Last)
+        {
+            // [..]
+        }
+        else
+        {
+            // request new chunk
+            m_MapdownloadChunk++;
+
+            CMsgPacker Msg(NETMSG_REQUEST_MAP_DATA);
+            Msg.AddInt(m_MapdownloadChunk);
+            SendMsgEx(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+
+            if(g_Config.m_Debug)
+            {
+                char aBuf[256];
+                str_format(aBuf, sizeof(aBuf), "requested chunk %d", m_MapdownloadChunk);
+                m_pConsole->Print(IConsole::OUTPUT_LEVEL_DEBUG, "client/network", aBuf);
+            }
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_START"><a href="#NETMSG_AUTH_START">NETMSG_AUTH_START</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Unused</td></tr>
+                <tr><th>Recipient:</th><td>Unused</td></tr>
                 <tr><th>Message ID:</th><td>20</td></tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
             </table>
             <table>
@@ -733,27 +1167,25 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_AUTH_START_todo"><a href="#NETMSG_AUTH_START_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_AUTH_RESPONSE"><a href="#NETMSG_AUTH_RESPONSE">NETMSG_AUTH_RESPONSE</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Unused</td></tr>
+                <tr><th>Recipient:</th><td>Unused</td></tr>
                 <tr><th>Message ID:</th><td>21</td></tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
             </table>
             <table>
@@ -763,19 +1195,17 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_AUTH_RESPONSE_todo"><a href="#NETMSG_AUTH_RESPONSE_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_PING"><a href="#NETMSG_PING">NETMSG_PING</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>22</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -793,19 +1223,49 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_PING_todo"><a href="#NETMSG_PING_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            Unpacked by the client in <code>CClient::ProcessServerPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_PING)
+    {
+        CMsgPacker Msg(NETMSG_PING_REPLY);
+        SendMsgEx(&Msg, 0);
+    }
+                </code>
+            </pre>
+            Sent by the client via the <code>ping</code> console command
+            <pre class="code-snippet">
+                <code>
+    void CClient::Con_Ping(IConsole::IResult *pResult, void *pUserData)
+    {
+        CClient *pSelf = (CClient *)pUserData;
+
+        CMsgPacker Msg(NETMSG_PING);
+        pSelf->SendMsgEx(&Msg, 0);
+        pSelf->m_PingStartTime = time_get();
+    }
+                </code>
+            </pre>
+            Unpacked by the server in <code>CServer::ProcessClientPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_PING)
+    {
+        CMsgPacker Msg(NETMSG_PING_REPLY);
+        SendMsgEx(&Msg, 0, ClientID, true);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_PING_REPLY"><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client <br> Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>23</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -823,27 +1283,55 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_PING_REPLY_todo"><a href="#NETMSG_PING_REPLY_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            Sent by the server in <code>CServer::ProcessClientPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_PING)
+    {
+        CMsgPacker Msg(NETMSG_PING_REPLY);
+        SendMsgEx(&Msg, 0, ClientID, true);
+    }
+                </code>
+            </pre>
+            Sent by the client in <code>CClient::ProcessServerPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_PING)
+    {
+        CMsgPacker Msg(NETMSG_PING_REPLY);
+        SendMsgEx(&Msg, 0);
+    }
+                </code>
+            </pre>
+            Unpacked in the client side to print the ping in <code>CClient::ProcessServerPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if(Msg == NETMSG_PING_REPLY)
+    {
+        char aBuf[256];
+        str_format(aBuf, sizeof(aBuf), "latency %.2f", (time_get() - m_PingStartTime)*1000 / (float)time_freq());
+        m_pConsole->Print(IConsole::OUTPUT_LEVEL_STANDARD, "client/network", aBuf);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_ERROR"><a href="#NETMSG_ERROR">NETMSG_ERROR</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Unused</td></tr>
+                <tr><th>Recipient:</th><td>Unused</td></tr>
                 <tr><th>Message ID:</th><td>24</td></tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>Unused</td>
                 </tr>
             </table>
             <table>
@@ -853,19 +1341,17 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_ERROR_todo"><a href="#NETMSG_ERROR_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            This message ID is unused
         </p>
         <hr>
         <h2 id="NETMSG_RCON_CMD_ADD"><a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>25</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -883,19 +1369,41 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_RCON_CMD_ADD_todo"><a href="#NETMSG_RCON_CMD_ADD_todo">TODO</a></td>
+                    <td id="NETMSG_RCON_CMD_ADD_name"><a href="#NETMSG_RCON_CMD_ADD_name">Name</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_ADD_help"><a href="#NETMSG_RCON_CMD_ADD_help">Help</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_RCON_CMD_ADD_params"><a href="#NETMSG_RCON_CMD_ADD_params">Params</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            Sent by the server in <code>CServer::SendRconCmdAdd()</code>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendRconCmdAdd(const IConsole::CCommandInfo *pCommandInfo, int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_RCON_CMD_ADD);
+        Msg.AddString(pCommandInfo->m_pName, IConsole::TEMPCMD_NAME_LENGTH);
+        Msg.AddString(pCommandInfo->m_pHelp, IConsole::TEMPCMD_HELP_LENGTH);
+        Msg.AddString(pCommandInfo->m_pParams, IConsole::TEMPCMD_PARAMS_LENGTH);
+        SendMsgEx(&Msg, MSGFLAG_VITAL, ClientID, true);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_RCON_CMD_REM"><a href="#NETMSG_RCON_CMD_REM">NETMSG_RCON_CMD_REM</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>26</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -913,12 +1421,33 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_RCON_CMD_REM_todo"><a href="#NETMSG_RCON_CMD_REM_todo">TODO</a></td>
+                    <td id="NETMSG_RCON_CMD_REM_name"><a href="#NETMSG_RCON_CMD_REM_name">Name</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            Sent by the server in <code>CServer::SendRconCmdAdd()</code>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendRconCmdRem(const IConsole::CCommandInfo *pCommandInfo, int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_RCON_CMD_REM);
+        Msg.AddString(pCommandInfo->m_pName, 256);
+        SendMsgEx(&Msg, MSGFLAG_VITAL, ClientID, true);
+    }
+                </code>
+            </pre>
+            Unpacked by the client in <code>CClient::ProcessServerPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_CMD_REM)
+    {
+        const char *pName = Unpacker.GetString(CUnpacker::SANITIZE_CC);
+        if(Unpacker.Error() == 0)
+            m_pConsole->DeregisterTemp(pName);
+    }
+                </code>
+            </pre>
         </p>
     </div> <!-- content -->
     <footer>
