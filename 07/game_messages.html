@@ -1850,17 +1850,17 @@
         GameInfoMsg.m_TimeLimit = m_GameInfo.m_TimeLimit;
         GameInfoMsg.m_MatchNum = m_GameInfo.m_MatchNum;
         GameInfoMsg.m_MatchCurrent = m_GameInfo.m_MatchCurrent;
-    
+
         CNetMsg_Sv_GameInfo GameInfoMsgNoRace = GameInfoMsg;
         GameInfoMsgNoRace.m_GameFlags &= ~GAMEFLAG_RACE;
-    
+
         if(ClientID == -1)
         {
             for(int i = 0; i < MAX_CLIENTS; ++i)
             {
                 if(!GameServer()->m_apPlayers[i] || !Server()->ClientIngame(i))
                     continue;
-    
+
                 CNetMsg_Sv_GameInfo *pInfoMsg = (Server()->GetClientVersion(i) < CGameContext::MIN_RACE_CLIENTVERSION) ? &GameInfoMsgNoRace : &GameInfoMsg;
                 Server()->SendPackMsg(pInfoMsg, MSGFLAG_VITAL|MSGFLAG_NORECORD, i);
             }
@@ -2516,7 +2516,12 @@
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Chat mode can be one of those
+                        <ul>
+                            <li>1 - CHAT_ALL</li>
+                            <li>2 - CHAT_TEAM</li>
+                            <li>3 - CHAT_WHISPER</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
@@ -3904,7 +3909,7 @@
                 str_format(aBuf, sizeof(aBuf), Localize("'%s' has set a new map record: %s"), aLabel, aTime);
             else // m_RecordPersonal
                 str_format(aBuf, sizeof(aBuf), Localize("'%s' has set a new personal record: %s"), aLabel, aTime);
-            
+
             if(pMsg->m_Diff < 0)
             {
                 char aImprovement[64];
@@ -3930,7 +3935,7 @@
             CInfoMsg Finish;
             Finish.m_Player1ID = pMsg->m_ClientID;
             Finish.m_Player1RenderInfo = m_pClient->m_aClients[Finish.m_Player1ID].m_RenderInfo;
-            
+
             Finish.m_TimeCursor.m_FontSize = 36.0f;
             if(pMsg->m_RecordServer)
                 TextRender()->TextColor(1.0f, 0.5f, 0.0f, 1.0f);
