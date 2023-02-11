@@ -891,10 +891,18 @@
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
+                        Indicating wether it is team chat or not.
                         <ul>
-                            <li>1 - MODE_ALL</li>
-                            <li>2 - MODE_TEAM</li>
+                            <li>0 - public chat</li>
+                            <li>1 - team chat</li>
                         </ul>
+                        The client only tells the server that it wants team chat.
+                        And the server then figures out the team.
+                        <pre class="code-snippet">
+                            <code>
+    int Team = pMsg->m_Team ? pPlayer->GetTeam() : CGameContext::CHAT_ALL;
+                            </code>
+                        </pre>
                     </td>
                 </tr>
                 <tr>
@@ -909,6 +917,30 @@
                     </td>
                 </tr>
             </table>
+            Unpacked by the server in <code>CGameContext::OnMessage()</code>
+            <pre class="code-snippet">
+                <code>
+    if(MsgID == NETMSGTYPE_CL_SAY)
+    {
+        if(g_Config.m_SvSpamprotection && pPlayer->m_LastChat && pPlayer->m_LastChat+Server()->TickSpeed() > Server()->Tick())
+            return;
+
+        CNetMsg_Cl_Say *pMsg = (CNetMsg_Cl_Say *)pRawMsg;
+        int Team = pMsg->m_Team ? pPlayer->GetTeam() : CGameContext::CHAT_ALL;
+
+        // trim right and set maximum length to 128 utf8-characters
+        // [...]
+
+        // drop empty and autocreated spam messages (more than 16 characters per second)
+        if(Length == 0 || (g_Config.m_SvSpamprotection && pPlayer->m_LastChat && pPlayer->m_LastChat+Server()->TickSpeed()*((15+Length)/16) > Server()->Tick()))
+            return;
+
+        pPlayer->m_LastChat = Server()->Tick();
+
+        SendChat(ClientID, Team, pMsg->m_pMessage);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_SETTEAM"><a href="#NETMSGTYPE_CL_SETTEAM">NETMSGTYPE_CL_SETTEAM</a></h2>
