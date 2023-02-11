@@ -59,8 +59,8 @@
         <h2 id="NETMSG_INFO"><a href="#NETMSG_INFO">NETMSG_INFO</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Client</td></tr>
+                <tr><th>Recipient:</th><td>Server</td></tr>
                 <tr><th>Message ID:</th><td>1</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -105,8 +105,8 @@
         <h2 id="NETMSG_MAP_CHANGE"><a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>2</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -124,19 +124,41 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_MAP_CHANGE_todo"><a href="#NETMSG_MAP_CHANGE_todo">TODO</a></td>
+                    <td id="NETMSG_MAP_CHANGE_map_name"><a href="#NETMSG_MAP_CHANGE_map_name">Map name</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAP_CHANGE_crc"><a href="#NETMSG_MAP_CHANGE_crc">Crc</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAP_CHANGE_size"><a href="#NETMSG_MAP_CHANGE_size">Size</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            Sent by the server in <code>CServer::SendMap(int ClientID)</code>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendMap(int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_MAP_CHANGE);
+        Msg.AddString(GetMapName(), 0);
+        Msg.AddInt(m_CurrentMapCrc);
+        Msg.AddInt(m_CurrentMapSize);
+        SendMsgEx(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID, true);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_MAP_DATA"><a href="#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>3</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -154,19 +176,50 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_MAP_DATA_todo"><a href="#NETMSG_MAP_DATA_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSG_MAP_DATA_last"><a href="#NETMSG_MAP_DATA_last">Last</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
+                <tr>
+                    <td id="NETMSG_MAP_DATA_current_map_crc"><a href="#NETMSG_MAP_DATA_current_map_crc">Current map crc</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAP_DATA_chunk"><a href="#NETMSG_MAP_DATA_chunk">Chunk</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAP_DATA_chunk_size"><a href="#NETMSG_MAP_DATA_chunk_size">Chunk size</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_MAP_DATA_chunk_data"><a href="#NETMSG_MAP_DATA_chunk_data">Data</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>TODO</td>
+                </tr>
             </table>
+            Sent by the server in <code>CServer::ProcessClientPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    CMsgPacker Msg(NETMSG_MAP_DATA);
+    Msg.AddInt(Last);
+    Msg.AddInt(m_CurrentMapCrc);
+    Msg.AddInt(Chunk);
+    Msg.AddInt(ChunkSize);
+    Msg.AddRaw(&m_pCurrentMapData[Offset], ChunkSize);
+    SendMsgEx(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID, true);
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_CON_READY"><a href="#NETMSG_CON_READY">NETMSG_CON_READY</a></h2>
         <p>
             <table>
-                <tr><th>Sender:</th><td>TODO</td></tr>
-                <tr><th>Recipient:</th><td>TODO</td></tr>
+                <tr><th>Sender:</th><td>Server</td></tr>
+                <tr><th>Recipient:</th><td>Client</td></tr>
                 <tr><th>Message ID:</th><td>4</td></tr>
                 <tr>
                     <th>Response to:</th>
@@ -184,12 +237,28 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_CON_READY_todo"><a href="#NETMSG_CON_READY_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            Sent by the server in <code>CServer::SendConnectionReady()</code>
+            <pre class="code-snippet">
+                <code>
+    void CServer::SendConnectionReady(int ClientID)
+    {
+        CMsgPacker Msg(NETMSG_CON_READY);
+        SendMsgEx(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID, true);
+    }
+                </code>
+            </pre>
+            Unpacked by the client in <code>CClient::ProcessClientPacket()</code>
+            <pre class="code-snippet">
+                <code>
+    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_CON_READY)
+    {
+        GameClient()->OnConnected();
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSG_SNAP"><a href="#NETMSG_SNAP">NETMSG_SNAP</a></h2>
