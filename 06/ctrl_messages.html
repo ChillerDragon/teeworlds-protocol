@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html">
+            <img src="../img/tee.svg" alt="tee">
+        </a>
+        <a href="../index.html">home</a>
+        <a href="../06.html">overview</a>
+        <a href="fundamentals.html">fundamentals</a>
+        <a href="snap_items.html">snap_items</a>
+        <a href="system_messages.html">system_messages</a>
+        <a href="game_messages.html">game_messages</a>
+        <a href="ctrl_messages.html">ctrl_messages</a>
+        <hr>
+    </div>
+    <div class="content">
+        <h1>Control messages 0.6.5</h1>
+        <p>
+            There are three types of messages with overlapping message ids: <br>
+            <a href="system_messages.html">system messages</a>,
+            <a href="game_messages.html">game messages</a> and
+            <a href="ctrl_messages.html">control messages</a>
+            <br>
+            This list is only covering control messages.
+            <br>
+            <br>
+            Control messages have a simpler layout than game or system messages.
+            They are always sent as a single packet. So there is no chunking and flushing.
+            There is also no message header just its id and payload.
+            Note that 0.6.5 introduced security tokens
+            for control messages. Here the control msg send method used to send all of them.
+            <pre class="code-snippet">
+                <code>
+    void CNetBase::SendControlMsg(NETSOCKET Socket, NETADDR *pAddr, int Ack, bool UseToken, unsigned Token, int ControlMsg, const void *pExtra, int ExtraSize)
+    {
+        CNetPacketConstruct Construct;
+        Construct.m_Flags = NET_PACKETFLAG_CONTROL|(UseToken?NET_PACKETFLAG_TOKEN:0);
+        Construct.m_Ack = Ack;
+        Construct.m_NumChunks = 0;
+        Construct.m_Token = Token;
+        Construct.m_DataSize = 1+ExtraSize;
+        Construct.m_aChunkData[0] = ControlMsg;
+        mem_copy(&Construct.m_aChunkData[1], pExtra, ExtraSize);
+
+        // send the control message
+        CNetBase::SendPacket(Socket, pAddr, &Construct);
+    }
+                </code>
+            </pre>
+            Note that it shares the same teeworlds packet header so it has the fields NumChunks. But it is set to 0
+            at all times for control messages. Also control messages are never compressed using huffman compression.
+        </p>
+        <hr>
+        <h2 id="NET_CTRLMSG_KEEPALIVE"><a href="#NET_CTRLMSG_KEEPALIVE">NET_CTRLMSG_KEEPALIVE</a></h2>
+        <p>
+            <table>
+                <tr>
+                    <th>Sender:</th>
+                    <td>Client <br> Server </td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th>
+                    <td>Client <br> Server </td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>0</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>Sent after 250ms of silence</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>None</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            If no packets are exchanged for too long the connection times out. So this messages whole
+            purpose to keep the connection alive in case of no packets being exchanged.
+            Which rarley happens in regular healthy connections due to the protocol being very chatty.
+            It is sent automatically if needed in <code>network_conn.cpp</code> which is shared
+            by client and server.
+            <pre class="code-snippet">
+                <code>
+    // system.c
+    int64 time_freq()
+    {
+    #if defined(CONF_FAMILY_UNIX)
+        return 1000000;
+    #elif defined(CONF_FAMILY_WINDOWS)
+        int64 t;
+        QueryPerformanceFrequency((PLARGE_INTEGER)&t);
+        return t;
+    #else
+        #error not implemented
+    #endif
+    }
+
+    // network_conn.cpp
+    int CNetConnection::Update()
+    {
+        int64 Now = time_get();
+        int64 Freq = time_freq();
+
+        // [..]
+
+        // send keep alives if nothing has happend for 250ms
+        if(State() == NET_CONNSTATE_ONLINE)
+        {
+            // [..]
+
+            if(Now-m_LastSendTime &gt; Freq)
+                SendControl(NET_CTRLMSG_KEEPALIVE, 0, 0);
+        }
+        // [..]
+
+        return 0;
+    }
+                </code>
+            </pre>
+        </p>
+        <hr>
+        <h2 id="NET_CTRLMSG_CONNECT"><a href="#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a></h2>
+        <p>
+            <table>
+                <tr>
+                    <th>Sender:</th>
+                    <td>Client</td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th>
+                    <td>Server</td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>1</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_CONNECT_null4"><a href="#NET_CTRLMSG_CONNECT_null4">Null</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        4 null bytes
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_CONNECT_token"><a href="#NET_CTRLMSG_CONNECT_token">Client Token</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        Fixed size 4 byte random security token
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_CONNECT_null508"><a href="#NET_CTRLMSG_CONNECT_null508">Null</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        408 null bytes filling the total payload size to be 512 plus the control message id.
+                    </td>
+                </tr>
+            </table>
+            Since this is the very first packet the is sent by the client to initiate the connection the
+            payload has to be over 512 bytes otherwise the server will simply drop it.
+            This is for security purpose to avoid reflection attacks.
+            Sent via the <code>SendConnect()</code> wrapper.
+            <pre class="code-snippet">
+                <code>
+    void CNetConnection::SendConnect()
+    {
+        unsigned char aConnect[512] = {0};
+        uint32_to_be(&aConnect[4], m_Token);
+        SendControl(NET_CTRLMSG_CONNECT, aConnect, sizeof(aConnect));
+    }
+                </code>
+            </pre>
+            Here a sample payload of a NET_CTRLMSG_CONNECT sent over the network.
+            Note this is only the payload. There has to be a teeworlds packet header
+            in front of it.
+            <pre class="code-snippet">
+                <code>
+                         Token
+                          / \
+                         /   \
+                        /     \
+   NET_CTRLMSG_CONNECT /       \
+       v              /         \
+       01 00 00 00 00 80 45 7f 2e 00 00 00 00 00 00    ......E........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00                                             ..
+
+                </code>
+            </pre>
+            Unpacked by the server in <code>CNetServer::Recv()</code>
+            <pre class="code-snippet">
+                <code>
+    if(m_RecvUnpacker.m_Data.m_Flags&NET_PACKETFLAG_CONTROL && m_RecvUnpacker.m_Data.m_aChunkData[0] == NET_CTRLMSG_CONNECT)
+    {
+        if(ClientID != -1)
+        {
+            continue; // silent ignore.. we got this client already
+        }
+        if(m_RecvUnpacker.m_Data.m_DataSize >= 1+512)
+        {
+            unsigned MyToken = GetToken(Addr);
+            unsigned char aConnectAccept[4];
+            uint32_to_be(&aConnectAccept[0], MyToken);
+            CNetBase::SendControlMsg(m_Socket, &Addr, 0, true, Token, NET_CTRLMSG_CONNECTACCEPT, aConnectAccept, sizeof(aConnectAccept));
+            if(g_Config.m_Debug)
+            {
+                dbg_msg("netserver", "got connect, sending connect+accept challenge");
+            }
+        }
+        // [..]
+                </code>
+            </pre>
+        </p>
+        <hr>
+        <h2 id="NET_CTRLMSG_CONNECTACCEPT"><a href="#NET_CTRLMSG_CONNECTACCEPT">NET_CTRLMSG_CONNECTACCEPT</a></h2>
+        <p>
+            <table>
+                <tr>
+                    <th>Sender:</th>
+                    <td>Server</td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th>
+                    <td>Client</td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>2</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_CONNECTACCEPT_token"><a href="#NET_CTRLMSG_CONNECTACCEPT_token">Server Token</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        Fixed size 4 byte random security token
+                    </td>
+                </tr>
+            </table>
+            Sent by the server in <code>CNetServer::Recv()</code>
+            <pre class="code-snippet">
+                <code>
+    if(m_RecvUnpacker.m_Data.m_Flags&NET_PACKETFLAG_CONTROL && m_RecvUnpacker.m_Data.m_aChunkData[0] == NET_CTRLMSG_CONNECT)
+    {
+        if(ClientID != -1)
+        {
+            continue; // silent ignore.. we got this client already
+        }
+        if(m_RecvUnpacker.m_Data.m_DataSize >= 1+512)
+        {
+            unsigned MyToken = GetToken(Addr);
+            unsigned char aConnectAccept[4];
+            uint32_to_be(&aConnectAccept[0], MyToken);
+            CNetBase::SendControlMsg(m_Socket, &Addr, 0, true, Token, NET_CTRLMSG_CONNECTACCEPT, aConnectAccept, sizeof(aConnectAccept));
+            if(g_Config.m_Debug)
+            {
+                dbg_msg("netserver", "got connect, sending connect+accept challenge");
+            }
+        }
+        // [..]
+                </code>
+            </pre>
+            Unpacked by the client in <code>CNetConnection::Feed()</code>
+            <pre class="code-snippet">
+                <code>
+    if(State() == NET_CONNSTATE_CONNECT)
+    {
+        // connection made
+        if(CtrlMsg == NET_CTRLMSG_CONNECTACCEPT)
+        {
+            if(pPacket->m_Flags&NET_PACKETFLAG_TOKEN)
+            {
+                if(pPacket->m_DataSize < 1+4)
+                {
+                    if(g_Config.m_Debug)
+                    {
+                        dbg_msg("connection", "got short connect+accept, size=%d", pPacket->m_DataSize);
+                    }
+                    return 1;
+                }
+                m_Token = uint32_from_be(&pPacket->m_aChunkData[1]);
+            }
+            else
+            {
+                m_UseToken = false;
+            }
+            m_LastRecvTime = Now;
+            m_State = NET_CONNSTATE_ONLINE;
+            if(g_Config.m_Debug)
+                dbg_msg("connection", "got connect+accept, sending accept. connection online");
+        }
+    }
+                </code>
+            </pre>
+            Here a sample payload of a NET_CTRLMSG_CONNECTACCEPT sent over the network.
+            Note this is only the payload. There has to be a teeworlds packet header
+            in front of it.
+            <pre class="code-snippet">
+                <code>
+    NET_CTRLMSG_CONNECTACCEPT 
+        |
+        |       token
+        |   _____|___
+        v  /         \
+        02 5e 40 3a b8   .^@:.
+                </code>
+            </pre>
+        </p>
+        <hr>
+        <h2 id="NET_CTRLMSG_CLOSE"><a href="#NET_CTRLMSG_CLOSE">NET_CTRLMSG_CLOSE</a></h2>
+        <p>
+            <table>
+                <tr>
+                    <th>Sender:</th>
+                    <td>Client <br> Server </td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th>
+                    <td>Client <br> Server </td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>3</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_CLOSE_reason"><a href="#NET_CTRLMSG_CLOSE_reason">Reason</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>This argument is optional and can also be left out</td>
+                </tr>
+            </table>
+            This message is used to cleanly terminate connections. This can be sent by client
+            on disconnect or by server on shutdown.
+            The optional parameter <a href="#NET_CTRLMSG_CLOSE_reason">reason</a> can be sent by both
+            and will be displayed in the disconnect message or on the disconnect screen.
+            <br>
+            <br>
+            Sent in the <code>CNetConnection::Disconnect(const char *pReason)</code> method.
+            <pre class="code-snippet">
+                <code>
+    void CNetConnection::Disconnect(const char *pReason)
+    {
+        if(State() == NET_CONNSTATE_OFFLINE)
+            return;
+
+        if(m_RemoteClosed == 0)
+        {
+            if(pReason)
+                SendControl(NET_CTRLMSG_CLOSE, pReason, str_length(pReason)+1);
+            else
+                SendControl(NET_CTRLMSG_CLOSE, 0, 0);
+
+            if(pReason != m_ErrorString)
+            {
+                if(pReason)
+                    str_copy(m_ErrorString, pReason, sizeof(m_ErrorString));
+                else
+                    m_ErrorString[0] = 0;
+            }
+        }
+
+        Reset();
+    }
+                </code>
+            </pre>
+            Unpacket in <code>CNetConnection::Feed()</code>
+            <pre class="code-snippet">
+                <code>
+    if(CtrlMsg == NET_CTRLMSG_CLOSE)
+    {
+        if(net_addr_comp(&m_PeerAddr, pAddr) == 0)
+        {
+            m_State = NET_CONNSTATE_ERROR;
+            m_RemoteClosed = 1;
+
+            char aStr[128] = {0};
+            if(pPacket->m_DataSize > 1)
+            {
+                // make sure to sanitize the error string form the other party
+                if(pPacket->m_DataSize < 128)
+                    str_copy(aStr, (char *)&pPacket->m_aChunkData[1], pPacket->m_DataSize);
+                else
+                    str_copy(aStr, (char *)&pPacket->m_aChunkData[1], sizeof(aStr));
+                str_sanitize_strong(aStr);
+            }
+
+            if(!m_BlockCloseMsg)
+            {
+                // set the error string
+                SetError(aStr);
+            }
+
+            if(g_Config.m_Debug)
+                dbg_msg("connection", "closed reason='%s'", aStr);
+        }
+        return 0;
+    }
+                </code>
+            </pre>
+            If there is no reason set the payload of the teeworlds packet will only be the byte <code>0x04</code>.
+            If there is a reason it will be appended as a null terminated string.
+            <pre class="code-snippet">
+                <code>
+ NET_CTRLMSG_CLOSE
+    |
+    | All the rest is reason
+    |  |
+    v  v
+    04 53 65 72 76 65 72 20 73 68 75   .Server shu
+    74 64 6f 77 6e 00                  tdown.
+                   ^ 
+                   |
+                Terminating null byte
+                </code>
+            </pre>
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+</body>
