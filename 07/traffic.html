@@ -450,8 +450,7 @@
              19
 
     [CLIENT INFO]                              [CLIENT INFO ASCII]
-    41 1e 0a <span class="tooltip">24<span class="tooltiptext">
-0x24    hex
+    41 1e 0a <span class="tooltip">24<span class="tooltiptext">0x24    hex
 36      decimal
 100100  binary
 ^   ^^
@@ -473,7 +472,17 @@
     00                                         .
 
     [SNAP SINGLE]                              [SNAP SINGLE ASCII]
-    01 18 11 ac  31 ad 31 ae  89 01 8e 01      ....1.1.....
+    01 18 <span class="tooltip">11<span class="tooltiptext">0x11    hex
+17      decimal
+010001  binary
+^   ^^
+ \  /|
+01000|
+  |  |
+  | system message
+  v
+ 8 <a href="system_messages.html#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a>
+    </span></span> ac  31 ad 31 ae  89 01 8e 01      ....1.1.....
     00 08 00 04  01 b0 03 90  02 03 04 02      ............
     90 04 90 02  02 04 03 b0  04 90 02 04      ............
     04 04 b0 07  b0 06 01 04  05 b0 08 b0      ............
@@ -519,7 +528,17 @@
     10  04  03  <span class="token">51  3B  59  46</span>
 
     [PAYLOAD HEADER]
-    &lt;00  33&gt;&lt;11&gt; B8  01  B9  01  84  11  2B  00  03     .3.......+..
+    &lt;00  33&gt;&lt;<span class="tooltip">11<span class="tooltiptext">0x11    hex
+17      decimal
+010001  binary
+^   ^^
+ \  /|
+01000|
+  |  |
+  | system message
+  v
+  8 <a href="system_messages.html#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a>
+    </span></span>&gt; B8  01  B9  01  84  11  2B  00  03     .3.......+..
     ^        ^
     |     NETMSG_SNAPSINGLE
   Flags & Size
