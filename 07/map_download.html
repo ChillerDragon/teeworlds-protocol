@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html">
+            <img src="../img/tee.svg" alt="tee">
+        </a>
+        <a href="../index.html">home</a>
+        <a href="../07.html">overview</a>
+        <a href="fundamentals.html">fundamentals</a>
+        <a href="traffic.html">traffic</a>
+        <a href="map_download.html">map_download</a>
+        <a href="snap_items.html">snap_items</a>
+        <a href="system_messages.html">system_messages</a>
+        <a href="game_messages.html">game_messages</a>
+        <a href="ctrl_messages.html">ctrl_messages</a>
+        <hr>
+    </div>
+    <div class="content">
+        <h1>Teeworlds 0.7 map download</h1>
+        <p>
+          Here is a example network traffic dump annotated using
+          <a href="https://github.com/heinrich5991/libtw2/tree/ded871091bb984f0419cac605b85ecf438c6fbcd/wireshark-dissector">
+            libtw2's wireshark dissector.
+          </a>
+          The map download process is initiated if the map is changed or a client connects to the server.
+          And the client does not know the map. Both times the server sends a
+          <a href="system_messages.html#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a>
+          message where the client is supposed to answer with either
+          <a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a>
+          indicating that the client knows the map and is ready to enter or with
+          <a href="system_messages.html#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a>
+          to start the map download process.
+          <br>
+          <img class="rounded-img" src="../img/map_dl_start.png" alt="download start">
+          <br>
+          Note that the client has to keep sending
+          <a href="system_messages.html#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a>
+          otherwise the server would stop sending the map data.
+          <br>
+          <br>
+          Here another dump showing the end of a successful map download.
+          Since the client knows the total map size from the <a href="system_messages.html#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a>
+          message that was sent before. It sends <a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a>
+          as soon as it got the last data message indicating that it received the full map and wants to connect now.
+          <img class="rounded-img" src="../img/map_dl_end.png" alt="download end">
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+  </body>
+  </html>

@@ -15,6 +15,7 @@
         <a href="../07.html">overview</a>
         <a href="fundamentals.html">fundamentals</a>
         <a href="traffic.html">traffic</a>
+        <a href="map_download.html">map_download</a>
         <a href="snap_items.html">snap_items</a>
         <a href="system_messages.html">system_messages</a>
         <a href="game_messages.html">game_messages</a>
@@ -266,6 +267,9 @@
             </table>
             Sent when client should switch map and on initial join.
             <br>
+            See the <a href="map_download.html">map_download</a> section for a higher level overview.
+            <br>
+            <br>
             Sent by the server in
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">
                 CServer::SendMap(int ClientID)
@@ -402,6 +406,9 @@
             as size of the raw field. This variable was set to the value
             of the <a href="#NETMSG_MAP_CHANGE_chunk_size">Chunk Size</a> field from the
             <a href="#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a> message.
+            <br>
+            <br>
+            See the <a href="map_download.html">map_download</a> section for a higher level overview.
         </p>
         <hr>
         <h2 id="NETMSG_SERVERINFO"><a href="#NETMSG_SERVERINFO">NETMSG_SERVERINFO</a></h2>

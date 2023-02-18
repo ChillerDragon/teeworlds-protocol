@@ -15,6 +15,7 @@
         <a href="../07.html">overview</a>
         <a href="fundamentals.html">fundamentals</a>
         <a href="traffic.html">traffic</a>
+        <a href="map_download.html">map_download</a>
         <a href="snap_items.html">snap_items</a>
         <a href="system_messages.html">system_messages</a>
         <a href="game_messages.html">game_messages</a>
@@ -32,7 +33,8 @@
             <br>
             <br>
             In this example traffic we look at a client joing a server. The client already knows the map.
-            So no map download packets will be sent. The server sends all its basic info such as gametype, map name and similar.
+            So no map download packets will be sent (download process is documented <a href="map_download.html">here</a> instead).
+            The server sends all its basic info such as gametype, map name and similar.
             Then after the client is connected it sends 1 input packet. In the end we cleanly close the connection with a disconnect packet.
             <br>
             <br>
@@ -226,7 +228,8 @@
         <h2 id="cl_srv_ready"><a href="#cl_srv_ready">[CLIENT->SERVER] Ready</a></h2>
         <p>
             If the client already has the map or finished the download process it will respond with the ready packet.
-            The map download packets are yet to be documented.
+            For more info on how the traffic would look like if the client did not know the map see
+            the <a href="map_download.html">map_download</a> section.
             <br>
             <br>
             If the server gets this packet it will print the following log line.
@@ -513,7 +516,7 @@
     10  04  03  <span class="token">51  3B  59  46</span>
 
     [PAYLOAD HEADER]
-    &lt;00  33&gt;&lt;11&gt; B8  01  B9  01  84  11  2B  00  03     .3.......+..  
+    &lt;00  33&gt;&lt;11&gt; B8  01  B9  01  84  11  2B  00  03     .3.......+..
         ^        ^
  Flags & Size    |
         NETMSG_SNAPSINGLE
