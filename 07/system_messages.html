@@ -382,7 +382,7 @@
                 </code>
             </pre>
             The client then unpacks them in
-            <a href="">
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L1223-L1270">
                 CClient::ProcessServerPacket(CNetChunk *pPacket)
             </a>
             <pre class="code-snippet">
@@ -394,6 +394,8 @@
 
         int Size = minimum(m_MapDownloadChunkSize, m_MapdownloadTotalsize-m_MapdownloadAmount);
         const unsigned char *pData = Unpacker.GetRaw(Size);
+
+        // [..]
                 </code>
             </pre>
             The client uses the <code>m_MapDownloadChunkSize</code>
@@ -950,13 +952,13 @@
     void CServer::ConLogout(IConsole::IResult *pResult, void *pUser)
     {
         CServer *pServer = (CServer *)pUser;
-    
+
         if(pServer->m_RconClientID >= 0 && pServer->m_RconClientID < MAX_CLIENTS &&
             pServer->m_aClients[pServer->m_RconClientID].m_State != CServer::CClient::STATE_EMPTY)
         {
             CMsgPacker Msg(NETMSG_RCON_AUTH_OFF, true);
             pServer->SendMsg(&Msg, MSGFLAG_VITAL, pServer->m_RconClientID);
-    
+
             pServer->m_aClients[pServer->m_RconClientID].m_Authed = AUTHED_NO;
             pServer->m_aClients[pServer->m_RconClientID].m_AuthTries = 0;
             pServer->m_aClients[pServer->m_RconClientID].m_pRconCmdToSend = 0;
