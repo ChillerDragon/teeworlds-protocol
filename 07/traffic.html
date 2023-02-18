@@ -258,6 +258,9 @@
     print(msg) # => 18 (NETMSG_READY)
                 </code>
             </pre>
+            This python code only works because the message id is below 63
+            Otherwise we would have to do some more complicated int unpacking
+            see the <a href="fundamentals.html#int_packing">int packing</a> section for more details.
         </p>
         <pre class="code-snippet">
             <code>
@@ -517,9 +520,9 @@
 
     [PAYLOAD HEADER]
     &lt;00  33&gt;&lt;11&gt; B8  01  B9  01  84  11  2B  00  03     .3.......+..
-        ^        ^
- Flags & Size    |
-        NETMSG_SNAPSINGLE
+    ^        ^
+    |     NETMSG_SNAPSINGLE
+  Flags & Size
 
     [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
     00 06 00 00  01 00 0A 00  A6 01 90 04      ............
@@ -578,6 +581,9 @@
     print(msg) # => 20 (NETMSG_INPUT)
                 </code>
             </pre>
+            This python code only works because the message id is below 63
+            Otherwise we would have to do some more complicated int unpacking
+            see the <a href="fundamentals.html#int_packing">int packing</a> section for more details.
         </p>
         <pre class="code-snippet">
             <code>
