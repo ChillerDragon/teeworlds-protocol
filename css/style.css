@@ -15,6 +15,19 @@ html, body {
     color: #c3c3c3;
     border-radius: 1em;
     overflow: scroll;
+    /*
+        some browsers/fonts like to
+        replace letter combinations with ligatures
+        for example fl and fi becomes one letter
+        that messes up fixed width spacing and the arrows
+        are not aligned in the code snippets.
+
+        Because the string flags is displayed 1
+        letter width shorter one some systems.
+
+        Disabling liga fixes this.
+    */
+    font-feature-settings:"liga" 0, "dlig" 0;
 }
 
 .code-inline {
