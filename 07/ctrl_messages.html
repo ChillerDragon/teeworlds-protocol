@@ -30,7 +30,7 @@
         <hr>
     </div> <!-- header -->
     <div class="content">
-        <h1>Control messages</h1>
+        <h1>Control messages 0.7</h1>
         <p>
             There are three types of messages with overlapping message ids: <br>
             <a href="system_messages.html">system messages</a>,
@@ -40,30 +40,196 @@
             This list is only covering control messages.
             <br>
             <br>
-            TODO TEXT ABOUT CONTROL MESSAGES
+            Control messages have a simpler layout than game or system messages.
+            They are always sent as a single packet. So there is no chunking and flushing.
+            There is also no message header just its id and payload.
+            Note that 0.6.5 introduced security tokens
+            for control messages. Here the control msg send method used to send all of them.
+            <pre class="code-snippet">
+                <code>
+    void CNetBase::SendControlMsg(const NETADDR *pAddr, TOKEN Token, int Ack, int ControlMsg, const void *pExtra, int ExtraSize)
+    {
+        CNetPacketConstruct Construct;
+        Construct.m_Token = Token;
+        Construct.m_Flags = NET_PACKETFLAG_CONTROL;
+        Construct.m_Ack = Ack;
+        Construct.m_NumChunks = 0;
+        Construct.m_DataSize = 1+ExtraSize;
+        Construct.m_aChunkData[0] = ControlMsg;
+        if(ExtraSize > 0)
+            mem_copy(&Construct.m_aChunkData[1], pExtra, ExtraSize);
+
+        // send the control message
+        SendPacket(pAddr, &Construct);
+    }
+                </code>
+            </pre>
+            Note that it shares the same teeworlds packet header so it has the fields NumChunks. But it is set to 0
+            at all times for control messages. Also control messages are never compressed using huffman compression.
         </p>
         <hr>
         <h2 id="NET_CTRLMSG_KEEPALIVE"><a href="#NET_CTRLMSG_KEEPALIVE">NET_CTRLMSG_KEEPALIVE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 0 <br>
-            TODO
+            <table>
+                <tr>
+                    <th>Sender:</th>
+                    <td>Client <br> Server </td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th>
+                    <td>Client <br> Server </td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>0</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>Sent after 250ms of silence</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>None</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
+            If no packets are exchanged for too long the connection times out. So this messages whole
+            purpose to keep the connection alive in case of no packets being exchanged.
+            Which rarley happens in regular healthy connections due to the protocol being very chatty.
+            It is sent automatically if needed in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L406-L418">
+                network_conn.cpp
+            </a>
+            which is shared by client and server.
+            <pre class="code-snippet">
+                <code>
+    // system.c
+    int64 time_freq()
+    {
+    #if defined(CONF_FAMILY_UNIX)
+        return 1000000;
+    #elif defined(CONF_FAMILY_WINDOWS)
+        int64 t;
+        QueryPerformanceFrequency((PLARGE_INTEGER)&t);
+        return t;
+    #else
+        #error not implemented
+    #endif
+    }
+
+    // network_conn.cpp
+    int CNetConnection::Update()
+    {
+        // [..]
+
+        // send keep alives if nothing has happend for 250ms
+        if(State() == NET_CONNSTATE_ONLINE)
+        {
+            // [..]
+
+            if(time_get()-m_LastSendTime > time_freq())
+                SendControl(NET_CTRLMSG_KEEPALIVE, 0, 0);
+        }
+
+        // [..]
+
+        return 0;
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NET_CTRLMSG_CONNECT"><a href="#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 1 <br>
-            TODO
+            <table>
+                <tr>
+                    <th>Sender:</th>
+                    <td>Client</td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th>
+                    <td>Server</td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>1</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_CONNECT_response_token"><a href="#NET_CTRLMSG_CONNECT_response_token">Response token</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        Response token = client token
+                        <br>
+                        <br>
+                        The token of the server was already included in the packet header.
+                        This field then holds the token of the client it self.
+                        So this message is informing what token the server should put in the headers it
+                        sends to the client from now on.
+                        <br>
+                        <br>
+                        Technically the tokens are already exchanged in the first two
+                        <a href="#NET_CTRLMSG_TOKEN">NET_CTRLMSG_TOKEN</a> messages.
+                        So this payload is a bit redundant and not very critical.
+                    </td>
+                </tr>
+            </table>
         </p>
         <hr>
         <h2 id="NET_CTRLMSG_ACCEPT"><a href="#NET_CTRLMSG_ACCEPT">NET_CTRLMSG_ACCEPT</a></h2>
         <p>
-            <strong>Sender:</strong> Server <br>
-            <strong>Recipient:</strong> Client <br>
-            <strong>Message ID:</strong> 2 <br>
+            <table>
+                <tr>
+                    <th>Sender:</th>
+                    <td>Server</td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th>
+                    <td>Client</td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>2</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td colspan="3">None</td>
+                </tr>
+            </table>
             In a ideal connection scenario this is the 4th
             package being exchanged.
             After the two token packets and the connection request from the client.
@@ -74,18 +240,266 @@
         <hr>
         <h2 id="NET_CTRLMSG_CLOSE"><a href="#NET_CTRLMSG_CLOSE">NET_CTRLMSG_CLOSE</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 4 <br>
-            TODO
+            <table>
+                <tr>
+                    <th>Sender:</th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th><td>Client <br> Server</td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>4</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>
+                        <a href="system_messages.html#NETMSG_RCON_AUTH">NETMSG_RCON_AUTH</a> (Too many remote console authentication tries) | <br>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <code>kick</code>, <code>ban</code>, <code>shutdown</code>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>None</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_CLOSE_reason"><a href="#NET_CTRLMSG_CLOSE_reason">Reason</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>This argument is optional and can also be left out</td>
+                </tr>
+            </table>
+            This message is used to cleanly terminate connections. This can be sent by client
+            on disconnect or by server on shutdown.
+            The optional parameter <a href="#NET_CTRLMSG_CLOSE_reason">reason</a> can be sent by both
+            and will be displayed in the disconnect message or on the disconnect screen.
+            <br>
+            <br>
+            Sent in the <code>CNetConnection::Disconnect(const char *pReason)</code> method.
+            <pre class="code-snippet">
+                <code>
+    void CNetConnection::Disconnect(const char *pReason)
+    {
+        if(State() == NET_CONNSTATE_OFFLINE)
+            return;
+
+        if(m_RemoteClosed == 0)
+        {
+            if(pReason)
+                SendControl(NET_CTRLMSG_CLOSE, pReason, str_length(pReason)+1);
+            else
+                SendControl(NET_CTRLMSG_CLOSE, 0, 0);
+
+            if(pReason != m_ErrorString)
+            {
+                if(pReason)
+                    str_copy(m_ErrorString, pReason, sizeof(m_ErrorString));
+                else
+                    m_ErrorString[0] = 0;
+            }
+        }
+
+        Reset();
+    }
+                </code>
+            </pre>
+            Unpacket in <code>CNetConnection::Feed()</code>
+            <pre class="code-snippet">
+                <code>
+    if(CtrlMsg == NET_CTRLMSG_CLOSE)
+    {
+        if(net_addr_comp(&m_PeerAddr, pAddr) == 0)
+        {
+            m_State = NET_CONNSTATE_ERROR;
+            m_RemoteClosed = 1;
+
+            char aStr[128] = {0};
+            if(pPacket->m_DataSize > 1)
+            {
+                // make sure to sanitize the error string form the other party
+                if(pPacket->m_DataSize < 128)
+                    str_copy(aStr, (char *)&pPacket->m_aChunkData[1], pPacket->m_DataSize);
+                else
+                    str_copy(aStr, (char *)&pPacket->m_aChunkData[1], sizeof(aStr));
+                str_sanitize_strong(aStr);
+            }
+
+            if(!m_BlockCloseMsg)
+            {
+                // set the error string
+                SetError(aStr);
+            }
+
+            if(g_Config.m_Debug)
+                dbg_msg("connection", "closed reason='%s'", aStr);
+        }
+        return 0;
+    }
+                </code>
+            </pre>
+            If there is no reason set the payload of the teeworlds packet will only be the byte <code>0x04</code>.
+            If there is a reason it will be appended as a null terminated string.
+            <pre class="code-snippet">
+                <code>
+ NET_CTRLMSG_CLOSE
+    |
+    | All the rest is reason
+    |  |
+    v  v
+    04 53 65 72 76 65 72 20 73 68 75   .Server shu
+    74 64 6f 77 6e 00                  tdown.
+                   ^
+                   |
+                Terminating null byte
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NET_CTRLMSG_TOKEN"><a href="#NET_CTRLMSG_TOKEN">NET_CTRLMSG_TOKEN</a></h2>
         <p>
-            <strong>Sender:</strong>  <br>
-            <strong>Recipient:</strong>  <br>
-            <strong>Message ID:</strong> 5 <br>
-            TODO
+            <table>
+                <tr>
+                    <th>Sender:</th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Recipient:</th><td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Message ID:</th><td>5</td>
+                </tr>
+                <tr>
+                    <th>Response to:</th>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <th>Expected response:</th>
+                    <td>TODO</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NET_CTRLMSG_TOKEN_response_token"><a href="#NET_CTRLMSG_TOKEN_response_token">Response token</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        Response token = senders token
+                        <br>
+                        <br>
+                        This field is used by client and server to send their own token
+                        to the other party.
+                    </td>
+                </tr>
+            </table>
+            This message is the first message sent by client and server.
+            First the client initiates the connection by telling its own token to the server.
+            The packet header contains <code>FF FF FF FF</code> as the server token indicating a empty token.
+            The server then responds with the client token in the packet header and his own token as
+            <a href="#NET_CTRLMSG_TOKEN_response_token">payload</a>.
+            <br>
+            <br>
+            Note that the server will drop all token packets that are smaller than 512 bytes.
+            So the client appends a bunch of null bytes at the end. This is to protect against reflection attacks.
+            The servers message does not include any null bytes.
+            <br>
+            <br>
+            Here a full hexdump of the teeworlds packet being sent by the client. Including not just the
+            token message but also its teeworlds packet header to see where the token is being used:
+            <pre class="code-snippet">
+                <code>
+    [TEEWORLDS PACKET HEADER]
+    04 00 00 ff ff ff ff                              .......
+    ^        \_________/
+    |             |
+    |       Server token placeholder (token is not known yet)
+    |
+    0x04 hex
+    0001 binary
+       ^
+       |
+    control flag
+
+    [NET_CTRLMSG_TOKEN]
+    05 24 05 cd fd                                    .$...
+    ^  \_________/
+    |       |
+    |    <a href="#NET_CTRLMSG_TOKEN_response_token">Response token</a>
+    |    Client token the server should
+    |    put in all packet headers from now on
+    |
+    |
+    0x05 -> <a href="fundamentals.html#int_packing">Unpacker.GetInt()</a> -> 5 -> NET_CTRLMSG_TOKEN
+
+    [NULL BYTES]
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+    00 00 00 00 00 00 00 00 00 00 00 00               ............
+                </code>
+            </pre>
+            How the server responds with his token
+            <pre class="code-snippet">
+                <code>
+    [TEEWORLDS PACKET HEADER]
+    04 00 00 24 05 cd fd      ......$
+    ^        \_________/
+    |            |
+    |       Client token from the payload
+    |       of the NET_CTRLMSG_TOKEN the client just sent
+    |
+    0x04 hex
+    0001 binary
+       ^
+       |
+    control flag
+
+    [NET_CTRLMSG_TOKEN]
+    05 fc 55 3a aa            ..U:.
+    ^  \_________/
+    |       |
+    |   <a href="#NET_CTRLMSG_TOKEN_response_token">Response token</a>
+    |   Server token the client should
+    |   put in all packet headers from now on
+    |
+    0x05 -> <a href="fundamentals.html#int_packing">Unpacker.GetInt()</a> -> 5 -> NET_CTRLMSG_TOKEN
+                </code>
+            </pre>
         </p>
     </div> <!-- content -->
     <footer>
