@@ -268,31 +268,68 @@
                     <td id="NETMSGTYPE_SV_TEAM_client_id"><a href="#NETMSGTYPE_SV_TEAM_client_id">Client ID</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        ID of the client that switched team
                     </td>
                 </tr>
                 <tr>
                     <td id="NETMSGTYPE_SV_TEAM_team"><a href="#NETMSGTYPE_SV_TEAM_team">Team</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Target team the client switched to. Can be one of those:
+                        <ul>
+                            <li><span class="num">-1</span> - TEAM_SPECTATORS</li>
+                            <li><span class="num">0</span>  - TEAM_RED</li>
+                            <li><span class="num">1</span>  - TEAM_BLUE</li>
+                        </ul>
+                        If the game mode has no teams and a player joins the game
+                        it uses 0 which is technically TEAM_RED.
                     </td>
                 </tr>
                 <tr>
                     <td id="NETMSGTYPE_SV_TEAM_silent"><a href="#NETMSGTYPE_SV_TEAM_silent">Silent</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Boolean flag that decides if the message is visible in chat.
+                        Can be one of those values:
+                        <ul>
+                            <li>0 - Message shown (not silent)</li>
+                            <li>1 - Message hidden (silent)</li>
+                        </ul>
+                        For example if the value 0 is sent it is not silent. And a message like this
+                        is shown in the clients chat: <br><br>
+                        <code>*** 'nameless tee' joined the spectators</code>
                     </td>
                 </tr>
                 <tr>
                     <td id="NETMSGTYPE_SV_TEAM_cooldown_tick"><a href="#NETMSGTYPE_SV_TEAM_cooldown_tick">Cooldown Tick</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        The server disallows changing teams too fast. This field informs the client who changed team
+                        when he can change the team again. This is used to show a cooldown in the client menu.
+                        The message in the ui then looks like this:
+                        <br>
+                        <br>
+                        <code>Teams are locked. Time to wait before changing team: 00:01</code>
                     </td>
                 </tr>
             </table>
+            A sample message sent over the network could look like this:
+            <pre class="code-snippet">
+                <code>
+    40 06 0c 08 00 40 00 91 3b   @....@..;
+    \______/ ^  ^  ^  ^  \___/
+       |     |  |  |  |    |
+    chunk    |  |  |  |   Cooldown Tick (3793)
+    header   |  |  |  |
+flags: vital |  |  |  Silent (0/false)
+size: 6      |  |  |
+seq: 12      |  | TEAM_SPECTATORS (-1)
+             |  |
+             | ClientID (0)
+             |
+        NETMSGTYPE_SV_TEAM (msg=4 system=false)
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_KILLMSG"><a href="#NETMSGTYPE_SV_KILLMSG">NETMSGTYPE_SV_KILLMSG</a></h2>
@@ -971,6 +1008,31 @@
 
             m_pVoting->AddOption(pDescription);
         }
+    }
+                </code>
+            </pre>
+            Sent by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/server/gamecontext.cpp#L1134-L1150">
+                CGameContext::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    CVoteOptionServer *pCurrent = m_pVoteOptionFirst;
+    while(pCurrent)
+    {
+        // count options for actual packet
+        int NumOptions = 0;
+        for(CVoteOptionServer *p = pCurrent; p && NumOptions &lt; MAX_VOTE_OPTION_ADD; p = p->m_pNext, ++NumOptions);
+
+        // pack and send vote list packet
+        CMsgPacker Msg(NETMSGTYPE_SV_VOTEOPTIONLISTADD);
+        Msg.AddInt(NumOptions);
+        while(pCurrent && NumOptions--)
+        {
+            Msg.AddString(pCurrent->m_aDescription, VOTE_DESC_LENGTH);
+            pCurrent = pCurrent->m_pNext;
+        }
+        Server()->SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
     }
                 </code>
             </pre>
