@@ -163,11 +163,15 @@
                 </tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>
+                        <a href="#NET_CTRLMSG_TOKEN">NET_CTRLMSG_TOKEN</a>
+                    </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>
+                        <a href="#NET_CTRLMSG_ACCEPT">NET_CTRLMSG_ACCEPT</a>
+                    </td>
                 </tr>
             </table>
             <table>
@@ -195,6 +199,89 @@
                     </td>
                 </tr>
             </table>
+            The client and server code for sending and receiving this message is in the same
+            shared function
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/network_conn.cpp#L233-L363">
+                CNetConnection::Feed()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    int CNetConnection::Feed(CNetPacketConstruct *pPacket, NETADDR *pAddr)
+    {
+        // [..]
+
+        int64 Now = time_get();
+
+        // [..]
+
+        //
+        if(pPacket->m_Flags&NET_PACKETFLAG_CONTROL)
+        {
+            int CtrlMsg = pPacket->m_aChunkData[0];
+
+            if(CtrlMsg == NET_CTRLMSG_CLOSE)
+            {
+                // [..]
+                return 0;
+            }
+            else
+            {
+                if(CtrlMsg == NET_CTRLMSG_TOKEN)
+                {
+                    m_PeerToken = pPacket->m_ResponseToken;
+
+                    if(State() == NET_CONNSTATE_TOKEN)
+                    {
+                        m_LastRecvTime = Now;
+                        m_State = NET_CONNSTATE_CONNECT;
+                        SendControlWithToken(<span class="orange">NET_CTRLMSG_CONNECT</span>);
+                        dbg_msg("connection", "got token, replying, token=%x mytoken=%x", m_PeerToken, m_Token);
+                    }
+                    else if(Config()->m_Debug)
+                        dbg_msg("connection", "got token, token=%x", m_PeerToken);
+                }
+                else
+                {
+                    if(State() == NET_CONNSTATE_OFFLINE)
+                    {
+                        if(CtrlMsg == <span class="orange">NET_CTRLMSG_CONNECT</span>)
+                        {
+                            // send response and init connection
+                            TOKEN Token = m_Token;
+                            Reset();
+                            mem_zero(m_ErrorString, sizeof(m_ErrorString));
+                            m_State = NET_CONNSTATE_PENDING;
+                            m_PeerAddr = *pAddr;
+                            m_PeerToken = pPacket->m_ResponseToken;
+                            m_Token = Token;
+                            m_LastSendTime = Now;
+                            m_LastRecvTime = Now;
+                            m_LastUpdateTime = Now;
+                            SendControl(NET_CTRLMSG_ACCEPT, 0, 0);
+                            if(Config()->m_Debug)
+                                dbg_msg("connection", "got connection, sending accept");
+                        }
+                    }
+                    else if(State() == NET_CONNSTATE_CONNECT)
+                    {
+                        // connection made
+                        if(CtrlMsg == NET_CTRLMSG_ACCEPT)
+                        {
+                            m_LastRecvTime = Now;
+                            m_State = NET_CONNSTATE_ONLINE;
+                            if(Config()->m_Debug)
+                                dbg_msg("connection", "got accept. connection online");
+                        }
+                    }
+                }
+            }
+        }
+        // [..]
+
+        return 1;
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NET_CTRLMSG_ACCEPT"><a href="#NET_CTRLMSG_ACCEPT">NET_CTRLMSG_ACCEPT</a></h2>
@@ -213,11 +300,15 @@
                 </tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>
+                        <a href="#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a>
+                    </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>
+                        <a href="system_messages.html#NETMSG_INFO">NETMSG_INFO</a>
+                    </td>
                 </tr>
             </table>
             <table>
@@ -364,21 +455,26 @@
         <p>
             <table>
                 <tr>
-                    <th>Sender:</th><td>TODO</td>
+                    <th>Sender:</th><td>Client <br> Server</td>
                 </tr>
                 <tr>
-                    <th>Recipient:</th><td>TODO</td>
+                    <th>Recipient:</th><td>Client <br> Server</td>
                 </tr>
                 <tr>
                     <th>Message ID:</th><td>5</td>
                 </tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>
+                        <a href="#NET_CTRLMSG_TOKEN">NET_CTRLMSG_TOKEN</a>
+                    </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>
+                        Client expects <a href="#NET_CTRLMSG_TOKEN">NET_CTRLMSG_TOKEN</a> <br>
+                        Server expects <a href="#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a>
+                    </td>
                 </tr>
             </table>
             <table>
