@@ -367,21 +367,35 @@ seq: 12      |  | TEAM_SPECTATORS (-1)
                     <td id="NETMSGTYPE_SV_KILLMSG_killer"><a href="#NETMSGTYPE_SV_KILLMSG_killer">Killer</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Client ID of the killer. Can be the same as the Victim.
+                        For example on a selfkill with grenade but also when a tee
+                        dies in a spike (death tile) or falls out of the world.
                     </td>
                 </tr>
                 <tr>
                     <td id="NETMSGTYPE_SV_KILLMSG_victim"><a href="#NETMSGTYPE_SV_KILLMSG_victim">Victim</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Client ID of the killed.
                     </td>
                 </tr>
                 <tr>
                     <td id="NETMSGTYPE_SV_KILLMSG_weapon"><a href="#NETMSGTYPE_SV_KILLMSG_weapon">Weapon</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Weapon the tee was killed with.
+                        Can be one of those:
+                        <ul>
+                            <li><span class="num">-3</span>WEAPON_GAME (team switching etc)</li>
+                            <li><span class="num">-2</span>WEAPON_SELF (console kill command)</li>
+                            <li><span class="num">-1</span>WEAPON_WORLD (death tiles etc)</li>
+                            <li><span class="num">0</span>WEAPON_HAMMER</li>
+                            <li><span class="num">1</span>WEAPON_GUN</li>
+                            <li><span class="num">2</span>WEAPON_SHOTGUN</li>
+                            <li><span class="num">3</span>WEAPON_GRENADE</li>
+                            <li><span class="num">4</span>WEAPON_LASER</li>
+                            <li><span class="num">5</span>WEAPON_NINJA</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
@@ -392,6 +406,137 @@ seq: 12      |  | TEAM_SPECTATORS (-1)
                     </td>
                 </tr>
             </table>
+            This message is used by the server to inform the client about kills.
+            The client will then render them in the kill feed in the top right corner.
+            <br>
+            <br>
+            The server sends this message to all clients when a tee dies.
+            <pre class="code-snippet">
+                <code>
+    void CCharacter::Die(int Killer, int Weapon)
+    {
+        // we got to wait 0.5 secs before respawning
+        m_Alive = false;
+        m_pPlayer->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()/2;
+        int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, (Killer < 0) ? 0 : GameServer()->m_apPlayers[Killer], Weapon);
+
+        char aBuf[256];
+        if(Killer < 0)
+        {
+            str_format(aBuf, sizeof(aBuf), "kill killer='%d:%d:' victim='%d:%d:%s' weapon=%d special=%d",
+                Killer, - 1 - Killer,
+                m_pPlayer->GetCID(), m_pPlayer->GetTeam(), Server()->ClientName(m_pPlayer->GetCID()), Weapon, ModeSpecial
+            );
+        }
+        else
+        {
+            str_format(aBuf, sizeof(aBuf), "kill killer='%d:%d:%s' victim='%d:%d:%s' weapon=%d special=%d",
+                Killer, GameServer()->m_apPlayers[Killer]->GetTeam(), Server()->ClientName(Killer),
+                m_pPlayer->GetCID(), m_pPlayer->GetTeam(), Server()->ClientName(m_pPlayer->GetCID()), Weapon, ModeSpecial
+            );
+        }
+        GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
+
+        // send the kill message
+        CNetMsg_Sv_KillMsg Msg;
+        Msg.m_Victim = m_pPlayer->GetCID();
+        Msg.m_ModeSpecial = ModeSpecial;
+        for(int i = 0 ; i < MAX_CLIENTS; i++)
+        {
+            if(!Server()->ClientIngame(i))
+                continue;
+
+            if(Killer < 0 && Server()->GetClientVersion(i) < MIN_KILLMESSAGE_CLIENTVERSION)
+            {
+                Msg.m_Killer = 0;
+                Msg.m_Weapon = WEAPON_WORLD;
+            }
+            else
+            {
+                Msg.m_Killer = Killer;
+                Msg.m_Weapon = Weapon;
+            }
+            Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
+        }
+
+        // a nice sound
+        GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE);
+
+        // this is for auto respawn after 3 secs
+        m_pPlayer->m_DieTick = Server()->Tick();
+
+        GameWorld()->RemoveEntity(this);
+        GameWorld()->m_Core.m_apCharacters[m_pPlayer->GetCID()] = 0;
+        GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
+    }
+                </code>
+            </pre>
+            <br>
+            <br>
+            The client side file that used to handle this was called <code>killmessages.cpp</code>
+            and was renamed to a more generic <code>infomessages.cpp</code> when 0.7 introduced
+            race related messages in the "killfeed".
+
+            <pre class="code-snippet">
+                <code>
+void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
+{
+	// [..]
+
+	bool Race = m_pClient->m_GameInfo.m_GameFlags&GAMEFLAG_RACE;
+
+	if(MsgType == NETMSGTYPE_SV_KILLMSG)
+	{
+		// [..]
+
+		<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/datasrc/network.py#L298-L303">CNetMsg_Sv_KillMsg</a> *pMsg = (CNetMsg_Sv_KillMsg *)pRawMsg;
+
+		// unpack messages
+		CInfoMsg Kill;
+		Kill.m_Player1ID = pMsg->m_Victim;
+		if(Config()->m_ClShowsocial)
+		{
+			Kill.m_Player1NameCursor.m_FontSize = 36.0f;
+			TextRender()->TextDeferred(&Kill.m_Player1NameCursor, m_pClient->m_aClients[Kill.m_Player1ID].m_aName, -1);
+		}
+
+		Kill.m_Player1RenderInfo = m_pClient->m_aClients[Kill.m_Player1ID].m_RenderInfo;
+
+		Kill.m_Player2ID = pMsg->m_Killer;
+		// [..]
+
+		Kill.m_Weapon = pMsg->m_Weapon;
+		Kill.m_ModeSpecial = pMsg->m_ModeSpecial;
+		Kill.m_FlagCarrierBlue = m_pClient->m_Snap.m_pGameDataFlag ? m_pClient->m_Snap.m_pGameDataFlag->m_FlagCarrierBlue : -1;
+
+		AddInfoMsg(INFOMSG_KILL, Kill);
+	}
+    // [..]
+                </code>
+            </pre>
+
+            In a update of 0.7 support for the community mod race was added.
+            So in <code>hud.cpp</code> the client also resets the checkpoint time
+            of the tee that died. Which is not used by the standard gametypes.
+            <pre class="code-snippet">
+                <code>
+    void CHud::OnMessage(int MsgType, void *pRawMsg)
+    {
+        // [..]
+        else if(MsgType == NETMSGTYPE_SV_KILLMSG && (m_pClient->m_GameInfo.m_GameFlags&GAMEFLAG_RACE))
+        {
+            // reset checkpoint time on death
+            CNetMsg_Sv_KillMsg *pMsg = (CNetMsg_Sv_KillMsg *)pRawMsg;
+            if(pMsg->m_Victim == m_pClient->m_LocalClientID)
+                m_CheckpointTime = 0;
+        }
+    }
+                </code>
+            </pre>
+            The client does also process this message in
+            <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/client/components/stats.cpp#L94-L127">
+                CStats::OnMessage()
+            </a>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_TUNEPARAMS"><a href="#NETMSGTYPE_SV_TUNEPARAMS">NETMSGTYPE_SV_TUNEPARAMS</a></h2>
