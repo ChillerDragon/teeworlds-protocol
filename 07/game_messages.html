@@ -402,7 +402,13 @@ seq: 12      |  | TEAM_SPECTATORS (-1)
                     <td id="NETMSGTYPE_SV_KILLMSG_mode_special"><a href="#NETMSGTYPE_SV_KILLMSG_mode_special">Mode special</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        For CTF, if the guy is carrying a flag for example.
+                        Only when the <code>sv_gametype</code> is <code>ctf</code> this mode is non zero.
+                        It is set in
+                        <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/server/gamemodes/ctf.cpp#L40-L64">
+                            ctf.cpp
+                        </a>
+                        when a flag is involved on death.
                     </td>
                 </tr>
             </table>
