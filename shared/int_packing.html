@@ -41,26 +41,28 @@
         <p>
             When trying to figure out how the packer should behave it can help to look at the tests
             that were written for it.
-            <br>
-            <br>
-            The
-            <a href="https://github.com/ddnet/ddnet/blob/22b7e5eaf4412bcb4c004ff2a3ecd39818cbb7f9/src/test/packer.cpp#L50-L206">
-                ddnet code base
-            </a>
-            has some annotated C++ test code that covers the int packer.
-            <br>
-            <br>
-            There also some similar tests in
-            <a href="https://github.com/ChillerDragon/teeworlds_network/blob/9230f32c6a9dbbe3bd0bfc17f89fd38a34016b48/spec/04_packer_spec.rb#L5-L66">
-                ruby.
-            </a>
-            <br>
-            <br>
-            The
-            <a href="https://github.com/edg-l/teeint/blob/9cb0d949abda7c270910f8511f3384c5608abc7b/src/lib.rs#L187-L382">
-                teeint rust project
-            </a>
-            has the best test coverage.
+            <ul>
+                <li>
+                    <a href="https://github.com/ddnet/ddnet/blob/22b7e5eaf4412bcb4c004ff2a3ecd39818cbb7f9/src/test/packer.cpp#L50-L206">
+                        C++ tests of the ddnet project
+                    </a>
+                </li>
+                <li>
+                    <a href="https://gitlab.com/teeworlds-network/twnet_parser/-/blob/1a0e19506035807c402a5b5ddeaa94221d90e9da/tests/int_packer_test.py">
+                        python tests of the twnet_parser project
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/ChillerDragon/teeworlds_network/blob/9230f32c6a9dbbe3bd0bfc17f89fd38a34016b48/spec/04_packer_spec.rb#L5-L66">
+                        ruby tests of the teeworlds_network project
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/edg-l/teeint/blob/9cb0d949abda7c270910f8511f3384c5608abc7b/src/lib.rs#L187-L382">
+                        rust tests of the teeint project
+                    </a>
+                </li>
+            </ul>
         </p>
         <hr>
         <h2 id="c_int_packer"><a href="#c_int_packer">The C packer code with print statements</a></h2>
