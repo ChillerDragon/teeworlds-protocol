@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <div class="header-grid">
+            <a class="logo" href="../index.html">
+                <img src="../img/tee.svg" alt="tee">
+            </a>
+            <span class="version">
+                Teeworlds protocol
+            </span>
+            <div class="links">
+                <a href="../index.html">home</a>
+                <a href="../07/fundamentals.html#int_packing">int_packing_07</a>
+                <a href="../06/fundamentals.html#int_packing">int_packing_06</a>
+            </div> <!-- links -->
+        </div> <!-- header-grid -->
+        <hr>
+    </div> <!-- header -->
+    <div class="content">
+        <h1>Technical int packing deep dive</h1>
+        <p>
+            This page is covering a technical dissection of the int packing code.
+            With some examples to better visualize it.
+            <br>
+            <br>
+            There is a chance you never have to fully understand int packing to
+            achieve your goals related to tw networking. This section is a bit weird.
+            I recommend reading the higher level docs on that in the
+            <a href="../07/fundamentals.html#int_packing">fundamentals</a> section.
+            If you already red that and still want to dive deeper you are correct here.
+        </p>
+        <hr>
+        <h2 id="int_packer_tests"><a href="#int_packer_tests">Other projects test code as reference</a></h2>
+        <p>
+            When trying to figure out how the packer should behave it can help to look at the tests
+            that were written for it.
+            <br>
+            <br>
+            The
+            <a href="https://github.com/ddnet/ddnet/blob/22b7e5eaf4412bcb4c004ff2a3ecd39818cbb7f9/src/test/packer.cpp#L50-L206">
+                ddnet code base
+            </a>
+            has some annotated C++ test code that covers the int packer.
+            <br>
+            <br>
+            There also some similar tests in
+            <a href="https://github.com/ChillerDragon/teeworlds_network/blob/9230f32c6a9dbbe3bd0bfc17f89fd38a34016b48/spec/04_packer_spec.rb#L5-L66">
+                ruby.
+            </a>
+            <br>
+            <br>
+            The
+            <a href="https://github.com/edg-l/teeint/blob/9cb0d949abda7c270910f8511f3384c5608abc7b/src/lib.rs#L187-L382">
+                teeint rust project
+            </a>
+            has the best test coverage.
+        </p>
+        <hr>
+        <h2 id="c_int_packer"><a href="#c_int_packer">The C packer code with print statements</a></h2>
+        <p>
+            Here the official teeworlds <code>Pack()</code> method annotated with some debug statements
+            to better visualize what is happening.
+            <pre class="code-snippet">
+                <code>
+    #include "stdio.h"
+    
+    void printbincharpad(char c)
+    {
+        for (int i = 7; i &gt;= 0; --i)
+        {
+            putchar( (c & (1 &lt;&lt; i)) ? '1' : '0' );
+        }
+    }
+    
+    void str_hex(char *dst, int dst_size, const void *data, int data_size)
+    {
+        static const char hex[] = "0123456789ABCDEF";
+        int b;
+    
+        for(b = 0; b &lt; data_size && b &lt; dst_size/4-4; b++)
+        {
+            dst[b*3] = hex[((const unsigned char *)data)[b]&gt;&gt;4];
+            dst[b*3+1] = hex[((const unsigned char *)data)[b]&0xf];
+            dst[b*3+2] = ' ';
+            dst[b*3+3] = 0;
+        }
+    }
+    
+    void print_bin(const char * pBuf, int size)
+    {
+        for(int i = 0; i &lt; size; i++)
+        {
+            printbincharpad(pBuf[i]);
+            putchar(' ');
+        }
+        putchar('\n');
+    }
+    
+    unsigned char *Pack(unsigned char *pDst, int i)
+    {
+        *pDst = 0;
+        if(i &lt; 0)
+        {
+            *pDst |= 0x40; // set sign bit
+            i = ~i;
+        }
+    
+        *pDst |= i & 0x3F; // pack 6bit into dst
+        i &gt;&gt;= 6; // discard 6 bits
+        while(i)
+        {
+            *pDst |= 0x80; // set extend bit
+            pDst++;
+            *pDst = i & 0x7F; // pack 7bit
+            i &gt;&gt;= 7; // discard 7 bits
+        }
+    
+        pDst++;
+        return pDst;
+    }
+    
+    void verbose_pack(int i)
+    {
+        int num_bytes = 1;
+        if(i &gt; 63 || i &lt; -63)
+            num_bytes = 2;
+        char aBuf[1024];
+        char aHex[1024];
+    
+        Pack(aBuf, i);
+    
+        str_hex(aHex, sizeof(aHex), aBuf, num_bytes);
+        printf("Pack(%d)\n =&gt; hex=%s\n =&gt; bin=", i, aHex);
+        print_bin(aBuf, num_bytes);
+    
+        printf(" =&gt; fmt=ESDDDDDD ");
+        for(int k = 1; k &lt; num_bytes; k++)
+            printf("EDDDDDDD ");
+        if(num_bytes &gt; 1)
+            puts("\n    when building the int keep in mind it is little endian!\n");
+        else
+            puts("\n");
+    }
+    
+    int main()
+    {
+        verbose_pack(1);
+        verbose_pack(2);
+        verbose_pack(3);
+    
+        verbose_pack(-1);
+        verbose_pack(-2);
+        verbose_pack(-3);
+    
+        verbose_pack(63);
+        verbose_pack(64);
+        verbose_pack(65);
+    
+        verbose_pack(-63);
+        verbose_pack(-64);
+        verbose_pack(-65);
+        verbose_pack(-66);
+        verbose_pack(-67);
+        return 0;
+    }
+                </code>
+            </pre>
+
+            It will output the following
+
+            <pre class="code-snippet">
+                <code>
+    Pack(1)
+     => hex=01 
+     => bin=00000001 
+     => fmt=ESDDDDDD 
+    
+    Pack(2)
+     => hex=02 
+     => bin=00000010 
+     => fmt=ESDDDDDD 
+    
+    Pack(3)
+     => hex=03 
+     => bin=00000011 
+     => fmt=ESDDDDDD 
+    
+    Pack(-1)
+     => hex=40 
+     => bin=01000000 
+     => fmt=ESDDDDDD 
+    
+    Pack(-2)
+     => hex=41 
+     => bin=01000001 
+     => fmt=ESDDDDDD 
+    
+    Pack(-3)
+     => hex=42 
+     => bin=01000010 
+     => fmt=ESDDDDDD 
+    
+    Pack(63)
+     => hex=3F 
+     => bin=00111111 
+     => fmt=ESDDDDDD 
+    
+    Pack(64)
+     => hex=80 01 
+     => bin=10000000 00000001 
+     => fmt=ESDDDDDD EDDDDDDD 
+        when building the int keep in mind it is little endian!
+    
+    Pack(65)
+     => hex=81 01 
+     => bin=10000001 00000001 
+     => fmt=ESDDDDDD EDDDDDDD 
+        when building the int keep in mind it is little endian!
+    
+    Pack(-63)
+     => hex=7E 
+     => bin=01111110 
+     => fmt=ESDDDDDD 
+    
+    Pack(-64)
+     => hex=7F 01 
+     => bin=01111111 00000001 
+     => fmt=ESDDDDDD EDDDDDDD 
+        when building the int keep in mind it is little endian!
+    
+    Pack(-65)
+     => hex=C0 01 
+     => bin=11000000 00000001 
+     => fmt=ESDDDDDD EDDDDDDD 
+        when building the int keep in mind it is little endian!
+    
+    Pack(-66)
+     => hex=C1 01 
+     => bin=11000001 00000001 
+     => fmt=ESDDDDDD EDDDDDDD 
+        when building the int keep in mind it is little endian!
+    
+    Pack(-67)
+     => hex=C2 01 
+     => bin=11000010 00000001 
+     => fmt=ESDDDDDD EDDDDDDD 
+        when building the int keep in mind it is little endian!                   
+                </code>
+            </pre>
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+</body>
