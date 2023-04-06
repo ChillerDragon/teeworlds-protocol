@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-grid">
+            <a class="logo" href="../index.html">
+                <img src="../img/tee.svg" alt="tee">
+            </a>
+            <span class="version">
+                Teeworlds 0.7
+            </span>
+            <div class="links">
+                <a href="../index.html">home</a>
+                <a href="../07.html">overview</a>
+                <a href="fundamentals.html">fundamentals</a>
+                <a href="packet_layout.html">packet_layout</a>
+                <a href="traffic.html">traffic</a>
+                <a href="map_download.html">map_download</a>
+                <a href="snap_items.html">snap_items</a>
+                <a href="system_messages.html">system_messages</a>
+                <a href="game_messages.html">game_messages</a>
+                <a href="ctrl_messages.html">ctrl_messages</a>
+            </div> <!-- links -->
+        </div> <!-- header-grid -->
+        <hr>
+    </div> <!-- header -->
+    <div class="content">
+        <h1>Packet layout 0.7</h1>
+        <p>
+            This page describes which format the full udp packets have that
+            are sent by client and server.
+            <br>
+            <br>
+            There are three types of messages: <br>
+            <a href="system_messages.html">system messages</a>,
+            <a href="game_messages.html">game messages</a> and
+            <a href="ctrl_messages.html">control messages</a>
+            <br>
+            <br>
+
+            System and game messages have the same layout.
+            There can be multiple game and system messages in one packet payload.
+            And they can also be mixed. Every message has its own <a href="fundamentals.html#flushing">chunk header</a>.
+            So "message" and "chunk" can be used as synonyms here.
+            <br>
+            <br>
+            Control messages on the other hand always fill up the whole packet payload.
+            So there can only be one control message per udp packet. And it does not have a chunk header.
+            <br>
+            <br>
+            <h1 id="packet_header"><a href="#packet_header">Packet header</a></h1>
+            The payload of every teeworlds udp packet starts with the teeworlds packet header.
+            In version 0.7 it is 7 bytes at all times. It has the following layout:
+            <pre class="code-snippet">
+                <code>
+    # Packet header
+    +---------+---------+------------------------------+------------------+----------------+
+    | Unused  | Flags   | Acknowledged sequence number | Number of chunks | Security token |
+    | 2 bits  | 4 bits  | 10 bits                      | 1 byte           | 4 bytes        |
+    +---------+---------+------------------------------+------------------+----------------+
+                </code>
+            </pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Unused</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Flags</td>
+                    <td>
+                        4 bits in the following order
+                        <ul>
+                            <li>conless - 1=connection less 0=connection oriented</li>
+                            <li>compression - 1=compressed 0=not compressed</li>
+                            <li>resend - 1=resend 0=not resend</li>
+                            <li>control - 1=control packet 0=system/game message packet</li>
+                        </ul>
+                        For example if the binary value of flags is
+                        <code>0100</code>
+                        It means it is a compressed packet. Which was not resend and so on.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Acknowledged sequence number</td>
+                    <td>
+                        Telling the receiver how many vital packets were successfully received.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Number of chunks</td>
+                    <td>
+                        Number of game and system message chunks.
+                        If it is a control packet this value is 0 at all times.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Security token</td>
+                    <td>
+                        4 byte random <a href="fundamentals.html#tokens">security token</a> to avoid spoofing.
+                    </td>
+                </tr>
+            </table>
+            <h1 id="chunk_headers"><a href="#chunk_headers">Chunk headers</a></h1>
+            The chunk header has a optional sequence number field that is only set
+            if the vital flag is set to true.
+            The vital flag indicates that the following chunk is important.
+            So it includes a sequence number that has to be acknowleged by the receiving party
+            if that does not happen the message will be resend.
+            <pre class="code-snippet">
+                <code>
+    # Chunk header (not vital)
+    +---------+---------+
+    | Flags   | Size    |
+    | 2 bits  | 12 bits |
+    +---------+---------+
+
+    # Chunk header (vital)
+    +---------+---------+-----------------+
+    | Flags   | Size    | Sequence number |
+    | 2 bits  | 12 bits | 10 bits         |
+    +---------+---------+-----------------+
+                </code>
+            </pre>
+            Unfortunately the above structure is not 100% accurate how the bits are sent over the network.
+            The fields do overlap into each other like this
+
+            <pre class="code-snippet">
+                <code>
+    # Chunk header (not vital)
+    +---------+---------+--------+--------+
+    | Flags   | Size    | Unused | Size   |
+    | 2 bits  | 6 bits  | 2 bits | 6 bits |
+    +---------+---------+--------+--------+
+
+    # Chunk header (vital)
+    +---------+---------+-----------------+--------+-----------------+
+    | Flags   | Size    | Sequence number | Size   | Sequence number |
+    | 2 bits  | 6 bits  | 2 bits          | 6 bits | 8 bits          |
+    +---------+---------+-----------------+--------+-----------------+
+                </code>
+            </pre>
+
+
+            <h1 id="packet_ex_sys_and_game"><a href="#packet_ex_sys_and_game">Full example packet (system &amp; game)</a></h1>
+
+            <pre class="code-snippet">
+                <code>
+    +-------------------------+----------------------+-------------+----------------------+------------------------+----------------------+--------------------+
+    | teeworlds packet header | chunk header (vital) | motd (game) | chunk header (vital) | server settings (game) | chunk header (vital) | con ready (system) |
+    | 7 bytes                 | 3 bytes              |             | 3 bytes              |                        | 3 bytes              |                    |
+    +-------------------------+----------------------+-------------+----------------------+------------------------+----------------------+--------------------+
+                </code>
+            </pre>
+            <h1 id="control_messages"><a href="#control_messages">Control messages</a></h1>
+            Control messages hijack the whole packet. So in the packet header the control flag is set.
+            And the full payload is only the protocol message.
+            The control message layout always starts with 1 byte that is the message id.
+            Theoretically the regular int packer is used to pack that byte. So if there were more than 63 control messages
+            this message id field could be multiple bytes but since there are only 5 control messages in the protocol version 0.7.
+            It can safely be assumed that the message id field is 1 byte at all times.
+            Then it is followed by an optional payload. Every control message id
+            has a fixed payload structure defined.
+            The messages
+            <a href="ctrl_messages.html#NET_CTRLMSG_KEEPALIVE">NET_CTRLMSG_KEEPALIVE</a>
+            and
+            <a href="ctrl_messages.html#NET_CTRLMSG_ACCEPT">NET_CTRLMSG_ACCEPT</a>
+            Do not have any payload. So the full packet has a size of 8 bytes at all times.
+            And the message
+            <a href="ctrl_messages.html#NET_CTRLMSG_CLOSE">NET_CTRLMSG_CLOSE</a>
+            has a optional payload. Meaning it could also be 8 bytes. But if some more bytes
+            are sent they are supposed to be consumed a as a reason string.
+            <br>
+            <br>
+            Control messages without any payload look like this:
+            <pre class="code-snippet">
+                <code>
+    +-------------------------+--------------------+
+    | teeworlds packet header | Control message id |
+    | has control flag set    |                    |
+    | 7 bytes                 | 1 byte             |
+    +-------------------------+--------------------+
+                </code>
+            </pre>
+
+            To give an example of a control message with payload.
+            This is how <a href="ctrl_messages.html#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a>
+            is layed out:
+            <pre class="code-snippet">
+                <code>
+    +-------------------------+--------------------+----------------+-----------------------------------+
+    | teeworlds packet header | Control message id | Response token | Anti reflection attack null bytes |
+    | has control flag set    |                    |                |                                   |
+    | 7 bytes                 | 1 byte             | 4 bytes        | 508 bytes                         |
+    +-------------------------+--------------------+----------------+-----------------------------------+
+                </code>
+            </pre>
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener"
+                aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path
+                        d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+</body>
