@@ -152,7 +152,22 @@
                 </code>
             </pre>
 
-
+            <h1 id="message_with_header_and_payload"><a href="#message_with_header_and_payload">Game/system message with header and payload</a></h1>
+            Game messages and system messages share the exact same <a href="#chunk_headers">chunk header</a> format.
+            And also message payload structure. The only thing that differentiates a game message and a system message.
+            Is the 8th bit after the header. The format is always chunk header. Then two bytes message id plus sys/game bit.
+            And then the payload fields of the specific message.
+            8 bits is just 1 byte but this is 2 bytes
+            <pre class="code-snippet">
+                <code>
+    # Game or system message layout with header
+    +--------------+------------+-------------+----------------------------+
+    | Chunk header | Message ID | System flag | Message payload fields ... |
+    | 2-3 bytes    | 7 bits     | 1 bit       |                            |
+    +--------------+------------+-------------+----------------------------+
+                </code>
+            </pre>
+            If the system flag bit is set to 1 it is a system message. Otherwise it is a game message.
             <h1 id="packet_ex_sys_and_game"><a href="#packet_ex_sys_and_game">Full example packet (system &amp; game)</a></h1>
 
             <pre class="code-snippet">
