@@ -155,19 +155,69 @@
             <h1 id="message_with_header_and_payload"><a href="#message_with_header_and_payload">Game/system message with header and payload</a></h1>
             Game messages and system messages share the exact same <a href="#chunk_headers">chunk header</a> format.
             And also message payload structure. The only thing that differentiates a game message and a system message.
-            Is the 8th bit after the header. The format is always chunk header. Then two bytes message id plus sys/game bit.
-            And then the payload fields of the specific message.
-            8 bits is just 1 byte but this is 2 bytes
+            Is the last bit of the unpacked message id.
             <pre class="code-snippet">
                 <code>
     # Game or system message layout with header
-    +--------------+------------+-------------+----------------------------+
-    | Chunk header | Message ID | System flag | Message payload fields ... |
-    | 2-3 bytes    | 7 bits     | 1 bit       |                            |
-    +--------------+------------+-------------+----------------------------+
+    +--------------+------------+----------------------------+
+    | Chunk header | Message ID | Message payload fields ... |
+    | 2-3 bytes    | 1-2 bytes  |                            |
+    +--------------+------------+----------------------------+
                 </code>
             </pre>
+            The Message ID field is a bit special. It uses the regular <a href="fundamentals.html#int_packing">int packing</a>
+            compression from the teeworlds code. But also the very last bit of the <strong>unpacked</strong> id is a system flag.
             If the system flag bit is set to 1 it is a system message. Otherwise it is a game message.
+            The message id field needs two bytes as soon as the message id is higher than 31.
+            For system messages the message id field is always 1 byte because there are only 30.
+            But there are 39 game messages in the 0.7.5 protocol version. So these messages all have a 2 byte message ID field.
+            <a href="game_messages.html#NETMSGTYPE_CL_CALLVOTE">NETMSGTYPE_CL_CALLVOTE (32)</a>
+            <a href="game_messages.html#NETMSGTYPE_SV_SKINCHANGE">NETMSGTYPE_SV_SKINCHANGE (33)</a>
+            <a href="game_messages.html#NETMSGTYPE_CL_SKINCHANGE">NETMSGTYPE_CL_SKINCHANGE (34)</a>
+            <a href="game_messages.html#NETMSGTYPE_SV_RACEFINISH">NETMSGTYPE_SV_RACEFINISH (35)</a>
+            <a href="game_messages.html#NETMSGTYPE_SV_CHECKPOINT">NETMSGTYPE_SV_CHECKPOINT (36)</a>
+            <a href="game_messages.html#NETMSGTYPE_SV_COMMANDINFO">NETMSGTYPE_SV_COMMANDINFO (37)</a>
+            <a href="game_messages.html#NETMSGTYPE_SV_COMMANDINFOREMOVE">NETMSGTYPE_SV_COMMANDINFOREMOVE (38)</a>
+            <a href="game_messages.html#NETMSGTYPE_CL_COMMAND">NETMSGTYPE_CL_COMMAND (39)</a>
+            <br>
+            You might be wondering why 1 byte can hold at most 31 message ids. Because usually one byte can hold
+            numbers from 0-255. But this byte has 2 bits already in use for the <a href="fundamentals.html#int_packing">int packer</a>
+            The extension bit and the sign bit. And then the system flag takes another bit. So you are left with 5 (8 - 3) bits.
+            The maximum number you can build with 5 bits is <code>111111</code> which is 31 in decimal.
+            <br>
+            <br>
+            Lets look at the example of <a href="game_messages.html#NETMSGTYPE_CL_SKINCHANGE">NETMSGTYPE_CL_SKINCHANGE (34)</a>
+            These are the bytes sent over the network as hexadecimal.
+            <pre class="code-snippet">
+                <code>
+    41 0c 0e 84 01 67 72 65 ...
+    \______/ \___/ \__________ ...
+        |       |           |
+    Chunk    Message   Cut off payload
+    header    ID
+                </code>
+            </pre>
+            And here represented as binary
+            <pre class="code-snippet">
+                <code>
+    01000001 00001100 00001110 10000100 00000001 01100111 01110010 01100101 ...
+    \________________________/ \_______________/ \_________________________ ...
+        |                               |                    |
+    Chunk header                  Message ID          Cut off payload
+                                        |
+                            gets <a href="fundamentals.html#int_packing">int unpacked</a> to
+                                        |
+                                        v
+                                decimal 68
+                                binary  1000100
+                                        \____/|
+                                          |   |
+                                          |   System flag not set => Game message
+                                          |
+                                          34
+                                <a href="game_messages.html#NETMSGTYPE_CL_SKINCHANGE">NETMSGTYPE_CL_SKINCHANGE</a>
+                </code>
+            </pre>
             <h1 id="packet_ex_sys_and_game"><a href="#packet_ex_sys_and_game">Full example packet (system &amp; game)</a></h1>
 
             <pre class="code-snippet">
