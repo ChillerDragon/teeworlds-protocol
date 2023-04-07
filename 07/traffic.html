@@ -247,7 +247,8 @@
             </code>
             <br>
             <br>
-            The client sends the enum <code>NETMSG_READY</code> which has the value <code>18</code> but as a packed Integer tangled in with the system flag.
+            The client sends the enum <code>NETMSG_READY</code> which has the value <code>18</code> but as a packed Integer
+            <a href="packet_layout.html#message_with_header_and_payload">tangled in with the system flag</a>.
             This is how the server unpacks this message id:
             <pre class="code-snippet">
                 <code>
