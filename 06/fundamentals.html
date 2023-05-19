@@ -19,6 +19,7 @@
                 <a href="../index.html">home</a>
                 <a href="../06.html">overview</a>
                 <a href="fundamentals.html">fundamentals</a>
+                <a href="packet_layout.html">packet_layout</a>
                 <a href="snap_items.html">snap_items</a>
                 <a href="system_messages.html">system_messages</a>
                 <a href="game_messages.html">game_messages</a>
@@ -31,6 +32,24 @@
         <h1>Fundamentals</h1>
         <p>
             There are a few base concepts that you need to understand to fully grasp the whole network protocol from scratch.
+        </p>
+        <hr>
+        <h2 id="tokens"><a href="#tokens">Tokens</a></h2>
+        <p>
+            Not all 0.6 versions do have tokens only the last release 0.6.5 introduced tokens.
+            It uses no token when connecting to 0.6.4 or older 0.6 versions to stay backwards compatible.
+            Every game related packet (ignoring server info for now) has a packet header with a token field.
+            The token field has to be the token of the receiving party.
+            So when the client sends a packet to the server the token field
+            contains the token from the server and vice versa.
+            <br>
+            Client and server generate a random token and then exchange it.
+            <br>
+            Start the server or client with the config <code>debug 1</code> to see error messages in the log if a wrong token was sent.
+            This check happens in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/shared/network_conn.cpp#L299-L306">
+                network_conn.cpp Feed()
+            </a>
         </p>
         <hr>
         <h2 id="flushing"><a href="#flushing">Message queueing, chunks and flushing</a></h2>
