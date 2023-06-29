@@ -884,12 +884,88 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_VOTESTATUS_todo"><a href="#NETMSGTYPE_SV_VOTESTATUS_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_yes">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_yes">
+                            Yes
+                        </a>
+                    </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_no">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_no">
+                            No
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_pass">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_pass">
+                            Pass
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESTATUS_total">
+                        <a href="#NETMSGTYPE_SV_VOTESTATUS_total">
+                            Total
+                        </a>
+                    </td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
                 </tr>
             </table>
+            Unpacked by the client in voting.cpp
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L203-L210">
+                OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgType == NETMSGTYPE_SV_VOTESTATUS)
+    {
+        CNetMsg_Sv_VoteStatus *pMsg = (CNetMsg_Sv_VoteStatus *)pRawMsg;
+        m_Yes = pMsg->m_Yes;
+        m_No = pMsg->m_No;
+        m_Pass = pMsg->m_Pass;
+        m_Total = pMsg->m_Total;
+    }
+                </code>
+            </pre>
+            Sent by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/server/gamecontext.cpp#L341-L351">
+                SendVoteStatus()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CGameContext::SendVoteStatus(int ClientID, int Total, int Yes, int No)
+    {
+        CNetMsg_Sv_VoteStatus Msg = {0};
+        Msg.m_Total = Total;
+        Msg.m_Yes = Yes;
+        Msg.m_No = No;
+        Msg.m_Pass = Total - (Yes+No);
+
+        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+    }
+                </code>
+            </pre>
+            Which is called in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/server/gamecontext.cpp#L502">
+                CGameContext::OnTick()
+            </a>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_SAY"><a href="#NETMSGTYPE_CL_SAY">NETMSGTYPE_CL_SAY</a></h2>
