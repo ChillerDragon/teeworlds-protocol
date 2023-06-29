@@ -810,12 +810,44 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_VOTESET_todo"><a href="#NETMSGTYPE_SV_VOTESET_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_VOTESET_timeout"><a href="#NETMSGTYPE_SV_VOTESET_timeout">Timeout</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>TODO</td>
                 </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESET_description"><a href="#NETMSGTYPE_SV_VOTESET_description">Description</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTESET_reason"><a href="#NETMSGTYPE_SV_VOTESET_reason">Reason</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
             </table>
+            Unpacked by the client in voting.cpp
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L188-L202">
+                OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CVoting::OnMessage(int MsgType, void *pRawMsg)
+    {
+	if(MsgType == NETMSGTYPE_SV_VOTESET)
+	{
+		CNetMsg_Sv_VoteSet *pMsg = (CNetMsg_Sv_VoteSet *)pRawMsg;
+		if(pMsg->m_Timeout)
+		{
+			OnReset();
+			str_copy(m_aDescription, pMsg->m_pDescription, sizeof(m_aDescription));
+			str_copy(m_aReason, pMsg->m_pReason, sizeof(m_aReason));
+			m_Closetime = time_get() + time_freq() * pMsg->m_Timeout;
+		}
+		else
+			OnReset();
+	}
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTESTATUS"><a href="#NETMSGTYPE_SV_VOTESTATUS">NETMSGTYPE_SV_VOTESTATUS</a></h2>
