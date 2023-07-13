@@ -1417,7 +1417,7 @@
                 <tr>
                     <th>Response to:</th>
                     <td>
-                        TODO
+                        The user clicking "Call vote" button in the menu or using the <code>callvote</code> console command.
                     </td>
                 </tr>
                 <tr>
@@ -1436,12 +1436,45 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_CL_CALLVOTE_todo"><a href="#NETMSGTYPE_CL_CALLVOTE_todo">TODO</a></td>
+                    <td id="NETMSGTYPE_CL_CALLVOTE_type"><a href="#NETMSGTYPE_CL_CALLVOTE_type">Type</a></td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Possible values are
+                        <ul>
+                            <li>kick</li>
+                            <li>spectate</li>
+                            <li>option</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_CALLVOTE_value"><a href="#NETMSGTYPE_CL_CALLVOTE_value">Value</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_CL_CALLVOTE_reason"><a href="#NETMSGTYPE_CL_CALLVOTE_reason">Reason</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            It is sent by the client from the voting.cpp component in the
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L25-L32">
+                Callvote()
+            </a>
+            method.
+            <pre class="code-snippet">
+                <code>
+    void CVoting::Callvote(const char *pType, const char *pValue, const char *pReason)
+    {
+        CNetMsg_Cl_CallVote Msg = {0};
+        Msg.m_Type = pType;
+        Msg.m_Value = pValue;
+        Msg.m_Reason = pReason;
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
         </p>
     </div>
 </body>
