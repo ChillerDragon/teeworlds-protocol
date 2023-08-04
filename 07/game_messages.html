@@ -807,6 +807,39 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                 tuning.h
             </a>
             file.
+            <br><br>
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/client/gameclient.cpp#L634-L652">
+                CGameClient::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CGameClient::OnMessage(int MsgId, CUnpacker *pUnpacker)
+    {
+        Client()->RecordGameMessage(true);
+
+        // special messages
+        if(MsgId == NETMSGTYPE_SV_TUNEPARAMS && Client()->State() != IClient::STATE_DEMOPLAYBACK)
+        {
+            Client()->RecordGameMessage(false);
+            // unpack the new tuning
+            CTuningParams NewTuning;
+            int *pParams = (int *)&amp;NewTuning;
+            for(unsigned i = 0; i &lt; sizeof(CTuningParams)/sizeof(int); i++)
+                pParams[i] = pUnpacker->GetInt();
+
+            // check for unpacking errors
+            if(pUnpacker->Error())
+                return;
+
+            m_ServerMode = SERVERMODE_PURE;
+
+            // apply new tuning
+            m_Tuning = NewTuning;
+            return;
+        }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_EXTRAPROJECTILE"><a href="#NETMSGTYPE_SV_EXTRAPROJECTILE">NETMSGTYPE_SV_EXTRAPROJECTILE</a></h2>
