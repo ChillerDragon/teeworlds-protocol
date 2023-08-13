@@ -158,7 +158,14 @@
                     int m_RoundCurrent;<br>
                 </td>
                 <td>
-                    desc
+                    Possible <code>m_GameStateFlags</code> are:
+                    <ul>
+                        <li>GAMESTATEFLAG_GAMEOVER (1)</li>
+                        <li>GAMESTATEFLAG_SUDDENDEATH (2)</li>
+                        <li>GAMESTATEFLAG_PAUSED (4)</li>
+                    </ul>
+                    Note these are flags and can be combined using bitwise operations.
+                    And are not mutually exclusive states.
                 </td>
             </tr>
             <tr id="obj_game_data">
