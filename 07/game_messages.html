@@ -2890,7 +2890,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                 <tr>
                     <th><strong>Flags:</strong></th>
                     <td>
-                        TODO
+                        <a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a>
                     </td>
                 </tr>
             </table>
@@ -2908,7 +2908,13 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        The value should be one of those
+                        <ul>
+                            <li>0 - SPEC_FREEVIEW</li>
+                            <li>1 - SPEC_PLAYER</li>
+                            <li>2 - SPEC_FLAGRED</li>
+                            <li>3 - SPEC_FLAGBLUE</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
@@ -2923,6 +2929,33 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                 </tr>
             </table>
+            Sent by the client if the spectate next or spectate previous bind is triggerd.
+            Or if the client user picks a player in the specate menu. Or selects free view in the spectate menu.
+            Or if the user "clicks" on a player in free view.
+            <br>
+            In <strong>src/game/client/components/spectator.cpp</strong> there is a <code>Spectate()</code>
+            method used by the client to send this message.
+            <pre class="code-snippet">
+                <code>
+    void CSpectator::Spectate(int SpecMode, int SpectatorID)
+    {
+        if(Client()->State() == IClient::STATE_DEMOPLAYBACK)
+        {
+            m_pClient->m_DemoSpecMode = clamp(SpecMode, 0, NUM_SPECMODES-1);
+            m_pClient->m_DemoSpecID = clamp(SpectatorID, -1, MAX_CLIENTS-1);
+            return;
+        }
+
+        if(m_pClient->m_Snap.m_SpecInfo.m_SpecMode == SpecMode && (SpecMode != SPEC_PLAYER || m_pClient->m_Snap.m_SpecInfo.m_SpectatorID == SpectatorID))
+            return;
+
+        CNetMsg_Cl_SetSpectatorMode Msg;
+        Msg.m_SpecMode = SpecMode;
+        Msg.m_SpectatorID = SpectatorID;
+        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_CL_STARTINFO"><a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a></h2>
