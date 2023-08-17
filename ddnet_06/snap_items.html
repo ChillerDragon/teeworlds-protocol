@@ -36,7 +36,7 @@
             <a href="https://github.com/ddnet/ddnet/blob/2e1157bf3f986d975ef1f49c8bf0dca972f1baf6/src/engine/shared/snapshot.cpp#L80">CSnapshot::FindItem</a>
             <pre class="code-snippet">
                 <code>
-                    if(pItem->Type() == 0 && pItem->ID() &gt;= OFFSET_UUID_TYPE) // NETOBJTYPE_EX
+    if(<span class="tooltip">pItem<span class="tooltiptext">const <a href="https://github.com/ddnet/ddnet/blob/2e1157bf3f986d975ef1f49c8bf0dca972f1baf6/src/engine/shared/snapshot.h#L11-L24">CSnapshotItem</a> *pItem = GetItem(i);</span></span>->Type() == 0 && <span class="tooltip">pItem<span class="tooltiptext">const <a href="https://github.com/ddnet/ddnet/blob/2e1157bf3f986d975ef1f49c8bf0dca972f1baf6/src/engine/shared/snapshot.h#L11-L24">CSnapshotItem</a> *pItem = GetItem(i);</span></span>->ID() &gt;= <span class="tooltip">OFFSET_UUID_TYPE<span class="tooltiptext">OFFSET_UUID_TYPE = 0x8000 // 32768</span></span>) // NETOBJTYPE_EX
                 </code>
             </pre>
             The enum <a href="">OFFSET_UUID_TYPE</a> is set to <a href="">0x4000</a> which is <strong>16384</strong> in decimal.
