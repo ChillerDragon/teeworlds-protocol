@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <div class="header-grid">
+            <a class="logo" href="../index.html">
+                <img src="../img/tee.svg" alt="tee">
+            </a>
+            <span class="version">
+                DDNet 0.6
+            </span>
+            <div class="links">
+                <a href="../index.html">home</a>
+                <a href="../ddnet_06.html">overview</a>
+                <a href="snap_items.html">snap_items</a>
+            </div> <!-- links -->
+        </div> <!-- header-grid -->
+        <hr>
+    </div> <!-- header -->
+    <div class="content">
+        <h1>List of snap items</h1>
+        <p>
+            Note there is also documentation about snapshots in <a href="https://github.com/heinrich5991/libtw2/blob/master/doc/snapshot.md">libtw2</a>.
+            <br>
+            <br>
+            DDNet is fully compatible with and based on the
+            <a href="../06/snap_items.html">teeworlds 0.6 snapshot</a>. So please read that section first.
+            DDNet extended the snap with new ddnet specific items. Those items have the type id 0 and a high id.
+            The ddnet client detects the snap items using this line of code in
+            <a href="https://github.com/ddnet/ddnet/blob/2e1157bf3f986d975ef1f49c8bf0dca972f1baf6/src/engine/shared/snapshot.cpp#L80">CSnapshot::FindItem</a>
+            <pre class="code-snippet">
+                <code>
+                    if(pItem->Type() == 0 && pItem->ID() &gt;= OFFSET_UUID_TYPE) // NETOBJTYPE_EX
+                </code>
+            </pre>
+            The enum <a href="">OFFSET_UUID_TYPE</a> is set to <a href="">0x4000</a> which is <strong>16384</strong> in decimal.
+            Meaning the ddnet client will assume every snap item that has a type of zero and an id of higher or equal to <strong>16384</strong>
+            to be a ddnet extension item. In reality the ddnet server only sends ids over <strong>65536</strong> offset by some other ddnet uuids.
+            So in reality the snap ids you will see usually are in the format <strong>6xxxx</strong>.
+            <br>
+            <br>
+            The vanilla teeworlds 0.6 snapshot implementation ignores items with unknown type ids including id zero.
+            So vanilla clients can join ddnet servers just fine without getting any errors during snap parsing.
+        </p>
+        <h2>DDNet snap extension items</h2>
+        <ul>
+            <li>NETOBJTYPE_MYOWNOBJECT</li>
+            <li>NETOBJTYPE_DDNETCHARACTER</li>
+            <li>NETOBJTYPE_DDNETPLAYER</li>
+            <li>NETOBJTYPE_GAMEINFOEX</li>
+            <li>NETOBJTYPE_DDRACEPROJECTILE</li>
+            <li>NETOBJTYPE_DDNETLASER</li>
+            <li>NETOBJTYPE_DDNETPROJECTILE</li>
+            <li>NETOBJTYPE_DDNETPICKUP</li>
+            <li>NETOBJTYPE_MYOWNEVENT</li>
+            <li>NETOBJTYPE_SPECCHAR</li>
+            <li>NETOBJTYPE_SWITCHSTATE</li>
+            <li>NETOBJTYPE_ENTITYEX</li>
+        </ul>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+</body>
