@@ -2173,13 +2173,15 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                 <tr>
                     <th><strong>Response to:</strong></th>
                     <td>
-                        TODO
+                        Either triggered by a disconnecting client via
+                        <a href="ctrl_messages.html#NET_CTRLMSG_CLOSE">NET_CTRLMSG_CLOSE</a>.
+                        Or sent by the server if it disconnects a client due to kick or timeout.
                     </td>
                 </tr>
                 <tr>
                     <th><strong>Expected response:</strong></th>
                     <td>
-                        TODO
+                        None
                     </td>
                 </tr>
                 <tr>
@@ -2230,6 +2232,86 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                 </tr>
             </table>
+            If one client leaves the server sends this message to all remaining clients.
+            To inform them about the updated connected player list. Which also causes the client
+            to print the <code>'nameless tee' has left the game</code> chat message.
+            In 0.6 this used to be a regular chat message the server sent to the client.
+            Now in 0.7 this is a network message allowing the client to localize the message locally.
+            The client is just informed about who left the game and then translates the "left the game" string into
+            the language the client is running in.
+            <br>
+            <br>
+            Sent by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/server/gamecontext.cpp#L747-L784">
+                CGameContext::OnClientDrop()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    void CGameContext::OnClientDrop(int ClientID, const char *pReason)
+    {
+        AbortVoteOnDisconnect(ClientID);
+        m_pController-&gt;OnPlayerDisconnect(m_apPlayers[ClientID]);
+    
+        // update clients on drop
+        if(Server()-&gt;ClientIngame(ClientID) || IsClientBot(ClientID))
+        {
+            if(Server()-&gt;DemoRecorder_IsRecording())
+            {
+                CNetMsg_De_ClientLeave Msg;
+                Msg.m_pName = Server()-&gt;ClientName(ClientID);
+                Msg.m_pReason = pReason;
+                Server()-&gt;SendPackMsg(&Msg, MSGFLAG_NOSEND, -1);
+            }
+    
+            CNetMsg_Sv_ClientDrop Msg;
+            Msg.m_ClientID = ClientID;
+            Msg.m_pReason = pReason;
+            Msg.m_Silent = false;
+            if(Config()-&gt;m_SvSilentSpectatorMode && m_apPlayers[ClientID]-&gt;GetTeam() == TEAM_SPECTATORS)
+                Msg.m_Silent = true;
+            Server()-&gt;SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NORECORD, -1);
+        }
+    
+        // [..]
+    }
+                </code>
+            </pre>
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/client/gameclient.cpp#L888-L921">
+                CGameClient::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgId == NETMSGTYPE_SV_CLIENTDROP && Client()->State() != IClient::STATE_DEMOPLAYBACK)
+    {
+        Client()->RecordGameMessage(false);
+        CNetMsg_Sv_ClientDrop *pMsg = (CNetMsg_Sv_ClientDrop *)pRawMsg;
+
+        if(m_LocalClientID == pMsg->m_ClientID || !m_aClients[pMsg-&gt;m_ClientID].m_Active)
+        {
+            if(Config()-&gt;m_Debug)
+                Console()-&gt;Print(IConsole::OUTPUT_LEVEL_ADDINFO, "client", "invalid clientdrop");
+            return;
+        }
+
+        if(!pMsg-&gt;m_Silent)
+        {
+            DoLeaveMessage(m_aClients[pMsg-&gt;m_ClientID].m_aName, pMsg-&gt;m_ClientID, pMsg-&gt;m_pReason);
+
+            if(m_pDemoRecorder-&gt;IsRecording())
+            {
+                CNetMsg_De_ClientLeave Msg;
+                Msg.m_pName = m_aClients[pMsg-&gt;m_ClientID].m_aName;
+                Msg.m_ClientID = pMsg-&gt;m_ClientID;
+                Msg.m_pReason = pMsg-&gt;m_pReason;
+                Client()-&gt;SendPackMsg(&Msg, MSGFLAG_NOSEND | MSGFLAG_RECORD);
+            }
+        }
+
+        // [..]
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_GAMEMSG"><a href="#NETMSGTYPE_SV_GAMEMSG">NETMSGTYPE_SV_GAMEMSG</a></h2>
