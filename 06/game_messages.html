@@ -1184,7 +1184,7 @@
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>None</td>
                 </tr>
                 <tr>
                     <th>Flags:</th>
@@ -1198,12 +1198,30 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_VOTEOPTIONADD_todo"><a href="#NETMSGTYPE_SV_VOTEOPTIONADD_todo">TODO</a></td>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                        <a href="#NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                            Vote description
+                        </a>
+                    </td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        Display name of the vote option
+                    </td>
                 </tr>
             </table>
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L241-L245">
+                CVoting::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgType == NETMSGTYPE_SV_VOTEOPTIONADD)
+    {
+        CNetMsg_Sv_VoteOptionAdd *pMsg = (CNetMsg_Sv_VoteOptionAdd *)pRawMsg;
+        AddOption(pMsg->m_pDescription);
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTEOPTIONREMOVE"><a href="#NETMSGTYPE_SV_VOTEOPTIONREMOVE">NETMSGTYPE_SV_VOTEOPTIONREMOVE</a></h2>
@@ -1226,7 +1244,7 @@
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>None</td>
                 </tr>
                 <tr>
                     <th>Flags:</th>
@@ -1240,12 +1258,57 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_VOTEOPTIONREMOVE_todo"><a href="#NETMSGTYPE_SV_VOTEOPTIONREMOVE_todo">TODO</a></td>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                        <a href="#NETMSGTYPE_SV_VOTEOPTIONADD_vote_description">
+                            Vote description
+                        </a>
+                    </td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        Display name of the vote option to be deleted
+                    </td>
                 </tr>
             </table>
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L246-L277">
+                CVoting::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgType == NETMSGTYPE_SV_VOTEOPTIONREMOVE)
+    {
+        CNetMsg_Sv_VoteOptionRemove *pMsg = (CNetMsg_Sv_VoteOptionRemove *)pRawMsg;
+
+        for(CVoteOptionClient *pOption = m_pFirst; pOption; pOption = pOption->m_pNext)
+        {
+            if(str_comp(pOption->m_aDescription, pMsg->m_pDescription) == 0)
+            {
+                // remove it from the list
+                if(m_pFirst == pOption)
+                    m_pFirst = m_pFirst->m_pNext;
+                if(m_pLast == pOption)
+                    m_pLast = m_pLast->m_pPrev;
+                if(pOption->m_pPrev)
+                    pOption->m_pPrev->m_pNext = pOption->m_pNext;
+                if(pOption->m_pNext)
+                    pOption->m_pNext->m_pPrev = pOption->m_pPrev;
+                --m_NumVoteOptions;
+
+                // add it to recycle list
+                pOption->m_pNext = 0;
+                pOption->m_pPrev = m_pRecycleLast;
+                if(pOption->m_pPrev)
+                    pOption->m_pPrev->m_pNext = pOption;
+                m_pRecycleLast = pOption;
+                if(!m_pRecycleFirst)
+                    m_pRecycleLast = pOption;
+
+                break;
+            }
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTESET"><a href="#NETMSGTYPE_SV_VOTESET">NETMSGTYPE_SV_VOTESET</a></h2>
