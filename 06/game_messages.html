@@ -629,7 +629,7 @@
 
         CMsgPacker Msg(NETMSGTYPE_SV_TUNEPARAMS);
         int *pParams = (int *)&m_Tuning;
-        for(unsigned i = 0; i < sizeof(m_Tuning)/sizeof(int); i++)
+        for(unsigned i = 0; i &lt; sizeof(m_Tuning)/sizeof(int); i++)
             Msg.AddInt(pParams[i]);
         Server()->SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
     }
@@ -940,16 +940,16 @@
                 <tr>
                     <th>Response to:</th>
                     <td>
-                        TODO
+                        <a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a>
                     </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>None</td>
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -959,12 +959,209 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_todo"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_num_options"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_num_options">Num options</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        Number of used description fields should be in the range from 1 to 15
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description0"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description0">Description 0</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description1"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description1">Description 1</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description2"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description2">Description 2</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description3"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description3">Description 3</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description4"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description4">Description 4</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description5"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description5">Description 5</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description6"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description6">Description 6</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description7"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description7">Description 7</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description8"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description8">Description 8</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description9"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description9">Description 9</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description10"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description10">Description 10</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description11"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description11">Description 11</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description12"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description12">Description 12</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description13"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description13">Description 13</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td>TODO</td>
+                </tr>
+                <tr>
+                    <td id="NETMSGTYPE_SV_VOTEOPTIONLISTADD_description14"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_description14">Description 14</a></td>
+                    <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>TODO</td>
                 </tr>
             </table>
+            The message always contains 15 description strings. If less are needed the
+            <a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD_num_options">Num options</a> value is indicating the amount of used ones.
+            The client is supposed to only look at the options from zero to Num options.
+            <br>
+            <br>
+            Sent by the server in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/server/gamecontext.cpp#L961-L1026">
+                CGameContext::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    if(MsgID == NETMSGTYPE_CL_STARTINFO)
+    {
+        // [..]
+
+        // send vote options
+        CNetMsg_Sv_VoteClearOptions ClearMsg;
+        Server()->SendPackMsg(&ClearMsg, MSGFLAG_VITAL, ClientID);
+
+        CNetMsg_Sv_VoteOptionListAdd OptionMsg;
+        int NumOptions = 0;
+        OptionMsg.m_pDescription0 = "";
+        OptionMsg.m_pDescription1 = "";
+        OptionMsg.m_pDescription2 = "";
+        OptionMsg.m_pDescription3 = "";
+        OptionMsg.m_pDescription4 = "";
+        OptionMsg.m_pDescription5 = "";
+        OptionMsg.m_pDescription6 = "";
+        OptionMsg.m_pDescription7 = "";
+        OptionMsg.m_pDescription8 = "";
+        OptionMsg.m_pDescription9 = "";
+        OptionMsg.m_pDescription10 = "";
+        OptionMsg.m_pDescription11 = "";
+        OptionMsg.m_pDescription12 = "";
+        OptionMsg.m_pDescription13 = "";
+        OptionMsg.m_pDescription14 = "";
+        CVoteOptionServer *pCurrent = m_pVoteOptionFirst;
+        while(pCurrent)
+        {
+            switch(NumOptions++)
+            {
+            case 0: OptionMsg.m_pDescription0 = pCurrent->m_aDescription; break;
+            case 1: OptionMsg.m_pDescription1 = pCurrent->m_aDescription; break;
+            case 2: OptionMsg.m_pDescription2 = pCurrent->m_aDescription; break;
+            case 3: OptionMsg.m_pDescription3 = pCurrent->m_aDescription; break;
+            case 4: OptionMsg.m_pDescription4 = pCurrent->m_aDescription; break;
+            case 5: OptionMsg.m_pDescription5 = pCurrent->m_aDescription; break;
+            case 6: OptionMsg.m_pDescription6 = pCurrent->m_aDescription; break;
+            case 7: OptionMsg.m_pDescription7 = pCurrent->m_aDescription; break;
+            case 8: OptionMsg.m_pDescription8 = pCurrent->m_aDescription; break;
+            case 9: OptionMsg.m_pDescription9 = pCurrent->m_aDescription; break;
+            case 10: OptionMsg.m_pDescription10 = pCurrent->m_aDescription; break;
+            case 11: OptionMsg.m_pDescription11 = pCurrent->m_aDescription; break;
+            case 12: OptionMsg.m_pDescription12 = pCurrent->m_aDescription; break;
+            case 13: OptionMsg.m_pDescription13 = pCurrent->m_aDescription; break;
+            case 14:
+                {
+                    OptionMsg.m_pDescription14 = pCurrent->m_aDescription;
+                    OptionMsg.m_NumOptions = NumOptions;
+                    Server()->SendPackMsg(&OptionMsg, MSGFLAG_VITAL, ClientID);
+                    OptionMsg = CNetMsg_Sv_VoteOptionListAdd();
+                    NumOptions = 0;
+                    OptionMsg.m_pDescription1 = "";
+                    OptionMsg.m_pDescription2 = "";
+                    OptionMsg.m_pDescription3 = "";
+                    OptionMsg.m_pDescription4 = "";
+                    OptionMsg.m_pDescription5 = "";
+                    OptionMsg.m_pDescription6 = "";
+                    OptionMsg.m_pDescription7 = "";
+                    OptionMsg.m_pDescription8 = "";
+                    OptionMsg.m_pDescription9 = "";
+                    OptionMsg.m_pDescription10 = "";
+                    OptionMsg.m_pDescription11 = "";
+                    OptionMsg.m_pDescription12 = "";
+                    OptionMsg.m_pDescription13 = "";
+                    OptionMsg.m_pDescription14 = "";
+                }
+            }
+            pCurrent = pCurrent->m_pNext;
+        }
+        if(NumOptions > 0)
+        {
+            OptionMsg.m_NumOptions = NumOptions;
+            Server()->SendPackMsg(&OptionMsg, MSGFLAG_VITAL, ClientID);
+        }
+                </code>
+            </pre>
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L215-L240">
+                CVoting::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgType == NETMSGTYPE_SV_VOTEOPTIONLISTADD)
+    {
+        CNetMsg_Sv_VoteOptionListAdd *pMsg = (CNetMsg_Sv_VoteOptionListAdd *)pRawMsg;
+        int NumOptions = pMsg-&gt;m_NumOptions;
+        for(int i = 0; i &lt; NumOptions; ++i)
+        {
+            switch(i)
+            {
+            case 0: AddOption(pMsg-&gt;m_pDescription0); break;
+            case 1: AddOption(pMsg-&gt;m_pDescription1); break;
+            case 2: AddOption(pMsg-&gt;m_pDescription2); break;
+            case 3: AddOption(pMsg-&gt;m_pDescription3); break;
+            case 4: AddOption(pMsg-&gt;m_pDescription4); break;
+            case 5: AddOption(pMsg-&gt;m_pDescription5); break;
+            case 6: AddOption(pMsg-&gt;m_pDescription6); break;
+            case 7: AddOption(pMsg-&gt;m_pDescription7); break;
+            case 8: AddOption(pMsg-&gt;m_pDescription8); break;
+            case 9: AddOption(pMsg-&gt;m_pDescription9); break;
+            case 10: AddOption(pMsg-&gt;m_pDescription10); break;
+            case 11: AddOption(pMsg-&gt;m_pDescription11); break;
+            case 12: AddOption(pMsg-&gt;m_pDescription12); break;
+            case 13: AddOption(pMsg-&gt;m_pDescription13); break;
+            case 14: AddOption(pMsg-&gt;m_pDescription14);
+            }
+        }
+    }
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTEOPTIONADD"><a href="#NETMSGTYPE_SV_VOTEOPTIONADD">NETMSGTYPE_SV_VOTEOPTIONADD</a></h2>

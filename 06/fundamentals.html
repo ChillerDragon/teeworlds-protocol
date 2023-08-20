@@ -52,6 +52,44 @@
             </a>
         </p>
         <hr>
+        <h2 id="sequence_numbers"><a href="#sequence_numbers">Sequence numbers</a></h2>
+        <p>
+            Every chunk header can contain a vital flag (MSGFLAG_VITAL). Note that one teeworlds packet can
+            contain multiple chunks. If said vital flag is set to true the receiving party
+            has to increment a counter. This counter is called the sequence or acknowledge number.
+            Client and server will send the amount of vital chunks they received as sequence number
+            in the packet header.
+            <br>
+            <br>
+            The
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/shared/network.h#L147-L150">
+                CNetConnection
+            </a>
+            class keeps track of these sequence numbers.
+            <br>
+            <pre class="code-snippet">
+                <code>
+    unsigned short m_Sequence;
+    unsigned short m_Ack;
+    unsigned short m_PeerAck;
+                </code>
+            </pre>
+            Using these three variables client and server keep track of:
+            <ul>
+                <li>m_Sequence - The amount of vital chunks sent</li>
+                <li>m_Ack - The amount of vital chunks received</li>
+                <li>m_PeerAck - The amount of vital chunks acknowledged by the peer</li>
+            </ul>
+            Be warned that the client and server silently drop all packets with wrong
+            sequence numbers set in the packet header.
+            <br>
+            Quick debug tip if you suspect sequence number bugs in your implemenation.
+            Comment out or add dbg_msgs in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/shared/network_conn.cpp#L310-L320">
+                these lines.
+            </a>
+        </p>
+        <hr>
         <h2 id="flushing"><a href="#flushing">Message queueing, chunks and flushing</a></h2>
         <a href="ctrl_messages.html">Control messages</a> are sent immediately.
         All ctrl messages go through the <code>SendControlMsg()</code> method which calls
