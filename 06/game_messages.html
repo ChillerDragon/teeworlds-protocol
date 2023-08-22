@@ -898,16 +898,17 @@
                 <tr>
                     <th>Response to:</th>
                     <td>
-                        TODO
+                        <a href="#NETMSGTYPE_CL_STARTINFO">NETMSGTYPE_CL_STARTINFO</a> | <br>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> (<code>remove_vote</code>, <code>clear_votes</code>)
                     </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>None</td>
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -917,12 +918,29 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_VOTECLEAROPTIONS_todo"><a href="#NETMSGTYPE_SV_VOTECLEAROPTIONS_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td colspan="3">None</td>
                 </tr>
             </table>
+            Unpacked by the client in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L211-L214">
+                CVoting::OnMessage()
+            </a>
+            <pre class="code-snippet">
+                <code>
+    else if(MsgType == NETMSGTYPE_SV_VOTECLEAROPTIONS)
+    {
+        <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/components/voting.cpp#L158-L168">ClearOptions();</a>
+    }
+                </code>
+            </pre>
+            The server sends the message from multiple places. For example when the a rcon command clears it.
+            Or when a new client joins. And the layout is always something like this:
+            <pre class="code-snippet">
+                <code>
+    CNetMsg_Sv_VoteClearOptions ClearMsg;
+    Server()->SendPackMsg(&ClearMsg, MSGFLAG_VITAL, ClientID);
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NETMSGTYPE_SV_VOTEOPTIONLISTADD"><a href="#NETMSGTYPE_SV_VOTEOPTIONLISTADD">NETMSGTYPE_SV_VOTEOPTIONLISTADD</a></h2>
