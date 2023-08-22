@@ -1573,7 +1573,16 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        If it is set to 1 kick votes are allowed. <br>
+                        If it is set to 0 kick votes are not allowed. <br>
+                        <br>
+                        The client shows the "Server does not allow voting to kick players" message.
+                        In the menu when the user tries to start a kick vote.
+                        <br>
+                        <br>
+                        The value can be set by a server admin using the <code>sv_vote_kick</code> setting.
+                        If that value is updated via rcon on a running server this network message is sent
+                        to inform the clients.
                     </td>
                 </tr>
                 <tr>
@@ -1595,7 +1604,16 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        If it is set to 1 spectator votes are allowed. <br>
+                        If it is set to 0 spectator votes are not allowed. <br>
+                        <br>
+                        The client shows the "Server does not allow voting to move players to spectators" message.
+                        In the menu when the user tries to start a move to spectator vote.
+                        <br>
+                        <br>
+                        The value can be set by a server admin using the <code>sv_vote_spectate</code> setting.
+                        If that value is updated via rcon on a running server this network message is sent
+                        to inform the clients.
                     </td>
                 </tr>
                 <tr>
@@ -1606,7 +1624,11 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        If it is set to 1 changing team is allowed. <br>
+                        If it is set to 0 changing team is not allowed. <br>
+                        <br>
+                        If the teams are locked the client shows a "Teams are locked" in the menu.
+                        Where the join red/blue/spec buttons are.
                     </td>
                 </tr>
                 <tr>
@@ -1628,7 +1650,14 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        This value is used to fill in the number in the "Only %d active players are allowed"
+                        string that is shown to the clients when they try to join the game but the maximum amount
+                        of in game players is already reached.
+                        <br>
+                        <br>
+                        The value can be set by a server admin using the <code>sv_player_slots</code> setting.
+                        If that value is updated via rcon on a running server this network message is sent
+                        to inform the clients.
                     </td>
                 </tr>
             </table>
