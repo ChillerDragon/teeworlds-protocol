@@ -40,6 +40,16 @@
             All of those items are encoded as packed integers.
             The snapshot is build by the server and sent to the client.
         </p>
+
+        <h2>Item order</h2>
+        For some snap items the order they appear in the snap matters.
+        For example <a href="#obj_game_info">obj_game_info</a> is usually the first item in the snap.
+        And <a href="#obj_client_info">obj_client_info</a> should not be added in the snap before it.
+        Because the client code loops over all snap items in the order they were added.
+        And when inserting the clients it looks at the <code>obj_game_info->m_GameFlags</code> and if the teams flag is set
+        the clients tee is colored in team colors. If the <a href="#obj_game_info">obj_game_info</a> would be after the
+        <a href="#obj_client_info">obj_client_info</a> the client would not know yet about it and assume no teams are set.
+
         <h2>Known size table</h2>
         <table>
             <tr>
