@@ -298,7 +298,18 @@
                     int m_AttackTick;<br>
                     int m_TriggeredEvents;<br>
                 </td>
-                <td>desc</td>
+                <td>
+                  m_TriggeredEvents can have any of those flags set
+                  <ul>
+                    <li>COREEVENTFLAG_GROUND_JUMP - 1</li>
+                    <li>COREEVENTFLAG_AIR_JUMP - 2</li>
+                    <li>COREEVENTFLAG_HOOK_ATTACH_PLAYER - 4</li>
+                    <li>COREEVENTFLAG_HOOK_ATTACH_GROUND - 8</li>
+                    <li>COREEVENTFLAG_HOOK_HIT_NOHOOK - 16</li>
+                  </ul>
+                  All of those triggered events tell the client to play a sound.
+                  The COREEVENTFLAG_AIR_JUMP also spawns the air jump particle in addition to playing the air jump sound.
+                </td>
             </tr>
             <tr id="obj_player_info">
                 <td>11</td>
