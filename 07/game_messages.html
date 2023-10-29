@@ -2080,7 +2080,13 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                      Gameflags can have any combination of those flag bits set:
+                      <ul>
+                        <li>1 - GAMEFLAG_TEAMS</li>
+                        <li>2 - GAMEFLAG_FLAGS</li>
+                        <li>4 - GAMEFLAG_SURVIVAL</li>
+                        <li>8 - GAMEFLAG_RACE</li>
+                      </ul>
                     </td>
                 </tr>
                 <tr>
@@ -2280,7 +2286,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
     {
         AbortVoteOnDisconnect(ClientID);
         m_pController-&gt;OnPlayerDisconnect(m_apPlayers[ClientID]);
-    
+
         // update clients on drop
         if(Server()-&gt;ClientIngame(ClientID) || IsClientBot(ClientID))
         {
@@ -2291,7 +2297,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                 Msg.m_pReason = pReason;
                 Server()-&gt;SendPackMsg(&Msg, MSGFLAG_NOSEND, -1);
             }
-    
+
             CNetMsg_Sv_ClientDrop Msg;
             Msg.m_ClientID = ClientID;
             Msg.m_pReason = pReason;
@@ -2300,7 +2306,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                 Msg.m_Silent = true;
             Server()-&gt;SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NORECORD, -1);
         }
-    
+
         // [..]
     }
                 </code>
