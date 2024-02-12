@@ -2364,7 +2364,11 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                 <tr>
                     <th><strong>Response to:</strong></th>
                     <td>
-                        TODO
+                        <a href="#NETMSGTYPE_CL_READYCHANGE">NETMSGTYPE_CL_READYCHANGE</a> can trigger GAMEMSG_GAME_PAUSED.<br>
+                        <a href="#NETMSGTYPE_CL_SETSPECTATORMODE">NETMSGTYPE_CL_SETSPECTATORMODE</a> can trigger GAMEMSG_SPEC_INVALIDID.<br>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <code>swap_teams</code> triggers GAMEMSG_TEAM_SWAP.<br>
+                        <a href="system_messages.html#NETMSG_RCON_CMD">NETMSG_RCON_CMD</a> <code>set_team_all</code> triggers GAMEMSG_TEAM_ALL.<br>
+                        The other messages depend on gameplay state and are not direct responses to net messages from the client (auto team balance, flag cap/grab/return/capture).
                     </td>
                 </tr>
                 <tr>
@@ -2394,7 +2398,15 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Can be one of those values:
+                        <ul>
+                            <li>0 - GAMEMSG_TEAM_SWAP</li>
+                            <li>1 - GAMEMSG_SPEC_INVALIDID</li>
+                            <li>2 - GAMEMSG_TEAM_SHUFFLE</li>
+                            <li>3 - GAMEMSG_TEAM_BALANCE</li>
+                            <li>4 - GAMEMSG_CTF_DROP</li>
+                            <li>5 - GAMEMSG_CTF_RETURN</li>
+                        </ul>
                     </td>
                 </tr>
             </table>
@@ -2412,7 +2424,13 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Can be one of those values:
+                        <ul>
+                            <li>6 - GAMEMSG_TEAM_ALL</li>
+                            <li>7 - GAMEMSG_TEAM_BALANCE_VICTIM</li>
+                            <li>8 - GAMEMSG_CTF_GRAB</li>
+                            <li>10 - GAMEMSG_GAME_PAUSED</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
@@ -2423,7 +2441,13 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        The parameter depends on the type of game message:
+                        <ul>
+                            <li>GAMEMSG_TEAM_ALL =&gt Team</li>
+                            <li>GAMEMSG_TEAM_BALANCE_VICTIM =&gt Team</li>
+                            <li>GAMEMSG_CTF_GRAB =&gt Team</li>
+                            <li>GAMEMSG_GAME_PAUSED =&gt ClientID (pause initiator)</li>
+                        </ul>
                     </td>
                 </tr>
             </table>
@@ -2441,7 +2465,10 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        There is only one game message with 3 parameters:
+                        <ul>
+                            <li>9 - GAMEMSG_CTF_CAPTURE</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
@@ -2452,7 +2479,11 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Flag:
+                        <ul>
+                            <li>0 - red <code>*** The red flag was captured by 'ChillerDragon' (0.02 seconds)</code></li>
+                            <li>1 - blue <code>*** The blue flag was captured by 'ChillerDragon' (0.02 seconds)</code></li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
@@ -2463,7 +2494,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        This is the ClientID of the player who captured the flag.
                     </td>
                 </tr>
                 <tr>
@@ -2474,7 +2505,12 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        This is the capture time and it will converted to a float like This
+                        <pre class="code-snippet">
+                            <code>
+    float Time = aParaI[2] / (float)Client()->GameTickSpeed();
+                            </code>
+                        </pre>
                     </td>
                 </tr>
             </table>
@@ -2513,7 +2549,10 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                 </code>
             </pre>
             Server and client have a shared list of pre agreed "Game message ID" to "parameter"
-            mappings. The client unpacks the message like this:
+            <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/client/gameclient.cpp#L200-L215">
+                mappings.
+            </a>
+            The client unpacks the message like this:
             <pre class="code-snippet">
                 <code>
     else if(MsgId == NETMSGTYPE_SV_GAMEMSG)
