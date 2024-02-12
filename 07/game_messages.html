@@ -2514,6 +2514,10 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                 </tr>
             </table>
+            GAMEMSG_SPEC_INVALIDID and GAMEMSG_TEAM_BALANCE_VICTIM are sent to specific ClientIDs and all other game messages are
+            broadcasted to all connected players.
+            <br>
+            <br>
             The amount of parameters depends on the
             <a href="#NETMSGTYPE_SV_GAMEMSG_game_msg_id">
                 Game message ID
