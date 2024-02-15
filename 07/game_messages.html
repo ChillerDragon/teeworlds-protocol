@@ -2955,7 +2955,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        This is the client ID of the receiving party. It should be set to -1 if it is not a whisper message.
                     </td>
                 </tr>
                 <tr>
@@ -2966,7 +2966,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#string_packing">String</a></td>
                     <td>
-                        TODO
+                        Message that will be printed in chat. The server trims right and cuts off after 128 utf8-characters.
                     </td>
                 </tr>
             </table>
