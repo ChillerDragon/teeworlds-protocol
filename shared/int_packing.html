@@ -72,7 +72,7 @@
             <pre class="code-snippet">
                 <code>
     #include "stdio.h"
-    
+
     void printbincharpad(char c)
     {
         for (int i = 7; i &gt;= 0; --i)
@@ -80,12 +80,12 @@
             putchar( (c & (1 &lt;&lt; i)) ? '1' : '0' );
         }
     }
-    
+
     void str_hex(char *dst, int dst_size, const void *data, int data_size)
     {
         static const char hex[] = "0123456789ABCDEF";
         int b;
-    
+
         for(b = 0; b &lt; data_size && b &lt; dst_size/4-4; b++)
         {
             dst[b*3] = hex[((const unsigned char *)data)[b]&gt;&gt;4];
@@ -94,7 +94,7 @@
             dst[b*3+3] = 0;
         }
     }
-    
+
     void print_bin(const char * pBuf, int size)
     {
         for(int i = 0; i &lt; size; i++)
@@ -104,7 +104,7 @@
         }
         putchar('\n');
     }
-    
+
     unsigned char *Pack(unsigned char *pDst, int i)
     {
         *pDst = 0;
@@ -113,7 +113,7 @@
             *pDst |= 0x40; // set sign bit
             i = ~i;
         }
-    
+
         *pDst |= i & 0x3F; // pack 6bit into dst
         i &gt;&gt;= 6; // discard 6 bits
         while(i)
@@ -123,25 +123,25 @@
             *pDst = i & 0x7F; // pack 7bit
             i &gt;&gt;= 7; // discard 7 bits
         }
-    
+
         pDst++;
         return pDst;
     }
-    
+
     void verbose_pack(int i)
     {
         int num_bytes = 1;
-        if(i &gt; 63 || i &lt; -63)
+        if(i &gt; 63 || i &lt; -64)
             num_bytes = 2;
         char aBuf[1024];
         char aHex[1024];
-    
-        Pack(aBuf, i);
-    
+
+        Pack((unsigned char *)aBuf, i);
+
         str_hex(aHex, sizeof(aHex), aBuf, num_bytes);
         printf("Pack(%d)\n =&gt; hex=%s\n =&gt; bin=", i, aHex);
         print_bin(aBuf, num_bytes);
-    
+
         printf(" =&gt; fmt=ESDDDDDD ");
         for(int k = 1; k &lt; num_bytes; k++)
             printf("EDDDDDDD ");
@@ -150,21 +150,21 @@
         else
             puts("\n");
     }
-    
+
     int main()
     {
         verbose_pack(1);
         verbose_pack(2);
         verbose_pack(3);
-    
+
         verbose_pack(-1);
         verbose_pack(-2);
         verbose_pack(-3);
-    
+
         verbose_pack(63);
         verbose_pack(64);
         verbose_pack(65);
-    
+
         verbose_pack(-63);
         verbose_pack(-64);
         verbose_pack(-65);
@@ -180,80 +180,79 @@
             <pre class="code-snippet">
                 <code>
     Pack(1)
-     => hex=01 
-     => bin=00000001 
-     => fmt=ESDDDDDD 
-    
+     => hex=01
+     => bin=00000001
+     => fmt=ESDDDDDD
+
     Pack(2)
-     => hex=02 
-     => bin=00000010 
-     => fmt=ESDDDDDD 
-    
+     => hex=02
+     => bin=00000010
+     => fmt=ESDDDDDD
+
     Pack(3)
-     => hex=03 
-     => bin=00000011 
-     => fmt=ESDDDDDD 
-    
+     => hex=03
+     => bin=00000011
+     => fmt=ESDDDDDD
+
     Pack(-1)
-     => hex=40 
-     => bin=01000000 
-     => fmt=ESDDDDDD 
-    
+     => hex=40
+     => bin=01000000
+     => fmt=ESDDDDDD
+
     Pack(-2)
-     => hex=41 
-     => bin=01000001 
-     => fmt=ESDDDDDD 
-    
+     => hex=41
+     => bin=01000001
+     => fmt=ESDDDDDD
+
     Pack(-3)
-     => hex=42 
-     => bin=01000010 
-     => fmt=ESDDDDDD 
-    
+     => hex=42
+     => bin=01000010
+     => fmt=ESDDDDDD
+
     Pack(63)
-     => hex=3F 
-     => bin=00111111 
-     => fmt=ESDDDDDD 
-    
+     => hex=3F
+     => bin=00111111
+     => fmt=ESDDDDDD
+
     Pack(64)
-     => hex=80 01 
-     => bin=10000000 00000001 
-     => fmt=ESDDDDDD EDDDDDDD 
+     => hex=80 01
+     => bin=10000000 00000001
+     => fmt=ESDDDDDD EDDDDDDD
         when building the int keep in mind it is little endian!
-    
+
     Pack(65)
-     => hex=81 01 
-     => bin=10000001 00000001 
-     => fmt=ESDDDDDD EDDDDDDD 
+     => hex=81 01
+     => bin=10000001 00000001
+     => fmt=ESDDDDDD EDDDDDDD
         when building the int keep in mind it is little endian!
-    
+
     Pack(-63)
-     => hex=7E 
-     => bin=01111110 
-     => fmt=ESDDDDDD 
-    
+     => hex=7E
+     => bin=01111110
+     => fmt=ESDDDDDD
+
     Pack(-64)
-     => hex=7F 01 
-     => bin=01111111 00000001 
-     => fmt=ESDDDDDD EDDDDDDD 
-        when building the int keep in mind it is little endian!
-    
+     => hex=7F
+     => bin=01111111
+     => fmt=ESDDDDDD
+
     Pack(-65)
-     => hex=C0 01 
-     => bin=11000000 00000001 
-     => fmt=ESDDDDDD EDDDDDDD 
+     => hex=C0 01
+     => bin=11000000 00000001
+     => fmt=ESDDDDDD EDDDDDDD
         when building the int keep in mind it is little endian!
-    
+
     Pack(-66)
-     => hex=C1 01 
-     => bin=11000001 00000001 
-     => fmt=ESDDDDDD EDDDDDDD 
+     => hex=C1 01
+     => bin=11000001 00000001
+     => fmt=ESDDDDDD EDDDDDDD
         when building the int keep in mind it is little endian!
-    
+
     Pack(-67)
-     => hex=C2 01 
-     => bin=11000010 00000001 
-     => fmt=ESDDDDDD EDDDDDDD 
-        when building the int keep in mind it is little endian!                   
+     => hex=C2 01
+     => bin=11000010 00000001
+     => fmt=ESDDDDDD EDDDDDDD
+        when building the int keep in mind it is little endian!
                 </code>
             </pre>
         </p>
