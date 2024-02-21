@@ -786,7 +786,8 @@
             </table>
             normal snapshot, multiple parts <br>
             Will be sent by the server to every client if there is
-            new snap data.
+            new snap data. If the data is small enough to fit in a single message
+            it will use <a href="#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a> instead.
         </p>
         <hr>
         <h2 id="NETMSG_SNAPEMPTY"><a href="#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a></h2>
@@ -830,6 +831,58 @@
                     <th><strong>Expected response:</strong></th><td>None</td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Argument name</th>
+                    <th>Type</th>
+                    <th>Note</th>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAP_game_tick"><a href="#NETMSG_SNAP_game_tick">Game tick</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAP_delta_tick"><a href="#NETMSG_SNAP_delta_tick">Delta tick</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAP_crc"><a href="#NETMSG_SNAP_crc">Crc</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        TODO
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAP_part_size"><a href="#NETMSG_SNAP_part_size">Part size</a></td>
+                    <td><a href="fundamentals.html#int_packing">Int</a></td>
+                    <td>
+                        The size of this part. Meaning the size in bytes of the next raw data field.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="NETMSG_SNAP_data"><a href="#NETMSG_SNAP_data">Data</a></td>
+                    <td><a href="fundamentals.html#raw_packing">Raw</a></td>
+                    <td>
+                        The snapshot data. Which is a bunch of packed ints.
+                        The first is the amount of removed items.
+                        The second is the amount of item deltas.
+                        The third a unused zero byte.
+                        And the following ints are all snap items.
+                        You can read more about snap items and the structure
+                        of this data field in the
+                        <a href="snap_items.html">snap items</a>
+                        section.
+                    </td>
+                </tr>
+            </table>
+            One full snapshot. If it does not fit into one message it will be split into
+            multiple parts and send as <a href="#NETMSG_SNAP">NETMSG_SNAP</a> instead.
         </p>
         <hr>
         <h2 id="NETMSG_SNAPSMALL"><a href="#NETMSG_SNAPSMALL">NETMSG_SNAPSMALL</a></h2>
