@@ -274,7 +274,30 @@
                     int m_HookDx;<br>
                     int m_HookDy;<br>
                 </td>
-                <td>desc</td>
+                <td>
+                    <strong>m_Jumped</strong> is more complex than on and off.
+                    There is 0 for off yes. But on is represented on the bit level.
+                    Here a snippet from the source code.
+                    <pre class="code-snippet">
+                        <code>
+    // handle jumping
+    // 1 bit = to keep track if a jump has been made on this input
+    // 2 bit = to keep track if a air-jump has been made
+    if(Grounded)
+        m_Jumped &= ~2;
+                        </code>
+                    </pre>
+                    <img src="../img/m_Jumped.gif" alt="jump gif" style="width: 100%">
+                    <strong>m_HookState</strong> has those possible values:
+                    <ul>
+                        <li>HOOK_RETRACTED (-1)</li>
+                        <li>HOOK_IDLE (0)</li>
+                        <li>HOOK_RETRACT_START (1)</li>
+                        <li>HOOK_RETRACT_END (3)</li>
+                        <li>HOOK_FLYING (4)</li>
+                        <li>HOOK_GRABBED (5)</li>
+                    </ul>
+                </td>
             </tr>
             <tr id="obj_character">
                 <td>10</td>
