@@ -242,7 +242,16 @@
                     int m_FlagDropTickRed;<br>
                     int m_FlagDropTickBlue;<br>
                 </td>
-                <td>desc</td>
+                <td>
+                    The fields <strong>m_FlagCarrierRed</strong> and <strong>m_FlagCarrierBlue</strong>
+                    hold either the client id of the person carrying the flag or a negative value.
+                    The negative values have the following meanings:
+                    <ul>
+                        <li>-3 - FLAG_MISSING</li>
+	                    <li>-2 - FLAG_ATSTAND</li>
+	                    <li>-1 - FLAG_TAKEN</li>
+                    </ul>
+                </td>
             </tr>
             <tr id="obj_character_core">
                 <td>9</td>
