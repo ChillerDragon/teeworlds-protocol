@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <div class="header-grid">
+            <a class="logo" href="../index.html">
+                <img src="../img/tee.svg" alt="tee">
+            </a>
+            <span class="version">
+                Teeworlds 0.6
+            </span>
+            <div class="links">
+                <a href="../index.html">home</a>
+                <a href="../06.html">overview</a>
+                <a href="fundamentals.html">fundamentals</a>
+                <a href="packet_layout.html">packet_layout</a>
+                <a href="map_download.html">map_download</a>
+                <a href="snap_items.html">snap_items</a>
+                <a href="system_messages.html">system_messages</a>
+                <a href="game_messages.html">game_messages</a>
+                <a href="ctrl_messages.html">ctrl_messages</a>
+            </div> <!-- links -->
+        </div> <!-- header-grid -->
+        <hr>
+    </div> <!-- header -->
+    <div class="content">
+        <h1>Teeworlds 0.6 map download</h1>
+        <p>
+            Here is an example network traffic dump annotated using
+            <a href="https://gitlab.com/-/snippets/3678838">
+                a twnet_parser script.
+            </a>
+            The map download process is initiated if the map is changed or a client connects to the server.
+            And the client does not know the map. Both times the server sends a
+            <a href="system_messages.html#NETMSG_MAP_CHANGE">NETMSG_MAP_CHANGE</a>
+            message where the client is supposed to answer with either
+            <a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a>
+            indicating that the client knows the map and is ready to enter or with
+            <a href="system_messages.html#NETMSG_REQUEST_MAP_DATA">NETMSG_REQUEST_MAP_DATA</a>
+            to start the map download process.
+            <br>
+            <br>
+            The message <a href="system_messages.html#NETMSG_MAP_DATA">NETMSG_MAP_DATA</a> has more fields than just
+            chunk and last. But to keep the output simple I left those out.
+        </p>
+        <pre>
+            <div class="code-snippet">
+    [TW6] 54939 -> 8303 connect
+    [TW6] 8303 -> 54939 connect_accept
+    [TW6] 54939 -> 8303 info
+    [TW6] 8303 -> 54939 map_change
+    [TW6] 54939 -> 8303 request_map_data (chunk=0)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=0 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=1)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=1 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=2)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=2 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=3)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=3 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=4)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=4 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=5)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=5 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=6)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=6 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=7)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=7 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=8)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=8 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=9)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=9 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=10)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=10 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=11)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=11 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=12)
+    [TW6] 8303 -> 54939 map_data (last=0 chunk=12 ..)
+    [TW6] 54939 -> 8303 request_map_data (chunk=13)
+    [TW6] 8303 -> 54939 map_data (last=1 chunk=13 ..)
+    [TW6] 54939 -> 8303 ready
+    [TW6] 8303 -> 54939 sv_motd, con_ready
+    [TW6] 54939 -> 8303 cl_start_info
+    [TW6] 8303 -> 54939 sv_vote_clear_options, sv_tune_params
+    [TW6] 54939 -> 8303 enter_game
+            </div>
+        </pre>
+        <p>
+            As you can see the client has to request every individual chunk from the server.
+            And the server then sets last to 1 when the last chunk of the map was sent. Informing the client that
+            he now holds the complete map file.
+        </p>
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2023
+            </span>
+        </div>
+    </footer>
+</body>
