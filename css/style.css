@@ -179,6 +179,10 @@ td, th {
     color: rgb(241, 162, 15);
 }
 
+.light {
+    color: rgb(87, 87, 87);
+}
+
 /* mobile */
 
 @media screen and (max-width: 1000px) {
