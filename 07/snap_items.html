@@ -301,6 +301,11 @@
                         <li>HOOK_FLYING (4)</li>
                         <li>HOOK_GRABBED (5)</li>
                     </ul>
+                    <div class="quote">
+                        &lt;<a href="https://github.com/heinrich5991/libtw2/issues/93">Zwelf</a>&gt; <code>m_HookTick</code> has the type <code>NetTick</code>
+                        in <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/datasrc/network.py#L170">protocol.py</a>,
+                        but is used as HookDuration. Starting with zero and incrementing one each tick until the roughly 60 ticks = 1.2s are passed.
+                    </div>
                 </td>
             </tr>
             <tr id="obj_character">

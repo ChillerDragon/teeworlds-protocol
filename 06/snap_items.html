@@ -236,6 +236,11 @@
                     It is only ever sent as part of <a href="#obj_character">obj_character</a>.
                     So the snap item type id 8 is unused.
                     <br><br>
+                    <div class="quote">
+                        &lt;<a href="https://github.com/heinrich5991/libtw2/issues/93">Zwelf</a>&gt; <code>m_HookTick</code> has the type <code>NetTick</code>
+                        in <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/datasrc/network.py#L138">protocol.py</a>,
+                        but is used as HookDuration. Starting with zero and incrementing one each tick until the roughly 60 ticks = 1.2s are passed.
+                    </div>
                 </td>
             </tr>
             <tr id="obj_character">
