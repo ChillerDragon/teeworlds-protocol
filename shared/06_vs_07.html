@@ -43,15 +43,20 @@
             </a>
             in 0.7
         </p>
-        <h2 id="sound_world"><a href="#sound_world">0.7 moved hook attach ground sound out of the snap</a></h2>
+        <h2 id="sound_world"><a href="#sound_world">0.7 removed net msg sound global and also removed some sound world snap items</a></h2>
         <p>
-                In 0.6 the sound SOUND_HOOK_ATTACH_GROUND was sent via the snap item
+                In 0.6 the sounds SOUND_PLAYER_JUMP (15), SOUND_HOOK_ATTACH_GROUND (21), SOUND_HOOK_ATTACH_PLAYER (22) and SOUND_HOOK_NOATTACH (23) were sent via the snap item
                 <a href="../06/snap_items.html#event_sound_world">event_sound_world</a>.
                 <br><br>
-                In 0.7 this no longer happens. The sound still exists but it is triggered from the client side.
+                In 0.7 this no longer happens. The sounds still exists but it is triggered from the client side.
                 The client side game state <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/gamecore.cpp#L236">gamecore</a>
-                detects when a hook is about to hit and then sets a flag which plays the sound in the
+                detects when for example a hook is about to hit and then sets a flag which plays the sound in the
                 <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/client/gameclient.cpp#L1114-L1115">gameclient</a>.
+
+                The relevant git commit is
+                <a href="https://github.com/teeworlds/teeworlds/commit/d2924b5ad6982945da5f2db299d964133a3e5e63"
+                    d2924b5
+                </a>
         </p>
     </div> <!-- content -->
     <footer>
