@@ -48,10 +48,12 @@
                 In 0.6 the sounds SOUND_PLAYER_JUMP (15), SOUND_HOOK_ATTACH_GROUND (21), SOUND_HOOK_ATTACH_PLAYER (22) and SOUND_HOOK_NOATTACH (23) were sent via the snap item
                 <a href="../06/snap_items.html#event_sound_world">event_sound_world</a>.
                 <br><br>
-                In 0.7 this no longer happens. The sounds still exists but it is triggered from the client side.
+                In 0.7 this no longer happens. The sounds still exists but it is triggered from the client side for the owner of the tee.
                 The client side game state <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/gamecore.cpp#L236">gamecore</a>
                 detects when for example a hook is about to hit and then sets a flag which plays the sound in the
                 <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/client/gameclient.cpp#L1114-L1115">gameclient</a>.
+                This does not happen for spectators. A spectator depends on <strong>m_TriggeredEvents</strong> from the
+                <a href="../06/snap_items.html#obj_character">obj_character</a> snap item to play those sounds.
                 <br><br>
                 Also the snap item
                 <a href="../06/snap_items.html#event_sound_global">event_sound_global</a>
