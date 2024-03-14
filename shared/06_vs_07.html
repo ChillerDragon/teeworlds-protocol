@@ -43,6 +43,16 @@
             </a>
             in 0.7
         </p>
+        <h2 id="sound_world"><a href="#sound_world">0.7 moved hook attach ground sound out of the snap</a></h2>
+        <p>
+                In 0.6 the sound SOUND_HOOK_ATTACH_GROUND was sent via the snap item
+                <a href="../06/snap_items.html#event_sound_world">event_sound_world</a>.
+                <br><br>
+                In 0.7 this no longer happens. The sound still exists but it is triggered from the client side.
+                The client side game state <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/gamecore.cpp#L236">gamecore</a>
+                detects when a hook is about to hit and then sets a flag which plays the sound in the
+                <a href="https://github.com/teeworlds/teeworlds/blob/a1911c8f7d8458fb4076ef8e7651e8ef5e91ab3e/src/game/client/gameclient.cpp#L1114-L1115">gameclient</a>.
+        </p>
     </div> <!-- content -->
     <footer>
         <hr>
