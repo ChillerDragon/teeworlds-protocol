@@ -40,17 +40,19 @@
             Not all 0.6 versions do have tokens only the last release 0.6.5 introduced tokens.
             It uses no token when connecting to 0.6.4 or older 0.6 versions to stay backwards compatible.
             Every game related packet (ignoring server info for now) has a packet header with a token field.
-            The token field has to be the token of the receiving party.
-            So when the client sends a packet to the server the token field
-            contains the token from the server and vice versa.
+            Client and server agree on one random 4 byte long token. And then both send the same token
+            in their packet headers.
             <br>
-            Client and server generate a random token and then exchange it.
+            The token is only part of the header if the packet header contains the token flag in the flags byte.
             <br>
             Start the server or client with the config <code>debug 1</code> to see error messages in the log if a wrong token was sent.
             This check happens in
             <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/shared/network_conn.cpp#L299-L306">
                 network_conn.cpp Feed()
             </a>
+            <br>
+            Be careful this is not the same security token ddnet uses. DDNet uses their own TKEN extension based on the 0.6.4 protocol.
+            For more details check the <a href="../ddnet_06/fundamentals.html">DDNet tokens section</a>.
         </p>
         <hr>
         <h2 id="sequence_numbers"><a href="#sequence_numbers">Sequence numbers</a></h2>
