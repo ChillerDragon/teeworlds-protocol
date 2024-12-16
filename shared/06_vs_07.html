@@ -27,6 +27,46 @@
             Far from complete diff between 0.6 and 0.7 protocol versions
         </p>
         <hr>
+        <h2 id="packet_header"><a href="#packet_header">Packet header</a></h2>
+        <p>
+                <h3>Security tokens</h3>
+                <ul>
+                    <li>0.6.4 and earlier have no security tokens and the header is always 3 bytes long.</li>
+                    <li>0.6.5 has a 4 byte security token at the end of the header and a token flag set.</li>
+                    <li>0.7 has a 4 byte security token at the end of the header but no token flag set.</li>
+                    <li>ddnet has 4 byte security token at the end of the packet payload. <strong>Not in the header</strong> and also no flag set.</li>
+                </ul>
+                <h3>Packet flags</h3>
+                <ul>
+                    <li>0.6.4 and earlier use the first 4 bits of the first byte for the flags: compression, resend, connless and control</li>
+                    <li>0.6.5 added the token flag at the end of the 0.6.4 flags so the first bits of every packet contain the flags: compression, resend, connless, control and token</li>
+                    <li>0.7 shifted the flags 2 bits to the right and the first two bits of every packet are now unused followed by the flags: connless, compression, resend and control</li>
+                </ul>
+
+                <pre class="code-snippet">
+                    <code>
+     Full packet headers with every letter representing one bit:
+
+     f = flag bit
+     - = unused bit
+     a = ack
+     c = number of chunks
+     t = security token
+
+     0.6.4
+     ffff --aa  aaaa aaaa  cccc cccc
+
+     0.6.5
+     ffff f-aa  aaaa aaaa  cccc cccc  tttt tttt  tttt tttt  tttt tttt  tttt tttt
+
+     0.7
+     --ff ffaa  aaaa aaaa  cccc cccc  tttt tttt  tttt tttt  tttt tttt  tttt tttt
+                    </code>
+                </pre>
+                The unused bits should be zeroed for proper compatibility with newer and older versions.
+                Old teeworlds versions actually wrongly interpreted the unused bits as part of the ack number
+                so when 0.6.5 started using them for the token flag it <a href="https://github.com/teeworlds/teeworlds/issues/1714">broke the connection</a>.
+        </p>
         <h2 id="chunk_header"><a href="#chunk_header">Chunk header</a></h2>
         <p>
             <img class="rounded-img" src="../img/06vs07_chunk_header.png" alt="chunk header diff">
