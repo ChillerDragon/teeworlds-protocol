@@ -394,18 +394,20 @@
             <table>
                 <tr>
                     <th>Sender:</th>
-                    <td>Server </td>
+                    <td>Client </td>
                 </tr>
                 <tr>
                     <th>Recipient:</th>
-                    <td>Client </td>
+                    <td>Server </td>
                 </tr>
                 <tr>
                     <th>Message ID:</th><td>3</td>
                 </tr>
                 <tr>
                     <th>Response to:</th>
-                    <td>TODO</td>
+                    <td>
+                        <a href="#NET_CTRLMSG_CONNECTACCEPT">NET_CTRLMSG_CONNECTACCEPT</a>
+                    </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
@@ -430,7 +432,15 @@
             Because 0.6.5 released while 0.7 was already in full development<a href="https://github.com/teeworlds/teeworlds/commit/d3fc0807d5f59d88661c8e58854805b064db3c4d">
                 it also got removed in 0.7 in a seperate commit.
             </a>
-            Since it is a duplicate of <a href="#NET_CTRLMSG_CONNECTACCEPT">NET_CTRLMSG_CONNECTACCEPT</a>
+            <br>
+            The client uses it to ack the servers accept. The first three messages sent when a connection is established are the following:
+            <pre class="code-snippet">
+                <code>
+    client -&gt; server NET_CTRLMSG_CONNECT
+    server -&gt; client NET_CTRLMSG_ACCEPTCONNECT
+    client -&gt; server <strong>NET_CTRLMSG_ACCEPT</strong> (ack servers accept)
+                </code>
+            </pre>
         </p>
         <hr>
         <h2 id="NET_CTRLMSG_CLOSE"><a href="#NET_CTRLMSG_CLOSE">NET_CTRLMSG_CLOSE</a></h2>
