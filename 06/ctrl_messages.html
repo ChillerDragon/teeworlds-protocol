@@ -179,13 +179,17 @@
                     <td><a href="fundamentals.html#raw_packing">Raw</a></td>
                     <td>
                         4 null bytes
+                        <br>
+                        Was added in 0.6.5! So 0.6.4 and earlier do not send any payload!
                     </td>
                 </tr>
                 <tr>
                     <td id="NET_CTRLMSG_CONNECT_token"><a href="#NET_CTRLMSG_CONNECT_token">Client Token</a></td>
                     <td><a href="fundamentals.html#raw_packing">Raw</a></td>
                     <td>
-                        Fixed size 4 byte random security token
+                        Fixed size 4 byte random security token.
+                        <br>
+                        Was added in 0.6.5! So 0.6.4 and earlier do not send a token!
                     </td>
                 </tr>
                 <tr>
@@ -193,10 +197,12 @@
                     <td><a href="fundamentals.html#raw_packing">Raw</a></td>
                     <td>
                         504 null bytes filling the total payload size to be 512 plus the control message id.
+                        <br>
+                        Was added in 0.6.5! So 0.6.4 and earlier do not send null bytes!
                     </td>
                 </tr>
             </table>
-            Since this is the very first packet the is sent by the client to initiate the connection the
+            Since this is the very first packet that is sent by the client to initiate the connection the
             payload has to be over 512 bytes otherwise the server will simply drop it.
             This is for security purpose to avoid reflection attacks.
             Sent via the <code>SendConnect()</code> wrapper.

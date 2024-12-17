@@ -27,6 +27,20 @@
             Far from complete diff between 0.6 and 0.7 protocol versions
         </p>
         <hr>
+        <h2 id="anti_reflection"><a href="#anti_reflection">Reflection attack protection</a></h2>
+        <p>
+                0.6.5 and 0.7 make the client send 512 null bytes while connecting
+                (
+                    <a href="../06/ctrl_messages.html#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a>,
+                    <a href="../07/ctrl_messages.html#NET_CTRLMSG_TOKEN">NET_CTRLMSG_TOKEN</a>
+                ).
+                If they are not sent the server (0.7 only) silently drops the connection.
+                This is a protection against reflection attacks where the attacker spoofs the victims
+                ip and uses the teeworlds servers response as attacking traffic.
+                <br>
+                <br>
+                0.6.4 (including ddnet) and earlier do not send these nullbytes.
+        </p>
         <h2 id="packet_header"><a href="#packet_header">Packet header</a></h2>
         <p>
                 <h3>Security tokens</h3>
