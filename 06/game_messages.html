@@ -619,10 +619,10 @@
             CTuningParams NewTuning;
             int *pParams = (int *)&amp;NewTuning;
             for(unsigned i = 0; i &lt; sizeof(CTuningParams)/sizeof(int); i++)
-                pParams[i] = pUnpacker->GetInt();
+                pParams[i] = pUnpacker-&gt;GetInt();
 
             // check for unpacking errors
-            if(pUnpacker->Error())
+            if(pUnpacker-&gt;Error())
                 return;
 
             m_ServerMode = SERVERMODE_PURE;
@@ -645,10 +645,10 @@
         CheckPureTuning();
 
         CMsgPacker Msg(NETMSGTYPE_SV_TUNEPARAMS);
-        int *pParams = (int *)&m_Tuning;
+        int *pParams = (int *)&amp;m_Tuning;
         for(unsigned i = 0; i &lt; sizeof(m_Tuning)/sizeof(int); i++)
             Msg.AddInt(pParams[i]);
-        Server()->SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
+        Server()-&gt;SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
     }
                 </code>
             </pre>
@@ -786,7 +786,7 @@
             <pre class="code-snippet">
                 <code>
     CNetMsg_Sv_ReadyToEnter m;
-    Server()->SendPackMsg(&m, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+    Server()-&gt;SendPackMsg(&amp;m, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
                 </code>
             </pre>
         </p>
@@ -955,7 +955,7 @@
             <pre class="code-snippet">
                 <code>
     CNetMsg_Sv_VoteClearOptions ClearMsg;
-    Server()->SendPackMsg(&ClearMsg, MSGFLAG_VITAL, ClientID);
+    Server()-&gt;SendPackMsg(&ClearMsg, MSGFLAG_VITAL, ClientID);
                 </code>
             </pre>
         </p>
@@ -1093,7 +1093,7 @@
 
         // send vote options
         CNetMsg_Sv_VoteClearOptions ClearMsg;
-        Server()->SendPackMsg(&ClearMsg, MSGFLAG_VITAL, ClientID);
+        Server()-&gt;SendPackMsg(&ClearMsg, MSGFLAG_VITAL, ClientID);
 
         CNetMsg_Sv_VoteOptionListAdd OptionMsg;
         int NumOptions = 0;
@@ -1117,25 +1117,25 @@
         {
             switch(NumOptions++)
             {
-            case 0: OptionMsg.m_pDescription0 = pCurrent->m_aDescription; break;
-            case 1: OptionMsg.m_pDescription1 = pCurrent->m_aDescription; break;
-            case 2: OptionMsg.m_pDescription2 = pCurrent->m_aDescription; break;
-            case 3: OptionMsg.m_pDescription3 = pCurrent->m_aDescription; break;
-            case 4: OptionMsg.m_pDescription4 = pCurrent->m_aDescription; break;
-            case 5: OptionMsg.m_pDescription5 = pCurrent->m_aDescription; break;
-            case 6: OptionMsg.m_pDescription6 = pCurrent->m_aDescription; break;
-            case 7: OptionMsg.m_pDescription7 = pCurrent->m_aDescription; break;
-            case 8: OptionMsg.m_pDescription8 = pCurrent->m_aDescription; break;
-            case 9: OptionMsg.m_pDescription9 = pCurrent->m_aDescription; break;
-            case 10: OptionMsg.m_pDescription10 = pCurrent->m_aDescription; break;
-            case 11: OptionMsg.m_pDescription11 = pCurrent->m_aDescription; break;
-            case 12: OptionMsg.m_pDescription12 = pCurrent->m_aDescription; break;
-            case 13: OptionMsg.m_pDescription13 = pCurrent->m_aDescription; break;
+            case 0: OptionMsg.m_pDescription0 = pCurrent-&gt;m_aDescription; break;
+            case 1: OptionMsg.m_pDescription1 = pCurrent-&gt;m_aDescription; break;
+            case 2: OptionMsg.m_pDescription2 = pCurrent-&gt;m_aDescription; break;
+            case 3: OptionMsg.m_pDescription3 = pCurrent-&gt;m_aDescription; break;
+            case 4: OptionMsg.m_pDescription4 = pCurrent-&gt;m_aDescription; break;
+            case 5: OptionMsg.m_pDescription5 = pCurrent-&gt;m_aDescription; break;
+            case 6: OptionMsg.m_pDescription6 = pCurrent-&gt;m_aDescription; break;
+            case 7: OptionMsg.m_pDescription7 = pCurrent-&gt;m_aDescription; break;
+            case 8: OptionMsg.m_pDescription8 = pCurrent-&gt;m_aDescription; break;
+            case 9: OptionMsg.m_pDescription9 = pCurrent-&gt;m_aDescription; break;
+            case 10: OptionMsg.m_pDescription10 = pCurrent-&gt;m_aDescription; break;
+            case 11: OptionMsg.m_pDescription11 = pCurrent-&gt;m_aDescription; break;
+            case 12: OptionMsg.m_pDescription12 = pCurrent-&gt;m_aDescription; break;
+            case 13: OptionMsg.m_pDescription13 = pCurrent-&gt;m_aDescription; break;
             case 14:
                 {
-                    OptionMsg.m_pDescription14 = pCurrent->m_aDescription;
+                    OptionMsg.m_pDescription14 = pCurrent-&gt;m_aDescription;
                     OptionMsg.m_NumOptions = NumOptions;
-                    Server()->SendPackMsg(&OptionMsg, MSGFLAG_VITAL, ClientID);
+                    Server()-&gt;SendPackMsg(&amp;OptionMsg, MSGFLAG_VITAL, ClientID);
                     OptionMsg = CNetMsg_Sv_VoteOptionListAdd();
                     NumOptions = 0;
                     OptionMsg.m_pDescription1 = "";
@@ -1154,9 +1154,9 @@
                     OptionMsg.m_pDescription14 = "";
                 }
             }
-            pCurrent = pCurrent->m_pNext;
+            pCurrent = pCurrent-&gt;m_pNext;
         }
-        if(NumOptions > 0)
+        if(NumOptions &gt; 0)
         {
             OptionMsg.m_NumOptions = NumOptions;
             Server()->SendPackMsg(&OptionMsg, MSGFLAG_VITAL, ClientID);
@@ -1253,7 +1253,7 @@
     else if(MsgType == NETMSGTYPE_SV_VOTEOPTIONADD)
     {
         CNetMsg_Sv_VoteOptionAdd *pMsg = (CNetMsg_Sv_VoteOptionAdd *)pRawMsg;
-        AddOption(pMsg->m_pDescription);
+        AddOption(pMsg-&gt;m_pDescription);
     }
                 </code>
             </pre>
@@ -1314,26 +1314,26 @@
     {
         CNetMsg_Sv_VoteOptionRemove *pMsg = (CNetMsg_Sv_VoteOptionRemove *)pRawMsg;
 
-        for(CVoteOptionClient *pOption = m_pFirst; pOption; pOption = pOption->m_pNext)
+        for(CVoteOptionClient *pOption = m_pFirst; pOption; pOption = pOption-&gt;m_pNext)
         {
-            if(str_comp(pOption->m_aDescription, pMsg->m_pDescription) == 0)
+            if(str_comp(pOption-&gt;m_aDescription, pMsg-&gt;m_pDescription) == 0)
             {
                 // remove it from the list
                 if(m_pFirst == pOption)
-                    m_pFirst = m_pFirst->m_pNext;
+                    m_pFirst = m_pFirst-&gt;m_pNext;
                 if(m_pLast == pOption)
-                    m_pLast = m_pLast->m_pPrev;
-                if(pOption->m_pPrev)
-                    pOption->m_pPrev->m_pNext = pOption->m_pNext;
-                if(pOption->m_pNext)
-                    pOption->m_pNext->m_pPrev = pOption->m_pPrev;
+                    m_pLast = m_pLast-&gt;m_pPrev;
+                if(pOption-&gt;m_pPrev)
+                    pOption-&gt;m_pPrev-&gt;m_pNext = pOption-&gt;m_pNext;
+                if(pOption-&gt;m_pNext)
+                    pOption-&gt;m_pNext-&gt;m_pPrev = pOption-&gt;m_pPrev;
                 --m_NumVoteOptions;
 
                 // add it to recycle list
-                pOption->m_pNext = 0;
-                pOption->m_pPrev = m_pRecycleLast;
-                if(pOption->m_pPrev)
-                    pOption->m_pPrev->m_pNext = pOption;
+                pOption-&gt;m_pNext = 0;
+                pOption-&gt;m_pPrev = m_pRecycleLast;
+                if(pOption-&gt;m_pPrev)
+                    pOption-&gt;m_pPrev-&gt;m_pNext = pOption;
                 m_pRecycleLast = pOption;
                 if(!m_pRecycleFirst)
                     m_pRecycleLast = pOption;
@@ -1406,12 +1406,12 @@
 	if(MsgType == NETMSGTYPE_SV_VOTESET)
 	{
 		CNetMsg_Sv_VoteSet *pMsg = (CNetMsg_Sv_VoteSet *)pRawMsg;
-		if(pMsg->m_Timeout)
+		if(pMsg-&gt;m_Timeout)
 		{
 			OnReset();
-			str_copy(m_aDescription, pMsg->m_pDescription, sizeof(m_aDescription));
-			str_copy(m_aReason, pMsg->m_pReason, sizeof(m_aReason));
-			m_Closetime = time_get() + time_freq() * pMsg->m_Timeout;
+			str_copy(m_aDescription, pMsg-&gt;m_pDescription, sizeof(m_aDescription));
+			str_copy(m_aReason, pMsg-&gt;m_pReason, sizeof(m_aReason));
+			m_Closetime = time_get() + time_freq() * pMsg-&gt;m_Timeout;
 		}
 		else
 			OnReset();
@@ -1507,10 +1507,10 @@
     else if(MsgType == NETMSGTYPE_SV_VOTESTATUS)
     {
         CNetMsg_Sv_VoteStatus *pMsg = (CNetMsg_Sv_VoteStatus *)pRawMsg;
-        m_Yes = pMsg->m_Yes;
-        m_No = pMsg->m_No;
-        m_Pass = pMsg->m_Pass;
-        m_Total = pMsg->m_Total;
+        m_Yes = pMsg-&gt;m_Yes;
+        m_No = pMsg-&gt;m_No;
+        m_Pass = pMsg-&gt;m_Pass;
+        m_Total = pMsg-&gt;m_Total;
     }
                 </code>
             </pre>
@@ -1528,7 +1528,7 @@
         Msg.m_No = No;
         Msg.m_Pass = Total - (Yes+No);
 
-        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+        Server()-&gt;SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
     }
                 </code>
             </pre>
@@ -1612,22 +1612,22 @@
                 <code>
     if(MsgID == NETMSGTYPE_CL_SAY)
     {
-        if(g_Config.m_SvSpamprotection && pPlayer->m_LastChat && pPlayer->m_LastChat+Server()->TickSpeed() > Server()->Tick())
+        if(g_Config.m_SvSpamprotection && pPlayer-&gt;m_LastChat && pPlayer-&gt;m_LastChat+Server()-&gt;TickSpeed() &gt; Server()-&gt;Tick())
             return;
 
         CNetMsg_Cl_Say *pMsg = (CNetMsg_Cl_Say *)pRawMsg;
-        int Team = pMsg->m_Team ? pPlayer->GetTeam() : CGameContext::CHAT_ALL;
+        int Team = pMsg-&gt;m_Team ? pPlayer-&gt;GetTeam() : CGameContext::CHAT_ALL;
 
         // trim right and set maximum length to 128 utf8-characters
         // [...]
 
         // drop empty and autocreated spam messages (more than 16 characters per second)
-        if(Length == 0 || (g_Config.m_SvSpamprotection && pPlayer->m_LastChat && pPlayer->m_LastChat+Server()->TickSpeed()*((15+Length)/16) > Server()->Tick()))
+        if(Length == 0 || (g_Config.m_SvSpamprotection && pPlayer-&gt;m_LastChat && pPlayer-&gt;m_LastChat+Server()-&gt;TickSpeed()*((15+Length)/16) &gt; Server()-&gt;Tick()))
             return;
 
-        pPlayer->m_LastChat = Server()->Tick();
+        pPlayer-&gt;m_LastChat = Server()-&gt;Tick();
 
-        SendChat(ClientID, Team, pMsg->m_pMessage);
+        SendChat(ClientID, Team, pMsg-&gt;m_pMessage);
     }
                 </code>
             </pre>
@@ -2101,7 +2101,7 @@
         Msg.m_Type = pType;
         Msg.m_Value = pValue;
         Msg.m_Reason = pReason;
-        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL);
+        Client()-&gt;SendPackMsg(&Msg, MSGFLAG_VITAL);
     }
                 </code>
             </pre>
