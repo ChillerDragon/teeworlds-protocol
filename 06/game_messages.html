@@ -272,14 +272,27 @@
                     <td id="NETMSGTYPE_SV_KILLMSG_weapon"><a href="#NETMSGTYPE_SV_KILLMSG_weapon">Weapon</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        Weapon the tee was killed with.
+                        Can be one of those:
+                        <ul>
+                            <li><span class="num">-3</span>WEAPON_GAME (team switching etc)</li>
+                            <li><span class="num">-2</span>WEAPON_SELF (console kill command)</li>
+                            <li><span class="num">-1</span>WEAPON_WORLD (death tiles etc)</li>
+                            <li><span class="num">0</span>WEAPON_HAMMER</li>
+                            <li><span class="num">1</span>WEAPON_GUN</li>
+                            <li><span class="num">2</span>WEAPON_SHOTGUN</li>
+                            <li><span class="num">3</span>WEAPON_GRENADE</li>
+                            <li><span class="num">4</span>WEAPON_LASER</li>
+                            <li><span class="num">5</span>WEAPON_NINJA</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
                     <td id="NETMSGTYPE_SV_KILLMSG_mode_special"><a href="#NETMSGTYPE_SV_KILLMSG_mode_special">Mode special</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        For CTF, if the guy is carrying a flag for example.
+                        Set to 0 in non ctf modes at all times.
                     </td>
                 </tr>
             </table>
