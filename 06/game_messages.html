@@ -798,16 +798,16 @@
                 <tr>
                     <th>Response to:</th>
                     <td>
-                        TODO
+                        Collecting a weapon pickup.
                     </td>
                 </tr>
                 <tr>
                     <th>Expected response:</th>
-                    <td>TODO</td>
+                    <td>None</td>
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -817,12 +817,24 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSGTYPE_SV_WEAPONPICKUP_todo"><a href="#NETMSGTYPE_SV_WEAPONPICKUP_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
+                    <td id="NETMSGTYPE_SV_WEAPONPICKUP_weapon"><a href="#NETMSGTYPE_SV_WEAPONPICKUP_weapon">weapon</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        Can be one of those:
+                        <ul>
+                            <li><span class="num">0</span>WEAPON_HAMMER</li>
+                            <li><span class="num">1</span>WEAPON_GUN</li>
+                            <li><span class="num">2</span>WEAPON_SHOTGUN</li>
+                            <li><span class="num">3</span>WEAPON_GRENADE</li>
+                            <li><span class="num">4</span>WEAPON_LASER</li>
+                            <li><span class="num">5</span>WEAPON_NINJA</li>
+                        </ul>
+                    </td>
                 </tr>
             </table>
+            Is used to inform the client that they obtained a new weapon.
+            Can be used to automatically switch weapon on pickup. Controlled by the client side config
+            <code>cl_autoswitch_weapons</code>.
             <hr>
             <h2 id="NETMSGTYPE_SV_EMOTICON"><a href="#NETMSGTYPE_SV_EMOTICON">NETMSGTYPE_SV_EMOTICON</a></h2>
             <table>
@@ -847,7 +859,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1207,7 +1219,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1265,7 +1277,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1350,7 +1362,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1422,7 +1434,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1631,7 +1643,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1711,7 +1723,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1876,7 +1888,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1916,7 +1928,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -1976,7 +1988,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
@@ -2016,7 +2028,7 @@
                 </tr>
                 <tr>
                     <th>Flags:</th>
-                    <td>TODO</td>
+                    <td><a href="fundamentals.html#sequence_numbers">MSGFLAG_VITAL</a></td>
                 </tr>
             </table>
             <table>
