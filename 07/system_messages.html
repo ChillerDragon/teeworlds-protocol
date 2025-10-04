@@ -146,14 +146,14 @@
         // restore password of favorite if possible
         const char *pPassword = m_ServerBrowser.GetFavoritePassword(m_aServerAddressStr);
         if(!pPassword)
-            pPassword = Config()->m_Password;
+            pPassword = Config()-&gt;m_Password;
         str_copy(m_aServerPassword, pPassword, sizeof(m_aServerPassword));
 
         CMsgPacker Msg(NETMSG_INFO, true);
         Msg.AddString(<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L8">GameClient()->NetVersion()</a>, 128);
         Msg.AddString(m_aServerPassword, 128);
         Msg.AddInt(<a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/game/version.h#L9">GameClient()->ClientVersion()</a>);
-        SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+        SendMsg(&amp;Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
     }
                 </code>
             </pre>
@@ -165,20 +165,20 @@
                 <code>
     if(Msg == NETMSG_INFO)
     {
-        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && m_aClients[ClientID].m_State == CClient::STATE_AUTH)
+        if((pPacket-&gt;m_Flags&amp;NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; m_aClients[ClientID].m_State == CClient::STATE_AUTH)
         {
             const char *pVersion = Unpacker.GetString(CUnpacker::SANITIZE_CC);
-            if(str_comp(pVersion, GameServer()->NetVersion()) != 0)
+            if(str_comp(pVersion, GameServer()-&gt;NetVersion()) != 0)
             {
                 // wrong version
                 char aReason[256];
-                str_format(aReason, sizeof(aReason), "Wrong version. Server is running '%s' and client '%s'", GameServer()->NetVersion(), pVersion);
+                str_format(aReason, sizeof(aReason), "Wrong version. Server is running '%s' and client '%s'", GameServer()-&gt;NetVersion(), pVersion);
                 m_NetServer.Drop(ClientID, aReason);
                 return;
             }
 
             const char *pPassword = Unpacker.GetString(CUnpacker::SANITIZE_CC);
-            if(Config()->m_Password[0] != 0 && str_comp(Config()->m_Password, pPassword) != 0)
+            if(Config()->m_Password[0] != 0 &amp;&amp; str_comp(Config()-&gt;m_Password, pPassword) != 0)
             {
                 // wrong password
                 m_NetServer.Drop(ClientID, "Wrong password");
@@ -368,18 +368,18 @@
                 <code>
     else if(Msg == NETMSG_REQUEST_MAP_DATA)
     {
-        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && (m_aClients[ClientID].m_State == CClient::STATE_CONNECTING || m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC))
+        if((pPacket->m_Flags&amp;NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; (m_aClients[ClientID].m_State == CClient::STATE_CONNECTING || m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC))
         {
             int ChunkSize = MAP_CHUNK_SIZE;
 
             // send map chunks
-            for(int i = 0; i < m_MapChunksPerRequest && m_aClients[ClientID].m_MapChunk >= 0; ++i)
+            for(int i = 0; i &lt; m_MapChunksPerRequest &amp;&amp; m_aClients[ClientID].m_MapChunk &gt;= 0; ++i)
             {
                 int Chunk = m_aClients[ClientID].m_MapChunk;
                 int Offset = Chunk * ChunkSize;
 
                 // check for last part
-                if(Offset+ChunkSize >= m_CurrentMapSize)
+                if(Offset+ChunkSize &gt;= m_CurrentMapSize)
                 {
                     ChunkSize = m_CurrentMapSize-Offset;
                     m_aClients[ClientID].m_MapChunk = -1;
@@ -388,14 +388,14 @@
                     m_aClients[ClientID].m_MapChunk++;
 
                 CMsgPacker Msg(NETMSG_MAP_DATA, true);
-                Msg.AddRaw(&m_pCurrentMapData[Offset], ChunkSize);
-                SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+                Msg.AddRaw(&amp;m_pCurrentMapData[Offset], ChunkSize);
+                SendMsg(&amp;Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
 
-                if(Config()->m_Debug)
+                if(Config()-&gt;m_Debug)
                 {
                     char aBuf[64];
                     str_format(aBuf, sizeof(aBuf), "sending chunk %d with size %d", Chunk, ChunkSize);
-                    Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "server", aBuf);
+                    Console()-&gt;Print(IConsole::OUTPUT_LEVEL_DEBUG, "server", aBuf);
                 }
             }
         }
@@ -408,7 +408,7 @@
             </a>
             <pre class="code-snippet">
                 <code>
-    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_MAP_DATA)
+    else if((pPacket-&gt;m_Flags&amp;NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; Msg == NETMSG_MAP_DATA)
     {
         if(!m_MapdownloadFileTemp)
             return;
@@ -571,17 +571,17 @@
     void CServer::SendServerInfo(int ClientID)
     {
         CMsgPacker Msg(NETMSG_SERVERINFO, true);
-        GenerateServerInfo(&Msg, -1);
+        GenerateServerInfo(&amp;Msg, -1);
         if(ClientID == -1)
         {
-            for(int i = 0; i < MAX_CLIENTS; i++)
+            for(int i = 0; i &lt; MAX_CLIENTS; i++)
             {
                 if(m_aClients[i].m_State != CClient::STATE_EMPTY)
-                    SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, i);
+                    SendMsg(&amp;Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, i);
             }
         }
-        else if(ClientID >= 0 && ClientID < MAX_CLIENTS && m_aClients[ClientID].m_State != CClient::STATE_EMPTY)
-            SendMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
+        else if(ClientID &gt;= 0 && ClientID &lt; MAX_CLIENTS &amp;&amp; m_aClients[ClientID].m_State != CClient::STATE_EMPTY)
+            SendMsg(&amp;Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH, ClientID);
     }
                 </code>
             </pre>
@@ -648,18 +648,18 @@
                 <code>
     else if(Msg == NETMSG_READY)
     {
-        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && (m_aClients[ClientID].m_State == CClient::STATE_CONNECTING || m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC))
+        if((pPacket->m_Flags&amp;NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; (m_aClients[ClientID].m_State == CClient::STATE_CONNECTING || m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC))
         {
             char aAddrStr[NETADDR_MAXSTRSIZE];
             net_addr_str(m_NetServer.ClientAddr(ClientID), aAddrStr, sizeof(aAddrStr), true);
 
             char aBuf[256];
             str_format(aBuf, sizeof(aBuf), "player is ready. ClientID=%d addr=%s", ClientID, aAddrStr);
-            Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
+            Console()-&gt;Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
 
             bool ConnectAsSpec = m_aClients[ClientID].m_State == CClient::STATE_CONNECTING_AS_SPEC;
             m_aClients[ClientID].m_State = CClient::STATE_READY;
-            GameServer()->OnClientConnected(ClientID, ConnectAsSpec);
+            GameServer()-&gt;OnClientConnected(ClientID, ConnectAsSpec);
             <a href="https://github.com/teeworlds/teeworlds/blob/master/src/engine/server/server.cpp#L721-L725">SendConnectionReady(ClientID);</a>
         }
     }
@@ -681,10 +681,10 @@
         m_Layers.Init(Kernel());
         m_Collision.Init(Layers());
 
-        for(int i = 0; i < m_All.m_Num; i++)
+        for(int i = 0; i &lt; m_All.m_Num; i++)
         {
-            m_All.m_paComponents[i]->OnMapLoad();
-            m_All.m_paComponents[i]->OnReset();
+            m_All.m_paComponents[i]-&gt;OnMapLoad();
+            m_All.m_paComponents[i]-&gt;OnReset();
         }
 
         m_ServerMode = SERVERMODE_PURE;
@@ -699,16 +699,16 @@
     void CGameClient::SendStartInfo()
     {
         CNetMsg_Cl_StartInfo Msg;
-        Msg.m_pName = Config()->m_PlayerName;
-        Msg.m_pClan = Config()->m_PlayerClan;
-        Msg.m_Country = Config()->m_PlayerCountry;
-        for(int p = 0; p < NUM_SKINPARTS; p++)
+        Msg.m_pName = Config()-&gt;m_PlayerName;
+        Msg.m_pClan = Config()-&gt;m_PlayerClan;
+        Msg.m_Country = Config()-&gt;m_PlayerCountry;
+        for(int p = 0; p &lt; NUM_SKINPARTS; p++)
         {
             Msg.m_apSkinPartNames[p] = CSkins::ms_apSkinVariables[p];
             Msg.m_aUseCustomColors[p] = *CSkins::ms_apUCCVariables[p];
             Msg.m_aSkinPartColors[p] = *CSkins::ms_apColorVariables[p];
         }
-        Client()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
+        Client()->SendPackMsg(&amp;Msg, MSGFLAG_VITAL|MSGFLAG_FLUSH);
     }
                 </code>
             </pre>
