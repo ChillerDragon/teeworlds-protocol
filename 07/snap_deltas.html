@@ -91,8 +91,10 @@
                     </td>
                     <td>
                         A list of single integers that represent the <a href="snap_items.html#snap_item_key">key</a> of
-                        <a href="snap_items.html#snap_item">snap items</a> from the delta snapshot.
-
+                        <a href="snap_items.html#snap_item">snap items</a> from the delta snapshot (old snapshot). That should be removed
+                        from the snap. The removal is explicit while the keep is implicit.
+                        When the client unpacks a delta it should copy over all old items from the old snapshot to the new
+                        snapshot that were not removed or changed.
                     </td>
                 </tr>
                 <tr>
@@ -119,7 +121,7 @@
             One thing to note here is that even if tees move in the world it might still not create an updated
             <a href="snap_items.html#obj_character">character snap item</a>
             that is because of a concept called dead reckoning. It expects the client to compute the current tee position
-            based on the known map, old tee position/speed and physics. The server only sends character items when it has to
+            based on the known map, current gametick, old tee position/speed/gametick and physics. The server only sends character items when it has to
             because something changed that can not be predicted by the client.
 
             <h2 id="snapshot_deltatick"><a href="#snapshot_deltatick">Snapshot delta tick</a></h2>
@@ -132,7 +134,35 @@
             A bit of a trap is that the result of the subtraction
             <a href="system_messages.html#NETMSG_SNAP_game_tick">game tick</a> -
             <a href="system_messages.html#NETMSG_SNAP_delta_tick">delta_tick</a>
-            is also referred to as delta tick!
+            is also referred to as delta tick! So I will be calling the delta tick sent over
+            the network <strong>raw delta tick</strong> and the result of 
+            <a href="system_messages.html#NETMSG_SNAP_game_tick">game tick</a> -
+            <a href="system_messages.html#NETMSG_SNAP_delta_tick">delta_tick</a>
+            I will be calling <strong>real delta tick</strong>
+            <br>
+            <br>
+            If the <strong>real delta tick</strong> has the special value <code>-1</code>
+            it is a delta against the empty snapshot. One could also interpret as it not being a delta at all.
+            Because doing a delta against nothing does nothing. Meaning all snap item values are the real absolute
+            correct values.
+            <br>
+            <br>
+            This <strong>real delta tick</strong> of <code>-1</code> is used at the beginning of every new connection
+            because there is no previous snap to delta against. But it usually will be actually used more than once.
+            That is because the server only creates deltas against snapshots the client confirmed to have received.
+            This confirm happens in the
+            <a href="system_messages.html#NETMSG_INPUT_ack_game_tick">NETMSG_INPUT</a> message sent by the client.
+            It is the field <a href="system_messages.html#NETMSG_INPUT_ack_game_tick">ack game tick</a> to be precise.
+            Because the server is faster at sending snapshots than the client to respond with the input message.
+            The server will send multiple snaps with a real delta tick of -1 against the empty snap.
+            The client will then ack the most recent snapshot it received as soon as it gets to sending the input message.
+            After the server received that ack it will send the next snap as a delta to that acknowledged tick.
+            Meaning the <strong>real delta tick</strong> will match the <a href="system_messages.html#NETMSG_INPUT_ack_game_tick">ack game tick</a>
+            so the client is supposed to store the full snapshot and its tick to be able to perform the correct undiff of all items.
+            The result of the <strong>unpacked</strong> snapshot should again be stored by the client for furture delta unpacks.
+            Even if the server sends an <a href="system_messages.html#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a> that contains no snap payload at all.
+            The client is still supposed to note down its game tick and ack it in the input message. And technically also "store" its "payload"
+            which just means creating a exact copy of the last known snapshot with a new gametick.
     </div> <!-- content -->
     <footer>
         <hr>
