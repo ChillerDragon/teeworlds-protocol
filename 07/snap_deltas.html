@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Teeworlds Protocol</title>
+</head>
+<body>
+    <div class="header">
+        <div class="header-grid">
+            <a class="logo" href="../index.html">
+                <img src="../img/tee.svg" alt="tee">
+            </a>
+            <span class="version">
+                Teeworlds 0.7
+            </span>
+            <div class="links">
+                <a href="../index.html">home</a>
+                <a href="../07.html">overview</a>
+                <a href="fundamentals.html">fundamentals</a>
+                <a href="packet_layout.html">packet_layout</a>
+                <a href="traffic.html">traffic</a>
+                <a href="map_download.html">map_download</a>
+                <a href="snap_items.html">snap_items</a>
+                <a href="snap_deltas.html">snap_deltas</a>
+                <a href="system_messages.html">system_messages</a>
+                <a href="game_messages.html">game_messages</a>
+                <a href="ctrl_messages.html">ctrl_messages</a>
+            </div> <!-- links -->
+        </div> <!-- header-grid -->
+        <hr>
+    </div> <!-- header -->
+    <div class="content">
+        <h1>Snapshot deltas</h1>
+        <p>
+            The <a href="snap_items.html#snapshot_deltas">snap_items</a> page already explains a bit what deltas are.
+            But this page is a full deep dive into how exactly the deltas work.
+            <br>
+            <br>
+            The network messages
+            <a href="system_messages.html#NETMSG_SNAP">NETMSG_SNAP</a>,
+            <a href="system_messages.html#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a> and
+            <a href="system_messages.html#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a>
+            contain snapshots which represent the current game state.
+
+            <h2 id="snapshot_data_layout"><a href="#snapshot_data_layout">Snapshot data layout</a></h2>
+
+            The <a href="system_messages.html#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a> has no payload.
+            And <a href="system_messages.html#NETMSG_SNAP">NETMSG_SNAP</a> contains a partial snap.
+            And <a href="system_messages.html#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a> contains a full snap.
+            That full snap
+            <a href="system_messages.html#NETMSG_SNAPSINGLE_data">payload</a>
+            has the following format.
+
+            <table>
+                <tr>
+                    <th>Field name</th>
+                    <th>Size in integers</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td id="snap_payload_num_removed_items"><a href="#snap_payload_num_removed_items">Num removed items</a></td>
+                    <td>1</td>
+                    <td>
+                        It determines the amount of <a href="snap_items.html#snap_item_key">snap item keys</a>.
+                        in the <a href="#snap_payload_removed_items">removed items</a> section.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="snap_payload_num_updated_items"><a href="#snap_payload_num_updated_items">Num updated items</a></td>
+                    <td>1</td>
+                    <td>
+                        Also known as item deltas. It determines the amount of
+                        <a href="snap_items.html#snap_item">snap items</a>
+                        in the <a href="#snap_payload_updated_items">updated items</a> section.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="snap_payload_zero"><a href="#snap_payload_zero">Unused zero</a></td>
+                    <td>1</td>
+                    <td>
+                        The value of this field should be <code>0</code> at all times.
+                        It is unused.
+                    </td>
+                </tr>
+                <tr>
+                    <td id="snap_payload_removed_items"><a href="#snap_payload_removed_items">Removed items</a></td>
+                    <td>
+                        The size will be exactly <a href="#snap_payload_num_removed_items">num removed items</a>.
+                    </td>
+                    <td>
+                        A list of single integers that represent the <a href="snap_items.html#snap_item_key">key</a> of
+                        <a href="snap_items.html#snap_item">snap items</a> from the delta snapshot.
+
+                    </td>
+                </tr>
+                <tr>
+                    <td id="snap_payload_updated_items"><a href="#snap_payload_updated_items">Updated items</a></td>
+                    <td>
+                        The size is dynamic. It will depend on the <a href="#snap_payload_num_updated_items">amount</a> of snap items
+                        and their <a href="snap_items.html#known_size_items">sizes</a>
+                    </td>
+                    <td>
+                        A list of full <a href="snap_items.html#snap_item">snap items</a>. All their payload fields
+                        are a diff to the previous (delta) snapshot.
+                        The type id, id and size are sent as is. But the actual payload integers have to be undiffed
+                        by adding them to the payload of the delta snapshot to receive their real values.
+                    </td>
+                </tr>
+            </table>
+
+            All <a href="snap_items.html#snap_item">snap items</a> not <a href="#snap_payload_removed_items">removed</a>
+            or <a href="#snap_payload_updated_items">updated</a>. Should be copied by the client from the delta snapshot.
+            This way the server does not have to send any snap item over the network that did not change since the last delta.
+
+            <h2 id="dead_reckoning"><a href="#dead_reckoning">Dead reckoning</a></h2>
+
+            One thing to note here is that even if tees move in the world it might still not create an updated
+            <a href="snap_items.html#obj_character">character snap item</a>
+            that is because of a concept called dead reckoning. It expects the client to compute the current tee position
+            based on the known map, old tee position/speed and physics. The server only sends character items when it has to
+            because something changed that can not be predicted by the client.
+
+            <h2 id="snapshot_deltatick"><a href="#snapshot_deltatick">Snapshot delta tick</a></h2>
+
+            All three messages
+            <a href="system_messages.html#NETMSG_SNAP">NETMSG_SNAP</a>,
+            <a href="system_messages.html#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a> and
+            <a href="system_messages.html#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a>
+            send a game tick and a delta tick.
+            A bit of a trap is that the result of the subtraction
+            <a href="system_messages.html#NETMSG_SNAP_game_tick">game tick</a> -
+            <a href="system_messages.html#NETMSG_SNAP_delta_tick">delta_tick</a>
+            is also referred to as delta tick!
+    </div> <!-- content -->
+    <footer>
+        <hr>
+        <div class="footer">
+            <!-- Icon-link to source code on GitHub -->
+            <a class="github" href="https://github.com/ChillerDragon/teeworlds-protocol" target="_blank" rel="noopener" aria-label="Source code">
+                <!-- icon: https://materialdesignicons.com/icon/github -->
+                <svg viewBox="0 0 24 24" class="github">
+                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </a>
+            <span>
+                ChillerDragon - 2025
+            </span>
+        </div>
+    </footer>
+</body>
+</html>

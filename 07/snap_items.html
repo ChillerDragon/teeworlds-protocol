@@ -23,6 +23,7 @@
                 <a href="traffic.html">traffic</a>
                 <a href="map_download.html">map_download</a>
                 <a href="snap_items.html">snap_items</a>
+                <a href="snap_deltas.html">snap_deltas</a>
                 <a href="system_messages.html">system_messages</a>
                 <a href="game_messages.html">game_messages</a>
                 <a href="ctrl_messages.html">ctrl_messages</a>
@@ -85,6 +86,36 @@
                 </li>
             </ul>
             For details on the payload check the <a href="#known_size_items">parameters in the table below</a>.
+
+            <h2 id="snap_item_key"><a href="#snap_item_key">Snap item key</a></h2>
+
+            The term snap item key. Refers to a unique identifier of a snap item.
+            It is a mix of the type id and id. Neither type ids nor ids are unique in a snapshot.
+            But their combination SHOULD be unique.
+            Even if the client can still properly render things correctly when type id and id combinations
+            are reused it is technically wrong and also breaks the concept of snap item keys.
+            <br>
+            <br>
+            The item key can be generated based on type id and id like this:
+
+            <pre class="code-snippet">
+                <code>
+    (item.type_id &lt;&lt; 16) | (item.id &amp; 0xffff)
+                </code>
+            </pre>
+
+            The reference implementation actually does not calculate item keys.
+            But only ever stores the item key. And extracts type id and id from it if it is needed.
+            <br>
+            The item key is a 32 bit integer with the type id as the lower 16 bits and the id as the higher 16 bits.
+
+            <pre class="code-snippet">
+                <code>
+    +------------------+------------------+
+    | type_id (16 bit) | id (16 bit)      |
+    +------------------+------------------+
+                </code>
+            </pre>
 
             <h2 id="snap_item_size_edge_case"><a href="#snap_item_size_edge_case">Size list edge case</a></h2>
 
