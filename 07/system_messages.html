@@ -748,7 +748,8 @@
                     <td id="NETMSG_SNAP_game_tick"><a href="#NETMSG_SNAP_game_tick">Game tick</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
-                        TODO
+                        The tick at which this snapshot happens. Will be acknowledged by the client in the input message.
+                        Read more about ticks and delta ticks <a href="snap_deltas.html#snapshot_deltatick">here</a>
                     </td>
                 </tr>
                 <tr>
@@ -757,6 +758,7 @@
                     <td>
                             The base snapshot game tick which the delta was created from.
                             Will be -1 for the first snapshot signaling it is a delta based on the empty snapshot.
+                            Read more about delta ticks <a href="snap_deltas.html#snapshot_deltatick">here</a>
                     </td>
                 </tr>
                 <tr>
@@ -821,6 +823,10 @@
                         of this data field in the
                         <a href="snap_items.html">snap items</a>
                         section.
+                        <br>
+                        <br>
+                        A full overview about the entire snap payload (all data sections from part 0 till num parts combined) can be found
+                        <a href="snap_deltas.html#snapshot_data_layout">here</a>
                     </td>
                 </tr>
             </table>
@@ -957,6 +963,10 @@
                         of this data field in the
                         <a href="snap_items.html">snap items</a>
                         section.
+                        <br>
+                        <br>
+                        A full overview about the entire snap payload can be found
+                        <a href="snap_deltas.html#snapshot_data_layout">here</a>
                     </td>
                 </tr>
             </table>
