@@ -86,7 +86,7 @@
             Be warned that the client and server silently drop all packets with wrong
             sequence numbers set in the packet header.
             <br>
-            Quick debug tip if you suspect sequence number bugs in your implemenation.
+            Quick debug tip if you suspect sequence number bugs in your implementation.
             Comment out or add dbg_msgs in
             <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/shared/network_conn.cpp#L310-L320">
                 these lines.
@@ -145,7 +145,7 @@
         how many chunks are in the packet.
         <br>
         <br>
-        This is probably done for performance reasons to not waste bandwith on teeworlds/udp/ip headers
+        This is probably done for performance reasons to not waste bandwidth on teeworlds/udp/ip headers
         when non time critical messages are being sent that are followed by other messages anyways.
         So they are bundled up and sent together.
         <br>
@@ -218,7 +218,7 @@
             </code>
         </pre>
         Note that this time the flag <code>MSGFLAG_FLUSH</code> is used
-        which causes the whole queue (Motd, Settings) to be sent inclusing the newly
+        which causes the whole queue (Motd, Settings) to be sent including the newly
         added CON_READY. So basically we send 3 messages here but they just get
         queued and then sent together. But this is all happening in the same tick
         so it feels instant.
@@ -322,7 +322,7 @@
             <a href="https://github.com/edg-l/teeint">
                 teeint
             </a>
-            which soley focusses on int packing.
+            which solely focuses on int packing.
         </p>
         <hr>
         <h2 id="string_packing"><a href="#string_packing">String packing</a></h2>
@@ -331,7 +331,7 @@
             They do not contain a length. And have to be null terminated.
             <br>
             <br>
-            The receiver then can use diffent types of sanitizers when unpacking the string:
+            The receiver then can use different types of sanitizers when unpacking the string:
             <ul>
                 <li>
                     <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/packer.h#L39">
@@ -398,13 +398,13 @@
             can simply checkout any non teeworlds related huffman documentation. Like this <a href="https://www.youtube.com/watch?v=iiGZ947Tcck">youtube video</a>.
             Huffman compression depends on a weight tree. So if you reimplement huffman your self
             make sure it uses the same weight tree as the official teeworlds server and client.
-            The official teeworlds frequence table can be found
+            The official teeworlds frequency table can be found
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/shared/huffman.cpp#L7-L20">
                 here</a>.
             <br>
             But chances are you do not have to reimplement the huffman algorithm
             even if you want to build a server or client in a new programming language.
-            There are community implemenations for
+            There are community implementations for
             <a href="https://github.com/edg-l/TeeAI/blob/18ae5eac39e82a882e751c01df2f3b1896e6ba4c/engine/huffman.py">
                 python,
             </a>

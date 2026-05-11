@@ -135,7 +135,7 @@
             <a href="system_messages.html#NETMSG_SNAP_game_tick">game tick</a> -
             <a href="system_messages.html#NETMSG_SNAP_delta_tick">delta_tick</a>
             is also referred to as delta tick! So I will be calling the delta tick sent over
-            the network <strong>raw delta tick</strong> and the result of 
+            the network <strong>raw delta tick</strong> and the result of
             <a href="system_messages.html#NETMSG_SNAP_game_tick">game tick</a> -
             <a href="system_messages.html#NETMSG_SNAP_delta_tick">delta_tick</a>
             I will be calling <strong>real delta tick</strong>
@@ -159,7 +159,7 @@
             After the server received that ack it will send the next snap as a delta to that acknowledged tick.
             Meaning the <strong>real delta tick</strong> will match the <a href="system_messages.html#NETMSG_INPUT_ack_game_tick">ack game tick</a>
             so the client is supposed to store the full snapshot and its tick to be able to perform the correct undiff of all items.
-            The result of the <strong>unpacked</strong> snapshot should again be stored by the client for furture delta unpacks.
+            The result of the <strong>unpacked</strong> snapshot should again be stored by the client for future delta unpacks.
             Even if the server sends an <a href="system_messages.html#NETMSG_SNAPEMPTY">NETMSG_SNAPEMPTY</a> that contains no snap payload at all.
             The client is still supposed to note down its game tick and ack it in the input message. And technically also "store" its "payload"
             which just means creating a exact copy of the last known snapshot with a new gametick.

@@ -263,7 +263,7 @@
                         the server is informing the client here how big that data field is.
                         It is sending <code>MAP_CHUNK_SIZE</code> which is defined as
                         <code>MAP_CHUNK_SIZE=NET_MAX_PAYLOAD-NET_MAX_CHUNKHEADERSIZE-4</code>
-                        which evalutes to <code>1384</code>.
+                        which evaluates to <code>1384</code>.
                         So on a unmodified vanilla server this will always be the fixed value
                         <code>1384</code> but custom servers could change it and the client
                         should technically support that.
@@ -690,7 +690,7 @@
 
         m_ServerMode = SERVERMODE_PURE;
 
-        // send the inital info
+        // send the initial info
         SendStartInfo();
     }
                 </code>
@@ -767,11 +767,11 @@
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
                         Indicates the total amount of parts for this snapshot. The current part is set in the <a href="#NETMSG_SNAP_part">Part</a> field.
-                        The client is supposed to collect the payload and concatinate it locally and only if the last part is received it should parse the snapshot.
+                        The client is supposed to collect the payload and concatenate it locally and only if the last part is received it should parse the snapshot.
                         Where last part is defined as <code><a href="#NETMSG_SNAP_part">Part</a> == <a href="#NETMSG_SNAP_num_parts">Num Parts</a> - 1</code>.
                         <br>
                         <br>
-                        So if <a href="#NETMSG_SNAP_num_parts">Num Parts</a> is set to 2 the first 
+                        So if <a href="#NETMSG_SNAP_num_parts">Num Parts</a> is set to 2 the first
                         <a href="#NETMSG_SNAP_part">Part</a> will be <code>0</code> and the second (last) will be <code>1</code>.
                     </td>
                 </tr>
@@ -1440,7 +1440,7 @@
             </pre>
         </p>
         <hr>
-        <h2 id="NETMSG_AUTH_CHALLANGE"><a href="#NETMSG_AUTH_CHALLANGE">NETMSG_AUTH_CHALLANGE</a></h2>
+        <h2 id="NETMSG_AUTH_CHALLENGE"><a href="#NETMSG_AUTH_CHALLENGE">NETMSG_AUTH_CHALLENGE</a></h2>
         <p>
             <table>
                 <tr>
@@ -1832,7 +1832,7 @@
             Contains the input data from the client (hook/walk/fire/meta data and more).
             <h3 id="NETMSG_INPUT_when_is_sent"><a href="#NETMSG_INPUT_when_is_sent">When is NETMSG_INPUT sent</a></h3>
             The server assumes the input is held if no input message updates the state.
-            So the official client also keeps the network bandwith minimal and does not
+            So the official client also keeps the network bandwidth minimal and does not
             resend this message if a key is held.
             <br>
             But if the client is active and in game it sends inputs at least in 10hz intervals
@@ -1894,7 +1894,7 @@
             <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L924-L951">
                 CServer::ProcessClientPacket(CNetChunk *pPacket)
             </a>
-            and replys with <a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a>
+            and replies with <a href="#NETMSG_INPUTTIMING">NETMSG_INPUTTIMING</a>
             <pre class="code-snippet">
                 <code>
     else if(Msg == NETMSG_INPUT)
@@ -2204,7 +2204,7 @@
                     <th><strong>Message ID:</strong></th><td>26</td>
                 </tr>
                 <tr>
-                    <th><strong>Response to:</strong></th><td>Triggerd client side by the <code>ping</code> console command</td>
+                    <th><strong>Response to:</strong></th><td>Triggered client side by the <code>ping</code> console command</td>
                 </tr>
                 <tr>
                     <th><strong>Expected response:</strong></th><td><a href="#NETMSG_PING_REPLY">NETMSG_PING_REPLY</a></td>
@@ -2255,7 +2255,7 @@
                     <td colspan="3">None</td>
                 </tr>
             </table>
-            Even though the client technically replys to <a href="#NETMSG_PING">NETMSG_PING</a>
+            Even though the client technically replies to <a href="#NETMSG_PING">NETMSG_PING</a>
             with this message it practically never does since the server never sends <a href="#NETMSG_PING">NETMSG_PING</a>.
         </p>
         <hr>
@@ -2329,7 +2329,7 @@
             Similar to the rcon command autocompletion in the clients remote console (<a href="#NETMSG_RCON_CMD_ADD">NETMSG_RCON_CMD_ADD</a>).
             This sends autocompletion for the argument of the rcon commands <code>sv_map</code> and <code>change_map</code>.
             The server sends every map entry from its map folder to the clients that authenticated in the rcon console.
-            Admininistrators and moderators can then type <code>sv_map</code> into the remote console
+            Administrators and moderators can then type <code>sv_map</code> into the remote console
             and see/autocomplete the list of possible maps.
         </p>
         <hr>

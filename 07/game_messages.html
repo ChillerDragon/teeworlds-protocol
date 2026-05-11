@@ -220,7 +220,7 @@
                     <td>
                         Recipient client id of the chat message.
                         If there is no specific target (no whisper message) it is set to <code>-1</code> which stands for ALL.
-                        And set to the target if it is a whipser message.
+                        And set to the target if it is a whisper message.
                     </td>
                 </tr>
                 <tr>
@@ -1939,7 +1939,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
                     </td>
                     <td><a href="fundamentals.html#int_packing">Int (bool)</a></td>
                     <td>
-                        A int field used as a boolean. Indicating wether the client
+                        A int field used as a boolean. Indicating whether the client
                         should show a client enter message in the chat or not.
                         <br>
                         Possible values are:
@@ -3145,7 +3145,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
             <a href="#NETMSGTYPE_SV_GAMEMSG">NETMSGTYPE_SV_GAMEMSG</a> (GAMEMSG_SPEC_INVALIDID).
             <br>
             <br>
-            Sent by the client if the spectate next or spectate previous bind is triggerd.
+            Sent by the client if the spectate next or spectate previous bind is triggered.
             Or if the client user picks a player in the specate menu. Or selects free view in the spectate menu.
             Or if the user "clicks" on a player in free view.
             <br>
@@ -3463,7 +3463,7 @@ void CInfoMessages::OnMessage(int MsgType, void *pRawMsg)
 
         m_ServerMode = SERVERMODE_PURE;
 
-        // send the inital info
+        // send the initial info
         SendStartInfo();
     }
                 </code>
