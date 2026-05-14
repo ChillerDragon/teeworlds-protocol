@@ -41,7 +41,7 @@
             you can establish a basic healthy connection.
             <br>
             <br>
-            In this example traffic we look at a client joing a server. The client already knows the map.
+            In this example traffic we look at a client joining a server. The client already knows the map.
             So no map download packets will be sent (download process is documented <a href="map_download.html">here</a> instead).
             The server sends all its basic info such as gametype, map name and similar.
             Then after the client is connected it sends 1 input packet. In the end we cleanly close the connection with a disconnect packet.
@@ -50,7 +50,7 @@
             All packets are prefixed with a <code>[SOURCE->DESTINATION]</code> indicating who is sending the packet to who.
             The packets are listed in the order they are supposed to be send when a client connects to a server.
             <br><br>
-            The packet content is displayed as space seperated hexadecimal encoded bytes.
+            The packet content is displayed as space separated hexadecimal encoded bytes.
             <br>
             So <code class="code-inline">01</code> means that the bits <code class="code-inline">00000001</code> are sent via the network.
             <br>

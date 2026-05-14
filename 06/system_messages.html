@@ -109,7 +109,7 @@
                 </code>
             </pre>
 
-            The server respons to it in
+            The server responds to it in
             <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/server/server.cpp#L804-L846">
                 CServer::ProcessClientPacket()
             </a>
@@ -363,11 +363,11 @@
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
                     <td>
                         Indicates the total amount of parts for this snapshot. The current part is set in the <a href="#NETMSG_SNAP_part">Part</a> field.
-                        The client is supposed to collect the payload and concatinate it locally and only if the last part is received it should parse the snapshot.
+                        The client is supposed to collect the payload and concatenate it locally and only if the last part is received it should parse the snapshot.
                         Where last part is defined as <code><a href="#NETMSG_SNAP_part">Part</a> == <a href="#NETMSG_SNAP_num_parts">Num Parts</a> - 1</code>.
                         <br>
                         <br>
-                        So if <a href="#NETMSG_SNAP_num_parts">Num Parts</a> is set to 2 the first 
+                        So if <a href="#NETMSG_SNAP_num_parts">Num Parts</a> is set to 2 the first
                         <a href="#NETMSG_SNAP_part">Part</a> will be <code>0</code> and the second (last) will be <code>1</code>.
                     </td>
                 </tr>
@@ -843,7 +843,7 @@
             </pre>
         </p>
         <hr>
-        <h2 id="NETMSG_AUTH_CHALLANGE"><a href="#NETMSG_AUTH_CHALLANGE">NETMSG_AUTH_CHALLANGE</a></h2>
+        <h2 id="NETMSG_AUTH_CHALLENGE"><a href="#NETMSG_AUTH_CHALLENGE">NETMSG_AUTH_CHALLENGE</a></h2>
         <p>
             <table>
                 <tr><th>Sender:</th><td>Unused</td></tr>
@@ -1295,7 +1295,7 @@
         int Size = Unpacker.GetInt();
         const unsigned char *pData = Unpacker.GetRaw(Size);
 
-        // check fior errors
+        // check for errors
         if(Unpacker.Error() || Size <= 0 || MapCRC != m_MapdownloadCrc || Chunk != m_MapdownloadChunk || !m_MapdownloadFile)
             return;
 
