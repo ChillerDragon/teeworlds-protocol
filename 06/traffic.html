@@ -31,18 +31,55 @@
         <hr>
     </div> <!-- header -->
     <div class="content">
-        <h1>Teeworlds 0.6 sample traffic</h1>
-        In theory all 0.X releases are compatible. But for 0.6 there
-        are 3 slightly different implementations for security tokens which have to be considered.
-        There are the teeworlds 0.6.4 and older 0.6.x releases that have no security token at all.
-        Then there is the fork of teeworlds called ddnet which is based on that teeworlds version
-        which added
-        <ul>
+            <h1>Teeworlds 0.6 sample traffic</h1>
+            In theory all 0.X releases are compatible. But for 0.6 there
+            are 3 slightly different implementations for security tokens which have to be considered.
+            There are the teeworlds 0.6.4 and older 0.6.x releases that have no security token at all.
+            Then there is the fork of teeworlds called ddnet which is based on that teeworlds version
+            which added
+            <ul>
                 <li>official teeworlds 0.6.4 and older has no security tokens at all</li>
                 <li>official teeworlds 0.6.5 introduced security tokens in the packet header in a backwards compatible way using a token flag</li>
                 <li>community fork ddnet based on older teeworlds 0.6 introduced own security tokens at the very end of the packet after the payload</li>
-        </ul>
-        <h1>Teeworlds 0.6.5 sample traffic</h1>
+            </ul>
+            <h1>Teeworlds 0.6.5 sample traffic</h1>
+            <h2 id="cl_srv_token"><a href="#cl_srv_token">[CLIENT->SERVER] Hello server this is my token</a></h2>
+            <pre class="code-snippet">
+                <code>
+         10 00 00 01 00 00 00 00 <span class="token">4a 44 82 61</span> 00 00 00 00 00 00 .. (followed by 498 more null bytes)
+         ^        ^  ^           ^
+         |        |  |           the client's 4 byte security token
+         |        |  |           inside of the payload
+         |        |  |           the payload is not parsed by 0.6.4 servers anyways
+         |        |  |           only the length is checked to protect against reflection attacks
+         |        |  |
+         |        |  payload start
+         |        |  the payload is 512 null bytes
+         |        |
+         |     control message id 1 (<a href="ctrl_messages.html#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a>)
+         |
+         |
+         flags (CONTROL)
+         the token flag is NOT set yet, because the server might be 0.6.4 the client does not know it yet
+                </code>
+            </pre>
+            <h2 id="srv_cl_token"><a href="#srv_cl_token">[SERVER->CLIENT] Hello client this my token</a></h2>
+            <pre class="code-snippet">
+                <code>
+         18 00 00 <span class="token">4a 44 82 61</span> 02 <span class="token">07 ec ab 6c</span>
+         ^        ^           ^  ^
+         |        |           |  |
+         |     client token   | server token
+         |                    |
+         |     control message id 2 (<a href="ctrl_messages.html#NET_CTRLMSG_CONNECTACCEPT">NET_CTRLMSG_CONNECTACCEPT</a>)
+         |
+        flags CONTROL and TOKEN
+        the server knows the client supports tokens
+        because the client already sent a token in the previous message
+        so the server sets the token flag and places the client token
+        in the packet header
+                </code>
+            </pre>
     </div> <!-- content -->
     <footer>
         <hr>
