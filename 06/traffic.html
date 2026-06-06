@@ -32,9 +32,17 @@
     </div> <!-- header -->
     <div class="content">
         <h1>Teeworlds 0.6 sample traffic</h1>
-        <p>
-            coming soon...
-        </p>
+        In theory all 0.X releases are compatible. But for 0.6 there
+        are 3 slightly different implementations for security tokens which have to be considered.
+        There are the teeworlds 0.6.4 and older 0.6.x releases that have no security token at all.
+        Then there is the fork of teeworlds called ddnet which is based on that teeworlds version
+        which added
+        <ul>
+                <li>official teeworlds 0.6.4 and older has no security tokens at all</li>
+                <li>official teeworlds 0.6.5 introduced security tokens in the packet header in a backwards compatible way using a token flag</li>
+                <li>community fork ddnet based on older teeworlds 0.6 introduced own security tokens at the very end of the packet after the payload</li>
+        </ul>
+        <h1>Teeworlds 0.6.5 sample traffic</h1>
     </div> <!-- content -->
     <footer>
         <hr>
