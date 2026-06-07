@@ -228,7 +228,7 @@ resend flag unset
         <h2 id="srv_cl_mapinfo"><a href="#srv_cl_mapinfo">[SERVER->CLIENT] Map info</a></h2>
         <p>
             Now the server is informing the client about the map. This is NOT the mapfile it self. Just its metadata.
-            To see what exactly is being sent checkout the code of <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">CServer::SendMap</a>
+            To see what exactly is being sent checkout the code of <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/server/server.cpp#L709-L719">CServer::SendMap()</a>
             it boils down to this:
 
             <pre class="code-snippet">

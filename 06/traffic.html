@@ -125,6 +125,45 @@
      null terminating byte from the version hash string
                 </code>
             </pre>
+            <h2 id="srv_cl_mapinfo"><a href="#srv_cl_mapinfo">[SERVER->CLIENT] Map info</a></h2>
+            Now the server is informing the client about the map. This is NOT the mapfile it self. Just its metadata.
+            To see what exactly is being sent checkout the code of <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/server/server.cpp#L733-L740">CServer::SendMap()</a>
+            it boils down to this:
+
+            <pre class="code-snippet">
+                <code>
+                    String GetMapName()
+                    Int    m_CurrentMapCrc
+                    Int    m_CurrentMapSize
+                </code>
+            </pre>
+
+            In the ASCII representation of the packet you can spot the mapname.
+            <br>
+            In this case the map is called <code class="orange">bridge</code>.
+
+            <pre class="code-snippet">
+                <code>
+  [PACKET HEADER]
+  08 01 01 <span class="token">07 ec ab 6c</span>
+  ^  ^  ^  ^
+  |  |  |  client token
+  |  |  |
+  |  | num chunks 1
+  |  | this packet contains one chunk/message in the payload
+  |  |
+  | Acknowledged sequence number 1
+  | this is the server confirming that it
+  | successfully received the first vital message from the client
+  | which was the net info and password
+  |
+ flags (TOKEN)
+
+  [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+  40 0f 01 05 62 72 69 64 67 65 00           @...<span class="orange">bridge.</span>
+  af cc 90 fb 0f a7 15                       .......
+                </code>
+            </pre>
     </div> <!-- content -->
     <footer>
         <hr>
