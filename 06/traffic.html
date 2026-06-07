@@ -164,6 +164,28 @@
   af cc 90 fb 0f a7 15                       .......
                 </code>
             </pre>
+            <h2 id="cl_srv_ready"><a href="#cl_srv_ready">[CLIENT->SERVER] Ready</a></h2>
+            If the client already has the map or finished the download process it will respond with the ready packet.
+            For more info on how the traffic would look like if the client did not know the map see
+            the <a href="map_download.html">map_download</a> section.
+            <br>
+            <br>
+            If the server gets this packet it will print the following log line.
+            <br>
+            <code>
+                [6a25182c][server]: player is ready. ClientID=2 addr=[0:0:0:0:0:0:0:1]:57620
+            </code>
+            <pre class="code-snippet">
+                <code>
+  08 01 01 <span class="token">07 ec ab 6c</span> 40 01 02 1d
+  ^  ^  ^  ^           ^        ^
+  |  |  |  |       chunk header |
+  |  |  | server token          |
+  |  | num chunks 1          NETMSG_READY with system bit
+  |  ack 1
+  flags (TOKEN)
+                </code>
+            </pre>
     </div> <!-- content -->
     <footer>
         <hr>
