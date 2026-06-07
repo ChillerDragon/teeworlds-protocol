@@ -46,38 +46,40 @@
             <h2 id="cl_srv_token"><a href="#cl_srv_token">[CLIENT->SERVER] Hello server this is my token</a></h2>
             <pre class="code-snippet">
                 <code>
-         10 00 00 01 00 00 00 00 <span class="token">4a 44 82 61</span> 00 00 00 00 00 00 .. (followed by 498 more null bytes)
-         ^        ^  ^           ^
-         |        |  |           the client's 4 byte security token
-         |        |  |           inside of the payload
-         |        |  |           the payload is not parsed by 0.6.4 servers anyways
-         |        |  |           only the length is checked to protect against reflection attacks
-         |        |  |
-         |        |  payload start
-         |        |  the payload is 512 null bytes
-         |        |
-         |     control message id 1 (<a href="ctrl_messages.html#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a>)
-         |
-         |
-         flags (CONTROL)
-         the token flag is NOT set yet, because the server might be 0.6.4 the client does not know it yet
+   10 00 00 01 00 00 00 00 <span class="token">4a 44 82 61</span> 00 00 00 .. (501 more null bytes)
+   ^        ^  ^           ^
+   |        |  |           the client's 4 byte security token
+   |        |  |           inside of the payload
+   |        |  |           the payload is not parsed by 0.6.4
+   |        |  |           servers anyways only the length is checked
+   |        |  |           to protect against reflection attacks
+   |        |  |
+   |        |  connect message payload start
+   |        |  the payload is 512 null bytes
+   |        |
+   |     control message id 1 (<a href="ctrl_messages.html#NET_CTRLMSG_CONNECT">NET_CTRLMSG_CONNECT</a>)
+   |
+   |
+   flags (CONTROL)
+   the token flag is NOT set yet, because the server
+   might be 0.6.4 the client does not know it yet
                 </code>
             </pre>
             <h2 id="srv_cl_token"><a href="#srv_cl_token">[SERVER->CLIENT] Hello client this my token</a></h2>
             <pre class="code-snippet">
                 <code>
-         18 00 00 <span class="token">4a 44 82 61</span> 02 <span class="token">07 ec ab 6c</span>
-         ^        ^           ^  ^
-         |        |           |  |
-         |     client token   | server token
-         |                    |
-         |     control message id 2 (<a href="ctrl_messages.html#NET_CTRLMSG_CONNECTACCEPT">NET_CTRLMSG_CONNECTACCEPT</a>)
-         |
-        flags CONTROL and TOKEN
-        the server knows the client supports tokens
-        because the client already sent a token in the previous message
-        so the server sets the token flag and places the client token
-        in the packet header
+   18 00 00 <span class="token">4a 44 82 61</span> 02 <span class="token">07 ec ab 6c</span>
+   ^        ^           ^  ^
+   |        |           |  |
+   |     client token   | server token
+   |                    |
+   |     control message id 2 (<a href="ctrl_messages.html#NET_CTRLMSG_CONNECTACCEPT">NET_CTRLMSG_CONNECTACCEPT</a>)
+   |
+  flags (CONTROL &amp; TOKEN)
+  the server knows the client supports tokens
+  because the client already sent a token in the previous message
+  so the server sets the token flag and places the client token
+  in the packet header
                 </code>
             </pre>
             <h2 id="cl_srv_info"><a href="#cl_srv_info">[CLIENT->SERVER] Version and password</a></h2>
@@ -102,13 +104,25 @@
             You can quickly identify this packet when running <code class="code-inline">tcpdump</code> with the <code class="code-inline">-X</code>flag.
             <pre class="code-snippet">
                 <code>
- [PACKET HEADER]
- 08 00 01 07 ec ab 6c                 ......l
+  [PACKET HEADER]
+  08 00 01 <span class="token">07 ec ab 6c</span>
+  ^     ^  ^
+  |     |  server token
+  |     |
+  |     <a href="packet_layout.html#packet_header_num_chunks">num chunks 1</a>
+  |     this is the first regular (non control) packet
+  |     and it has one chunk/message as payload
+  |
+  flags (TOKEN)
 
- [PACKET PAYLOAD HEX]                 [PACKET PAYLOAD ASCII]
- 41 07 01 03 30 2e 36 20 36 32 36     A...0.6 626
- 66 63 65 39 61 37 37 38 64 66 34     fce9a778df4
- 64 34 00 00                          d4..
+  [PACKET PAYLOAD HEX]                 [PACKET PAYLOAD ASCII]
+  41 07 01 03 30 2e 36 20 36 32 36     A...<a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/version.h#L7">0.6</a> <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/scripts/cmd5.py#L34">626</a>
+  66 63 65 39 61 37 37 38 64 66 34     <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/scripts/cmd5.py#L34">fce9a778df4</a>
+  64 34 00 00                          <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/scripts/cmd5.py#L34">d4.</a>.
+        ^  ^
+        |  empty password sent just as a single null byte
+        |
+     null terminating byte from the version hash string
                 </code>
             </pre>
     </div> <!-- content -->

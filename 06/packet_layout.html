@@ -84,7 +84,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Flags</td>
+                    <td id="packet_header_flags"><a href="#packet_header_flags">Flags</a></td>
                     <td>
                         5 bits in the following order
                         <ul>
@@ -100,20 +100,20 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Acknowledged sequence number</td>
+                    <td id="packet_header_sequence"><a href="#packet_header_sequence">Acknowledged sequence number</a></td>
                     <td>
                         Telling the receiver how many vital messages (chunks) were successfully received.
                     </td>
                 </tr>
                 <tr>
-                    <td>Number of chunks</td>
+                    <td id="packet_header_num_chunks"><a href="#packet_header_num_chunks">Number of chunks</a></td>
                     <td>
                         Number of game and system message chunks.
                         If it is a control packet this value is 0 at all times.
                     </td>
                 </tr>
                 <tr>
-                    <td>Security token</td>
+                    <td id="packet_header_token"><a href="#packet_header_token">Security token</a></td>
                     <td>
                         4 byte random <a href="fundamentals.html#tokens">security token</a> to avoid spoofing.
                     </td>
