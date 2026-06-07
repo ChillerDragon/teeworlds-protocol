@@ -72,6 +72,8 @@
    ^        ^           ^  ^
    |        |           |  |
    |     client token   | server token
+   |                    | it will from now on used by both parties
+   |                    | as the shared security token
    |                    |
    |     control message id 2 (<a href="ctrl_messages.html#NET_CTRLMSG_CONNECTACCEPT">NET_CTRLMSG_CONNECTACCEPT</a>)
    |
@@ -107,7 +109,7 @@
   [PACKET HEADER]
   08 00 01 <span class="token">07 ec ab 6c</span>
   ^     ^  ^
-  |     |  server token
+  |     |  token
   |     |
   |     <a href="packet_layout.html#packet_header_num_chunks">num chunks 1</a>
   |     this is the first regular (non control) packet
@@ -147,7 +149,7 @@
   [PACKET HEADER]
   08 01 01 <span class="token">07 ec ab 6c</span>
   ^  ^  ^  ^
-  |  |  |  client token
+  |  |  |  token
   |  |  |
   |  | num chunks 1
   |  | this packet contains one chunk/message in the payload
@@ -180,7 +182,7 @@
   08 01 01 <span class="token">07 ec ab 6c</span> 40 01 02 1d
   ^  ^  ^  ^           ^        ^
   |  |  |  |       chunk header |
-  |  |  | server token          |
+  |  |  | token                 |
   |  | num chunks 1          NETMSG_READY with system bit
   |  ack 1
   flags (TOKEN)
@@ -198,8 +200,8 @@
                 <code>
   08 02 02 <span class="token">07 ec ab 6c</span> 40 02 02 02 00 40 01 03 09
   ^  ^  ^  ^           ^        ^  ^  ^        ^
-  |  |  | client       |        |  |  |      msg id 4 <a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a>
-  |  |  | token        |        |  |  |      together in one byte with the game/system bit flag
+  |  |  | token        |        |  |  |      msg id 4 <a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a>
+  |  |  |              |        |  |  |      together in one byte with the game/system bit flag
   |  |  |              |        |  |  |      which is set so this a system message
   |  | num chunks 2    |        |  |  |
   |  |                 |        |  |  start of the second message
