@@ -245,20 +245,20 @@
     void CGameContext::SendMotd(int ClientID)
     {
         CNetMsg_Sv_Motd Msg;
-        Msg.m_pMessage = Config()->m_SvMotd;
-        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+        Msg.m_pMessage = Config()-&gt;m_SvMotd;
+        Server()-&gt;SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
     }
 
     void CGameContext::SendSettings(int ClientID)
     {
         CNetMsg_Sv_ServerSettings Msg;
-        Msg.m_KickVote = Config()->m_SvVoteKick;
-        Msg.m_KickMin = Config()->m_SvVoteKickMin;
-        Msg.m_SpecVote = Config()->m_SvVoteSpectate;
+        Msg.m_KickVote = Config()-&gt;m_SvVoteKick;
+        Msg.m_KickMin = Config()-&gt;m_SvVoteKickMin;
+        Msg.m_SpecVote = Config()-&gt;m_SvVoteSpectate;
         Msg.m_TeamLock = m_LockTeams != 0;
-        Msg.m_TeamBalance = Config()->m_SvTeambalanceTime != 0;
-        Msg.m_PlayerSlots = Config()->m_SvPlayerSlots;
-        Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+        Msg.m_TeamBalance = Config()-&gt;m_SvTeambalanceTime != 0;
+        Msg.m_PlayerSlots = Config()-&gt;m_SvPlayerSlots;
+        Server()-&gt;SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
     }
             </code>
         </pre>
@@ -306,6 +306,9 @@
     +-------------------------+---------------+------+---------------+-----------------+---------------+-----------+
             </code>
         </pre>
+        The MSGFLAG_VITAL does affect the chunk header that is being sent over the network.
+        The MSGFLAG_FLUSH is internal only. When looking just at the network traffic one can only guess
+        if the flush was used or not.
         <hr>
         <h2 id="int_packing"><a href="#int_packing">Int packing</a></h2>
         <p>
