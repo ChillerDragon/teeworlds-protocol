@@ -397,7 +397,7 @@ resend flag unset
         <h2 id="cl_srv_entergame"><a href="#cl_srv_entergame">[CLIENT->SERVER] Enter game</a></h2>
         <p>
             Now the client sends <code>NETMSG_ENTERGAME (19)</code> using <a href="https://github.com/teeworlds/teeworlds/blob/26d24ec061d44e6084b2d77a9b8a0a48e354eba6/src/engine/client/client.cpp#L356-L360">CClient::SendEnterGame()</a>
-            Keep in mind those net messages are packed and mixed with the system flag. So hex <code>0x27</code>
+            Keep in mind those net message ids are packed and mixed with the system flag. So hex <code>0x27</code>
             will be unpacked to the integer <code>19</code>.
             <br>
             <br>

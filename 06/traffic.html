@@ -270,7 +270,31 @@
   40 01 06 10
                 </code>
             </pre>
-        <hr>
+            <h2 id="cl_srv_entergame"><a href="#cl_srv_entergame">[CLIENT->SERVER] Enter game</a></h2>
+            Now the client sends <code>NETMSG_ENTERGAME (15)</code> using <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/client/client.cpp#L360-L364">CClient::SendEnterGame()</a>
+            Keep in mind those net message ids are packed and mixed with the system flag. So hex <code>0x1f</code>
+            will be unpacked to the integer <code>15</code>.
+            <br>
+            <br>
+            If the server gets this packet it will print the following log line.
+            <br>
+            <code>
+                [6a25182c][server]: player has entered the game. ClientID=2 addr=[0:0:0:0:0:0:0:1]:57620
+            </code>
+            <br>
+            <br>
+            <pre class="code-snippet">
+                <code>
+  08 06 01 <span class="token">07 ec ab 6c</span> 40 01 04 1f
+  ^  ^  ^  ^           ^        ^
+  |  |  | token     chunk header|
+  |  |num chunks 1              |
+  |ack 6                        |
+  |                         message id 15
+ flags (CONTROL)            together with the game/system bit
+                            (0x1f &gt;&gt; 1 == 15)
+                </code>
+            </pre>
     </div> <!-- content -->
     <footer>
         <hr>
