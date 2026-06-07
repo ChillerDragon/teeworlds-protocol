@@ -215,6 +215,31 @@
                                 which is unset so it is a game message
                 </code>
             </pre>
+            <h2 id="cl_srv_startinfo"><a href="#cl_srv_startinfo">[CLIENT->SERVER] Start info (skin data)</a></h2>
+            <p>
+                Now the client calls <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/client/gameclient.cpp#L1067-L1080">CGameClient::SendInfo()</a>
+                which sends all the needed infos to render a tee in the world: Name, Clan, Country, Skin name.
+                <br>
+                <br>
+                You can see in the ASCII output that this client is connecting with the name <span class="orange">0.6 dragon</span>
+                and with an empty clantag. You can also identify the skin name <span class="orange">greensward</span>.
+            </p>
+            <pre class="code-snippet">
+                <code>
+  [PACKET HEADER]
+  08 03 01 <span class="token">07 ec ab 6c</span>
+  ^  ^  ^  ^
+  |  |  | token
+  |  | num chunks 1
+  | ack 3
+  flags (CONTROL)
+
+  [PACKET PAYLOAD HEX]                       [PACKET PAYLOAD ASCII]
+  42 00 03 28 30 2e 36 20 64 72 61 67        B..(<span class="orange">0.6 drag</span>
+  6f 6e 00 00 40 67 72 65 65 6e 73 77        <span class="orange">on</span>..@<span class="orange">greensw</span>
+  61 72 64 00 00 80 fe 07 80 fe 07           <span class="orange">ard</span>........
+                </code>
+            </pre>
     </div> <!-- content -->
     <footer>
         <hr>
