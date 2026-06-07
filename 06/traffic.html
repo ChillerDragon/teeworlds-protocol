@@ -80,6 +80,37 @@
         in the packet header
                 </code>
             </pre>
+            <h2 id="cl_srv_info"><a href="#cl_srv_info">[CLIENT->SERVER] Version and password</a></h2>
+            Now the client will inform the server about its version.
+            This packet is defined in
+            <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/engine/client/client.cpp#L351-L357">CClient::SendInfo()</a>
+            and contains the password, the network hash and the supported protocol version.
+            The vanilla client always sends the password that was entered last by the user.
+            No matter which server it is connecting to also if the server does not expect a password.
+            This is nice since it minimizes user input even if the ip changes or multiple servers have the same password.
+            But it is leaking the password you entered last to every server you connect to.
+            That is why the <a href="https://ddnet.org/">ddnet</a> client decided to only send the password after user confirmation.
+            <br>
+            <br>
+            If the server receives this packet it will log the following line.
+            <br>
+            <code>
+                [2022-10-25 14:22:25][connection]: connecting online
+            </code>
+            <br><br>
+            Since the packet payload now contains uncompressed printable ASCII characters those are included below.
+            You can quickly identify this packet when running <code class="code-inline">tcpdump</code> with the <code class="code-inline">-X</code>flag.
+            <pre class="code-snippet">
+                <code>
+ [PACKET HEADER]
+ 08 00 01 07 ec ab 6c                 ......l
+
+ [PACKET PAYLOAD HEX]                 [PACKET PAYLOAD ASCII]
+ 41 07 01 03 30 2e 36 20 36 32 36     A...0.6 626
+ 66 63 65 39 61 37 37 38 64 66 34     fce9a778df4
+ 64 34 00 00                          d4..
+                </code>
+            </pre>
     </div> <!-- content -->
     <footer>
         <hr>
