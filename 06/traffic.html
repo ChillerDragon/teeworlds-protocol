@@ -240,6 +240,37 @@
   61 72 64 00 00 80 fe 07 80 fe 07           <span class="orange">ard</span>........
                 </code>
             </pre>
+            <h2 id="srv_cl_vote_tune_rdy"><a href="#srv_cl_vote_tune_rdy">[SERVER->CLIENT] Vote Clear, Tune Params, Ready To Enter</a></h2>
+            Now the server sends another bigger packet with 3 messages as payload.
+            With "ready to enter" being the most essential to progress the connection.
+            <ul>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_VOTECLEAROPTIONS">NETMSGTYPE_SV_VOTECLEAROPTIONS</a> - tell the client to reset the vote menu</li>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_TUNEPARAMS">NETMSGTYPE_SV_TUNEPARAMS</a> - sends the current servers gameplay affecting tunes</li>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_READYTOENTER">NETMSGTYPE_SV_READYTOENTER</a> - telling the client he can join the game (spawn a tee)</li>
+            </ul>
+            No readable ascii strings this time so below we only look at the raw hex data.
+            <pre class="code-snippet">
+                <code>
+  [PACKET HEADER]
+  08 03 03 <span class="token">07 ec ab 6c</span>
+  ^  ^  ^  ^
+  |  |  | token
+  |  | num chunks 1
+  | ack 3
+  |
+  flags (TOKEN)
+
+  [PACKET PAYLOAD]
+  40 01 04 16 44 07 05 0c a8 0f 88 03 32
+  a8 14 b0 12 b4 07 96 02 9f 01 b0 d1 04
+  80 7d ac 04 9c 17 32 98 db 06 80 b5 18
+  8c 02 bd 01 a0 ed 1a 88 03 bd 01 b8 c8
+  21 90 01 14 bc 0a a0 9a 0c 88 03 80 e2
+  09 98 ea 01 a4 01 00 b4 07 a4 01 a4 01
+  40 01 06 10
+                </code>
+            </pre>
+        <hr>
     </div> <!-- content -->
     <footer>
         <hr>
