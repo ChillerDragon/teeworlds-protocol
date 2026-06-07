@@ -186,6 +186,33 @@
   flags (TOKEN)
                 </code>
             </pre>
+            <h2 id="srv_cl_motd_con_rdy"><a href="#srv_cl_motd_con_rdy">[SERVER->CLIENT] Motd, Connection Ready</a></h2>
+            Now the server sends the first packet with more than one message in the payload:
+            <ul>
+                <li><a href="game_messages.html#NETMSGTYPE_SV_MOTD">NETMSGTYPE_SV_MOTD</a> - the message of the day</li>
+                <li><a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a> - telling the client he can send his startinfo</li>
+            </ul>
+            Read more about <a href="fundamentals.html#flushing">chunk queueing and flushing in the fundamentals</a>
+            if you want to understand why one packet contains 2 messages.
+            <pre class="code-snippet">
+                <code>
+  08 02 02 <span class="token">07 ec ab 6c</span> 40 02 02 02 00 40 01 03 09
+  ^  ^  ^  ^           ^        ^  ^  ^        ^
+  |  |  | client       |        |  |  |      msg id 4 <a href="system_messages.html#NETMSG_CON_READY">NETMSG_CON_READY</a>
+  |  |  | token        |        |  |  |      together in one byte with the game/system bit flag
+  |  |  |              |        |  |  |      which is set so this a system message
+  |  | num chunks 2    |        |  |  |
+  |  |                 |        |  |  start of the second message
+  | ack 2              |        |  |
+  |                    |        | the message field of the "message of the day" motd
+ flags (CONTROL)       |        | which is just 0x00 because the current message of the day is unset
+                       |        | so it just sends an empty string
+            start of the first  |
+                 message        msg id 1 SV_MOTD
+                                together in one byte with the game/system bit flag
+                                which is unset so it is a game message
+                </code>
+            </pre>
     </div> <!-- content -->
     <footer>
         <hr>
