@@ -448,12 +448,22 @@
                     <th>Note</th>
                 </tr>
                 <tr>
-                    <td id="NETMSG_SNAPEMPTY_todo"><a href="#NETMSG_SNAPEMPTY_todo">TODO</a></td>
-                    <td><a href="fundamentals.html#string_packing">String</a></td>
-                    <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
-                </tr>
-            </table>
+                     <td id="NETMSG_SNAPEMPTY_game_tick"><a href="#NETMSG_SNAPEMPTY_game_tick">Game tick</a></td>
+                     <td><a href="fundamentals.html#int_packing">Int</a></td>
+                     <td>TODO</td>
+                 </tr>
+                 <tr>
+                     <td id="NETMSG_SNAPEMPTY_delta_tick"><a href="#NETMSG_SNAPEMPTY_delta_tick">Delta tick</a></td>
+                     <td><a href="fundamentals.html#int_packing">Int</a></td>
+                     <td>
+                            The base snapshot game tick which the delta was created from.
+                            Not too interesting in this case because we don't delta anything anyways if it is empty.
+                            <br>
+                            But future deltas will be based on this empty snapshot if the client acked them.
+                     </td>
+                 </tr>
+             </table>
+             A empty snapshot without any snap items. Only used to sync the tick.
         </p>
         <hr>
         <h2 id="NETMSG_SNAPSINGLE"><a href="#NETMSG_SNAPSINGLE">NETMSG_SNAPSINGLE</a></h2>
