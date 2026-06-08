@@ -1022,7 +1022,18 @@
                 <tr>
                     <td id="NETMSG_INPUT_size"><a href="#NETMSG_INPUT_size">Size</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
-                    <td>TODO</td>
+                    <td>
+                        Size in bytes of the <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a> struct.
+                        The client uses <code>sizeof(CNetObj_PlayerInput)</code> to calculate this size.
+                        Since all fields of the struct are integers and integers are expected to be 4 bytes in C++
+                        this size is 4 times bigger than the amount of integers that are being sent.
+                        So until someone changes the layout of the <a href="#CNetObj_PlayerInput">CNetObj_PlayerInput</a>
+                        struct
+                        <a href="https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/datasrc/network.py#L54-L68">here</a>
+                        this value will always be <code>40</code> and the
+                        <a href="#NETMSG_INPUT_data">data</a> field will be in the message
+                        <code>10</code> times.
+                    </td>
                 </tr>
                 <tr id="NETMSG_INPUT_data">
                     <td id="NETMSG_INPUT_data_m_Direction"><a href="#NETMSG_INPUT_data_m_Direction">[data] Direction</a></td>
