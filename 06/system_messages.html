@@ -343,7 +343,7 @@
                     <th>Argument name</th>
                     <th>Type</th>
                     <th>Note</th>
-                </r>
+                </tr>
                 <tr>
                     <td id="NETMSG_SNAP_game_tick"><a href="#NETMSG_SNAP_game_tick">Game tick</a></td>
                     <td><a href="fundamentals.html#int_packing">Int</a></td>
@@ -708,7 +708,7 @@
         Unpacker.GetString(); // login name, not used
         pPw = Unpacker.GetString(CUnpacker::SANITIZE_CC);
 
-        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Unpacker.Error() == 0)
+        if((pPacket-&gt;m_Flags&amp;NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; Unpacker.Error() == 0)
         {
             if(g_Config.m_SvRconPassword[0] == 0 && g_Config.m_SvRconModPassword[0] == 0)
             {
@@ -719,32 +719,32 @@
                 CMsgPacker Msg(NETMSG_RCON_AUTH_STATUS);
                 Msg.AddInt(1);	//authed
                 Msg.AddInt(1);	//cmdlist
-                SendMsgEx(&Msg, MSGFLAG_VITAL, ClientID, true);
+                SendMsgEx(&amp;Msg, MSGFLAG_VITAL, ClientID, true);
 
                 m_aClients[ClientID].m_Authed = AUTHED_ADMIN;
                 int SendRconCmds = Unpacker.GetInt();
                 if(Unpacker.Error() == 0 && SendRconCmds)
-                    m_aClients[ClientID].m_pRconCmdToSend = Console()->FirstCommandInfo(IConsole::ACCESS_LEVEL_ADMIN, CFGFLAG_SERVER);
+                    m_aClients[ClientID].m_pRconCmdToSend = Console()-&gt;FirstCommandInfo(IConsole::ACCESS_LEVEL_ADMIN, CFGFLAG_SERVER);
                 SendRconLine(ClientID, "Admin authentication successful. Full remote console access granted.");
                 char aBuf[256];
                 str_format(aBuf, sizeof(aBuf), "ClientID=%d authed (admin)", ClientID);
-                Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+                Console()-&gt;Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
             }
             else if(g_Config.m_SvRconModPassword[0] && str_comp(pPw, g_Config.m_SvRconModPassword) == 0)
             {
                 CMsgPacker Msg(NETMSG_RCON_AUTH_STATUS);
                 Msg.AddInt(1);	//authed
                 Msg.AddInt(1);	//cmdlist
-                SendMsgEx(&Msg, MSGFLAG_VITAL, ClientID, true);
+                SendMsgEx(&amp;Msg, MSGFLAG_VITAL, ClientID, true);
 
                 m_aClients[ClientID].m_Authed = AUTHED_MOD;
                 int SendRconCmds = Unpacker.GetInt();
                 if(Unpacker.Error() == 0 && SendRconCmds)
-                    m_aClients[ClientID].m_pRconCmdToSend = Console()->FirstCommandInfo(IConsole::ACCESS_LEVEL_MOD, CFGFLAG_SERVER);
+                    m_aClients[ClientID].m_pRconCmdToSend = Console()-&gt;FirstCommandInfo(IConsole::ACCESS_LEVEL_MOD, CFGFLAG_SERVER);
                 SendRconLine(ClientID, "Moderator authentication successful. Limited remote console access granted.");
                 char aBuf[256];
                 str_format(aBuf, sizeof(aBuf), "ClientID=%d authed (moderator)", ClientID);
-                Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+                Console()-&gt;Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
             }
             else if(g_Config.m_SvRconMaxTries)
             {
@@ -752,7 +752,7 @@
                 char aBuf[128];
                 str_format(aBuf, sizeof(aBuf), "Wrong password %d/%d.", m_aClients[ClientID].m_AuthTries, g_Config.m_SvRconMaxTries);
                 SendRconLine(ClientID, aBuf);
-                if(m_aClients[ClientID].m_AuthTries >= g_Config.m_SvRconMaxTries)
+                if(m_aClients[ClientID].m_AuthTries &gt;= g_Config.m_SvRconMaxTries)
                 {
                     if(!g_Config.m_SvRconBantime)
                         m_NetServer.Drop(ClientID, "Too many remote console authentication tries");
@@ -776,21 +776,21 @@
     {
         CServer *pServer = (CServer *)pUser;
 
-        if(pServer->m_RconClientID >= 0 && pServer->m_RconClientID < MAX_CLIENTS &&
-            pServer->m_aClients[pServer->m_RconClientID].m_State != CServer::CClient::STATE_EMPTY)
+        if(pServer-&gt;m_RconClientID &gt;= 0 && pServer-&gt;m_RconClientID &lt; MAX_CLIENTS &&
+            pServer-&gt;m_aClients[pServer-&gt;m_RconClientID].m_State != CServer::CClient::STATE_EMPTY)
         {
             CMsgPacker Msg(NETMSG_RCON_AUTH_STATUS);
             Msg.AddInt(0);	//authed
             Msg.AddInt(0);	//cmdlist
-            pServer->SendMsgEx(&Msg, MSGFLAG_VITAL, pServer->m_RconClientID, true);
+            pServer-&gt;SendMsgEx(&Msg, MSGFLAG_VITAL, pServer-&gt;m_RconClientID, true);
 
-            pServer->m_aClients[pServer->m_RconClientID].m_Authed = AUTHED_NO;
-            pServer->m_aClients[pServer->m_RconClientID].m_AuthTries = 0;
-            pServer->m_aClients[pServer->m_RconClientID].m_pRconCmdToSend = 0;
-            pServer->SendRconLine(pServer->m_RconClientID, "Logout successful.");
+            pServer-&gt;m_aClients[pServer-&gt;m_RconClientID].m_Authed = AUTHED_NO;
+            pServer-&gt;m_aClients[pServer-&gt;m_RconClientID].m_AuthTries = 0;
+            pServer-&gt;m_aClients[pServer-&gt;m_RconClientID].m_pRconCmdToSend = 0;
+            pServer-&gt;SendRconLine(pServer-&gt;m_RconClientID, "Logout successful.");
             char aBuf[32];
-            str_format(aBuf, sizeof(aBuf), "ClientID=%d logged out", pServer->m_RconClientID);
-            pServer->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+            str_format(aBuf, sizeof(aBuf), "ClientID=%d logged out", pServer-&gt;m_RconClientID);
+            pServer-&gt;Console()-&gt;Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
         }
     }
                 </code>
@@ -798,7 +798,7 @@
             Unpacked by the client in <code>CClient::ProcessServerPacket()</code>
             <pre class="code-snippet">
                 <code>
-    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_RCON_AUTH_STATUS)
+    else if((pPacket-&gt;m_Flags&NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; Msg == NETMSG_RCON_AUTH_STATUS)
     {
         int Result = Unpacker.GetInt();
         if(Unpacker.Error() == 0)
@@ -808,7 +808,7 @@
         if(Unpacker.Error() != 0)
             m_UseTempRconCommands = 0;
         if(Old != 0 && m_UseTempRconCommands == 0)
-            m_pConsole->DeregisterTempAll();
+            m_pConsole-&gt;DeregisterTempAll();
     }
                 </code>
             </pre>
@@ -1201,16 +1201,16 @@
     {
         const char *pCmd = Unpacker.GetString();
 
-        if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Unpacker.Error() == 0 && m_aClients[ClientID].m_Authed)
+        if((pPacket-&gt;m_Flags&NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; Unpacker.Error() == 0 &amp;&amp; m_aClients[ClientID].m_Authed)
         {
             char aBuf[256];
             str_format(aBuf, sizeof(aBuf), "ClientID=%d rcon='%s'", ClientID, pCmd);
-            Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
+            Console()-&gt;Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
             m_RconClientID = ClientID;
             m_RconAuthLevel = m_aClients[ClientID].m_Authed;
-            Console()->SetAccessLevel(m_aClients[ClientID].m_Authed == AUTHED_ADMIN ? IConsole::ACCESS_LEVEL_ADMIN : IConsole::ACCESS_LEVEL_MOD);
-            Console()->ExecuteLineFlag(pCmd, CFGFLAG_SERVER);
-            Console()->SetAccessLevel(IConsole::ACCESS_LEVEL_ADMIN);
+            Console()-&gt;SetAccessLevel(m_aClients[ClientID].m_Authed == AUTHED_ADMIN ? IConsole::ACCESS_LEVEL_ADMIN : IConsole::ACCESS_LEVEL_MOD);
+            Console()-&gt;ExecuteLineFlag(pCmd, CFGFLAG_SERVER);
+            Console()-&gt;SetAccessLevel(IConsole::ACCESS_LEVEL_ADMIN);
             m_RconClientID = IServer::RCON_CID_SERV;
             m_RconAuthLevel = AUTHED_ADMIN;
         }
@@ -1309,7 +1309,7 @@
             Sent by the client in <code>CClient::ProcessServerPacket()</code>
             <pre class="code-snippet">
                 <code>
-    else if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Msg == NETMSG_MAP_DATA)
+    else if((pPacket-&gt;m_Flags&amp;NET_CHUNKFLAG_VITAL) != 0 &amp;&amp; Msg == NETMSG_MAP_DATA)
     {
         int Last = Unpacker.GetInt();
         int MapCRC = Unpacker.GetInt();
@@ -1318,7 +1318,7 @@
         const unsigned char *pData = Unpacker.GetRaw(Size);
 
         // check for errors
-        if(Unpacker.Error() || Size <= 0 || MapCRC != m_MapdownloadCrc || Chunk != m_MapdownloadChunk || !m_MapdownloadFile)
+        if(Unpacker.Error() || Size &lt;= 0 || MapCRC != m_MapdownloadCrc || Chunk != m_MapdownloadChunk || !m_MapdownloadFile)
             return;
 
         io_write(m_MapdownloadFile, pData, Size);
@@ -1342,7 +1342,7 @@
             {
                 char aBuf[256];
                 str_format(aBuf, sizeof(aBuf), "requested chunk %d", m_MapdownloadChunk);
-                m_pConsole->Print(IConsole::OUTPUT_LEVEL_DEBUG, "client/network", aBuf);
+                m_pConsole-&gt;Print(IConsole::OUTPUT_LEVEL_DEBUG, "client/network", aBuf);
             }
         }
     }
